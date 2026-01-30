@@ -2,7 +2,7 @@
 
 Plataforma moderna y futurista para generar documentos legales utilizando inteligencia artificial.
 
-> Repo: [WeroMilk/AvatarLegalAI](https://github.com/WeroMilk/AvatarLegalAI) · Última actualización: fix Vercel build + Node engine.
+> Repo: [WeroMilk/hmolegalai](https://github.com/WeroMilk/hmolegalai) · Última actualización: fix Vercel build + Node engine.
 
 ## 🚀 Tecnologías
 
@@ -45,7 +45,7 @@ npm run dev
 
 ## 📤 Subir a GitHub
 
-Repositorio: **[WeroMilk/AvatarLegalAI](https://github.com/WeroMilk/AvatarLegalAI)**
+Repositorio: **[WeroMilk/hmolegalai](https://github.com/WeroMilk/hmolegalai)**
 
 En la carpeta del proyecto, ejecuta en PowerShell:
 
@@ -61,7 +61,7 @@ O manualmente:
 git init
 git add .
 git commit -m "Initial commit: Avatar Legal AI"
-git remote add origin git@github.com:WeroMilk/AvatarLegalAI.git
+git remote add origin https://github.com/WeroMilk/hmolegalai.git
 git branch -M main
 git push -u origin main
 ```
