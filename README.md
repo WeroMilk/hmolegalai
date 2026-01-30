@@ -2,6 +2,8 @@
 
 Plataforma moderna y futurista para generar documentos legales utilizando inteligencia artificial.
 
+> Repo: [WeroMilk/AvatarLegalAI](https://github.com/WeroMilk/AvatarLegalAI) · Última actualización: fix Vercel build + Node engine.
+
 ## 🚀 Tecnologías
 
 - **Next.js 15** - Framework React con App Router
