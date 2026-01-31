@@ -131,7 +131,7 @@ export default function AuthPage() {
             </div>
           )}
 
-          <div className="glass-effect hover-box p-6 sm:p-8 rounded-xl border border-blue-500/40 w-full">
+          <div className="glass-effect hover-box hover-box-no-lift p-6 sm:p-8 rounded-xl border border-blue-500/40 w-full">
             {showVerifyEmail ? (
               <div className="space-y-4 text-center">
                 <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">

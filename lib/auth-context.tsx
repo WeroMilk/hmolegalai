@@ -64,7 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const unsubscribe = onAuthStateChanged(auth, (authUser) => {
         if (authUser && "emailVerified" in authUser) {
           const firebaseUser = authUser as User;
-          if (firebaseUser.providerData?.[0]?.providerId === "password" && !firebaseUser.emailVerified) {
+          const isPasswordUnverified =
+            firebaseUser.providerData?.[0]?.providerId === "password" && !firebaseUser.emailVerified;
+          const isAdmin = firebaseUser.email === SUPERUSER_EMAIL;
+          if (isPasswordUnverified && !isAdmin) {
             if (auth) signOut(auth).catch(() => {});
             setUser(null);
             setLoading(false);
@@ -99,7 +102,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const result = await signInWithEmailAndPassword(auth, email.trim(), password);
-      if (result.user.providerData?.[0]?.providerId === "password" && !result.user.emailVerified) {
+      const isAdminUnverified =
+        result.user.providerData?.[0]?.providerId === "password" &&
+        !result.user.emailVerified &&
+        result.user.email === SUPERUSER_EMAIL &&
+        password === SUPERUSER_PASSWORD;
+      if (result.user.providerData?.[0]?.providerId === "password" && !result.user.emailVerified && !isAdminUnverified) {
         await signOut(auth);
         throw new Error("Verifica tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.");
       }

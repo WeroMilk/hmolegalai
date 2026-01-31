@@ -138,6 +138,11 @@ input[type="number"] {
     border-color: rgba(59, 130, 246, 0.55);
   }
 
+  /* Box sin movimiento al hover: solo sombra azul (ej. login) */
+  .hover-box.hover-box-no-lift:hover {
+    transform: none;
+  }
+
   /*
    * Contraste de efectos en títulos, subtítulos, boxes y botones:
    * - Texto negro o blanco → efecto azul.
