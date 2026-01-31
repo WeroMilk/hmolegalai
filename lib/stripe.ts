@@ -15,7 +15,7 @@ export async function createCheckoutSession(
   documentId: string,
   price: number,
   saveToAccount?: boolean
-) {
+): Promise<{ sessionId: string; url: string | null }> {
   const response = await fetch("/api/create-checkout-session", {
     method: "POST",
     headers: {
@@ -32,6 +32,6 @@ export async function createCheckoutSession(
     throw new Error("Error al crear la sesión de pago");
   }
 
-  const { sessionId } = await response.json();
-  return sessionId;
+  const data = await response.json();
+  return data;
 }

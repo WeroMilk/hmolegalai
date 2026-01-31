@@ -44,11 +44,12 @@ export function formatMoneyDisplay(raw: string): string {
   return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
 
-/** Formato en vivo mientras se escribe: 1,500 o 1,500.50 (solo 2 decimales) */
+/** Formato en vivo mientras se escribe: 1,500 o 1,500.50 (solo 2 decimales). Vacío → 0.00 */
 export function formatMoneyDisplayLive(raw: string): string {
+  if (!raw || !raw.trim()) return "0.00";
   const n = parseMoneyValue(raw);
-  if (n === null || isNaN(n)) return raw;
-  return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+  if (n === null || isNaN(n)) return "0.00";
+  return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
 
 export function buildUserInputsForApi(

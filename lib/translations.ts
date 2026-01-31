@@ -45,6 +45,11 @@ export const translations = {
     auth_verify_email_title: "Revisa tu correo",
     auth_verify_email_desc: "Te enviamos un enlace de verificación a tu correo. Haz clic en el enlace para activar tu cuenta.",
     auth_verify_email_back: "¿Ya verificaste? Iniciar sesión",
+    auth_forgot_password: "¿Olvidaste tu contraseña?",
+    auth_reset_sent: "Te enviamos un enlace para restablecer tu contraseña. Revisa tu correo.",
+    auth_reset_send: "Enviar",
+    auth_invalid_email: "Ingresa un email válido",
+    auth_password_min: "La contraseña debe tener al menos 6 caracteres",
 
     // Home
     home_hero_title1: "Documentos Legales",
@@ -367,6 +372,11 @@ export const translations = {
     auth_verify_email_title: "Check your email",
     auth_verify_email_desc: "We sent you a verification link. Click the link in the email to activate your account.",
     auth_verify_email_back: "Already verified? Sign in",
+    auth_forgot_password: "Forgot your password?",
+    auth_reset_sent: "We sent you a link to reset your password. Check your email.",
+    auth_reset_send: "Send",
+    auth_invalid_email: "Enter a valid email",
+    auth_password_min: "Password must be at least 6 characters",
 
     home_hero_title1: "Legal Documents",
     home_hero_title2: "AI-Generated",

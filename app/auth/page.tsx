@@ -20,14 +20,26 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showVerifyEmail, setShowVerifyEmail] = useState(false);
-  const { signIn, signUp, signInWithGoogle } = useAuth();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
+  const { signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
   const { t } = useI18n();
   const router = useRouter();
+
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
+    if (!isValidEmail(email)) {
+      setError(t("auth_invalid_email"));
+      return;
+    }
+    if (password.length < 6) {
+      setError(t("auth_password_min"));
+      return;
+    }
     if (!isLogin && password !== confirmPassword) {
       setError(t("auth_password_mismatch"));
       return;
@@ -170,10 +182,25 @@ export default function AuthPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2 flex items-center text-foreground">
-                  <Lock className="w-4 h-4 mr-2" />
-                  {t("auth_password")}
-                </label>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="block text-sm font-medium flex items-center text-foreground">
+                    <Lock className="w-4 h-4 mr-2" />
+                    {t("auth_password")}
+                  </label>
+                  {isLogin && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowForgotPassword(true);
+                        setError("");
+                        setResetSent(false);
+                      }}
+                      className="text-xs text-blue-500 hover:text-blue-400"
+                    >
+                      {t("auth_forgot_password")}
+                    </button>
+                  )}
+                </div>
                 <Input
                   type="password"
                   value={password}
@@ -183,6 +210,57 @@ export default function AuthPage() {
                   minLength={6}
                 />
               </div>
+
+              {showForgotPassword && (
+                <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                  {resetSent ? (
+                    <p className="text-sm text-foreground">{t("auth_reset_sent")}</p>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-muted">{t("auth_placeholder_email")}</p>
+                      <div className="flex gap-2">
+                        <Input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder={t("auth_placeholder_email")}
+                          className="flex-1"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          disabled={loading || !isValidEmail(email)}
+                          onClick={async () => {
+                            if (!isValidEmail(email)) {
+                              setError(t("auth_invalid_email"));
+                              return;
+                            }
+                            setLoading(true);
+                            setError("");
+                            try {
+                              await resetPassword(email);
+                              setResetSent(true);
+                            } catch (err: any) {
+                              setError(err.message || t("auth_error"));
+                            } finally {
+                              setLoading(false);
+                            }
+                          }}
+                        >
+                          {t("auth_reset_send")}
+                        </Button>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setShowForgotPassword(false); setError(""); }}
+                        className="text-xs text-muted hover:text-foreground"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {!isLogin && (
                 <div>
