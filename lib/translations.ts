@@ -96,6 +96,7 @@ export const translations = {
 
     // Document form page
     doc_back_catalog: "Volver al catálogo",
+    doc_back_to_form: "Volver al formulario",
     doc_not_found: "Documento no encontrado",
     doc_complete_info: "Completa la información",
     doc_please_complete: "Por favor completa",
@@ -122,6 +123,7 @@ export const translations = {
     doc_name: "Nombre",
     doc_error_generate: "Error al generar el documento",
     doc_error_payment: "Error al procesar el pago",
+    doc_payment_form_title: "Datos de pago",
 
     // Preview page
     preview_title: "Vista previa — revisa antes de imprimir",
@@ -406,6 +408,7 @@ export const translations = {
     potential_demanda_mercantil: "Basic format for filing a commercial lawsuit in Mexican courts. Legal advice recommended.",
 
     doc_back_catalog: "Back to catalog",
+    doc_back_to_form: "Back to form",
     doc_not_found: "Document not found",
     doc_complete_info: "Complete the information",
     doc_please_complete: "Please complete",
@@ -432,6 +435,7 @@ export const translations = {
     doc_name: "Name",
     doc_error_generate: "Error generating document",
     doc_error_payment: "Error processing payment",
+    doc_payment_form_title: "Payment details",
 
     preview_title: "Preview — review before printing",
     preview_edit: "Edit",

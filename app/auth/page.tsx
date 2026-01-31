@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n-context";
@@ -60,7 +60,10 @@ export default function AuthPage() {
     }
   };
 
+  const [mounted, setMounted] = useState(false);
   const firebaseReady = isFirebaseConfigured();
+
+  useEffect(() => setMounted(true), []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -71,7 +74,7 @@ export default function AuthPage() {
           animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-md space-y-4"
         >
-          {!firebaseReady && (
+          {mounted && !firebaseReady && (
             <div className="glass-effect p-4 sm:p-5 rounded-xl border border-amber-500/50 bg-amber-500/10">
               <div className="flex items-start gap-3">
                 <Settings className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
@@ -203,7 +206,7 @@ export default function AuthPage() {
                 variant="outline"
                 className="w-full mt-4 flex items-center justify-center gap-2"
                 onClick={handleGoogleSignIn}
-                disabled={loading || !firebaseReady}
+                disabled={loading || !mounted || !firebaseReady}
               >
                 <Image
                   src="/google-g-logo.png"

@@ -25,7 +25,11 @@ export default function SuccessPage() {
   useEffect(() => {
     const generateDocument = async () => {
       const sessionId = searchParams.get("session_id");
+      const paymentIntent = searchParams.get("payment_intent");
       const contentParam = searchParams.get("content");
+
+      // sessionId = Checkout, payment_intent = Stripe Elements
+      const validPaymentId = sessionId || paymentIntent;
 
       // Si viene contenido en la URL (superusuario legacy), ir a preview
       if (contentParam) {
@@ -39,7 +43,7 @@ export default function SuccessPage() {
         return;
       }
 
-      if (!sessionId || !user) {
+      if (!validPaymentId || !user) {
         setError(t("success_invalid_session"));
         setGenerating(false);
         return;
@@ -69,7 +73,7 @@ export default function SuccessPage() {
             documentId: document.id,
             documentType: document.name,
             userInputs,
-            sessionId,
+            sessionId: validPaymentId,
             saveToAccount,
           }),
         });

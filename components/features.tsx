@@ -17,7 +17,7 @@ export function Features() {
   const { t } = useI18n();
 
   return (
-    <section id="como-funciona" className="pt-16 xs:pt-24 pb-8 xs:pb-10 px-3 xs:px-4 sm:px-6 lg:px-8 overflow-visible">
+    <section id="como-funciona" className="pt-6 xs:pt-8 md:pt-16 pb-8 xs:pb-10 px-3 xs:px-4 sm:px-6 lg:px-8 overflow-visible">
       <div className="max-w-7xl mx-auto w-full min-w-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}

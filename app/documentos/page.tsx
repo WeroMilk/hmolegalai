@@ -66,7 +66,7 @@ export default function DocumentosPage() {
                     className="glass-effect hover-box p-6 md:p-8 rounded-xl border border-blue-500/40 group"
                   >
                     <div className="flex flex-col md:flex-row md:items-start gap-6">
-                      <div className="text-5xl md:text-6xl flex-shrink-0 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">{doc.icon}</div>
+                      <div className="text-5xl md:text-6xl flex-shrink-0 origin-left transition-transform duration-300 ease-out group-hover:scale-125 group-hover:translate-x-1">{doc.icon}</div>
                       <div className="flex-1">
                         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4 gap-4">
                           <h3 className="hover-title text-2xl md:text-3xl font-bold leading-tight text-foreground">{name}</h3>

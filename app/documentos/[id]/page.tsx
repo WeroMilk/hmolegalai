@@ -24,9 +24,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowLeft, Loader2, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
-import { createCheckoutSession } from "@/lib/stripe";
-import { getStripe } from "@/lib/stripe";
 import { shouldSkipPayment } from "@/lib/superuser";
+import { PaymentForm } from "@/components/payment-form";
 import { PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
 import { parseDDMMYYYY, isValidDate } from "@/lib/date-utils";
 
@@ -43,6 +42,8 @@ export default function DocumentPage() {
   const [error, setError] = useState("");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [saveForever, setSaveForever] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [paymentClientSecret, setPaymentClientSecret] = useState<string | null>(null);
 
   useEffect(() => {
     if (params.id) {
@@ -182,17 +183,25 @@ export default function DocumentPage() {
         return;
       }
       
-      // Usuario normal: proceder con pago ($59 solo descarga o $99 guardar en Mi cuenta)
+      // Usuario normal: crear PaymentIntent y mostrar Stripe Elements
       const price = saveForever ? SAVE_FOREVER_PRICE : BASE_PRICE;
-      const sessionId = await createCheckoutSession(document.id, price, saveForever);
-      const stripe = await getStripe();
-      
-      if (stripe) {
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          setError(error.message ?? t("doc_error_payment"));
-        }
+      const amountCents = price * 100;
+      const res = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          documentId: document.id,
+          amount: amountCents,
+          saveToAccount: saveForever,
+        }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Error al iniciar el pago");
       }
+      const { clientSecret } = await res.json();
+      setPaymentClientSecret(clientSecret);
+      setShowPaymentForm(true);
     } catch (err: any) {
       setError(err.message || t("doc_error_payment"));
     } finally {
@@ -220,7 +229,7 @@ export default function DocumentPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-12 sm:pb-24">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-24">
         <Link
           href="/documentos"
           className="inline-flex items-center text-blue-500 hover:text-blue-400 mb-8 py-2 -my-2 min-h-[44px]"
@@ -446,23 +455,50 @@ export default function DocumentPage() {
             </div>
           )}
 
-          <Button
-            onClick={handlePayment}
-            disabled={loading}
-            className="w-full i18n-stable-btn min-w-[18rem] sm:min-w-[22rem]"
-            size="lg"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                {isSuperUser(user?.email) ? t("doc_generating") : t("doc_processing_payment")}
-              </>
-            ) : isSuperUser(user?.email) ? (
-              t("doc_generate_free")
-            ) : (
-              saveForever ? t("doc_pay_49_and_generate") : t("doc_pay_29_and_generate")
-            )}
-          </Button>
+          {showPaymentForm && paymentClientSecret ? (
+            <div className="space-y-4">
+              <div className="p-4 rounded-xl border-2 border-blue-500/30 bg-blue-500/5 dark:bg-blue-500/10">
+                <h3 className="text-sm font-semibold text-foreground mb-4">
+                  {t("doc_payment_form_title")} — {saveForever ? t("doc_price_plus_save") : t("doc_price_base")}
+                </h3>
+                <PaymentForm
+                  clientSecret={paymentClientSecret}
+                  documentId={document.id}
+                  saveToAccount={saveForever}
+                  onError={setError}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPaymentForm(false);
+                  setPaymentClientSecret(null);
+                  setError("");
+                }}
+                className="w-full text-sm text-muted hover:text-foreground py-2"
+              >
+                ← {t("doc_back_to_form")}
+              </button>
+            </div>
+          ) : (
+            <Button
+              onClick={handlePayment}
+              disabled={loading}
+              className="w-full i18n-stable-btn min-w-[18rem] sm:min-w-[22rem]"
+              size="lg"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  {isSuperUser(user?.email) ? t("doc_generating") : t("doc_processing_payment")}
+                </>
+              ) : isSuperUser(user?.email) ? (
+                t("doc_generate_free")
+              ) : (
+                saveForever ? t("doc_pay_49_and_generate") : t("doc_pay_29_and_generate")
+              )}
+            </Button>
+          )}
 
           {!user && (
             <p className="text-center text-muted mt-4 text-sm">

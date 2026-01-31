@@ -163,6 +163,13 @@ input[type="number"] {
     border-color: rgba(59, 130, 246, 0.55);
   }
 
+  /* Stripe Elements: contenedor del formulario de pago */
+  .StripeElement,
+  .stripe-element-container {
+    padding: 12px 16px;
+    border-radius: 8px;
+  }
+
   /* Títulos: light mode → efecto blanco; dark mode → efecto azul */
   .hover-title {
     @apply transition-all duration-300 ease-out inline-block;
