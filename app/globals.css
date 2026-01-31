@@ -203,7 +203,7 @@ input[type="number"] {
             drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
   }
 
-  /* Botones: negro/blanco (neutros) → efecto azul; azul (primary, white-glow) → efecto blanco */
+  /* Botones: todos los resplandores en azul */
   .hover-button {
     @apply transition-all duration-300 ease-out;
   }
@@ -212,10 +212,10 @@ input[type="number"] {
     box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
   }
   .hover-button.btn-primary:hover {
-    box-shadow: 0 0 28px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.28);
+    box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
   }
   .hover-button.btn-white-glow:hover {
-    box-shadow: 0 0 28px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 255, 255, 0.28);
+    box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
   }
   .hover-button:active {
     @apply transform scale-95;

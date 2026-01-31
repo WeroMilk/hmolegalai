@@ -8,7 +8,6 @@ import {
   serializePersonList,
   parseMoneyValue,
   sanitizeMoneyInput,
-  rawMoneyDisplay,
   normalizeMoneyOnBlur,
   buildUserInputsForApi,
   type PersonEntry,
@@ -299,10 +298,23 @@ export default function DocumentPage() {
         return;
       }
       
-      // Usuario normal: redirigir a Stripe Checkout (token fresco para evitar "Debes iniciar sesión")
+      // Usuario normal: redirigir a Stripe Checkout (token fresco; retry una vez si 401)
       const price = saveForever ? SAVE_FOREVER_PRICE : BASE_PRICE;
-      const token = await user.getIdToken(true);
-      const { url } = await createCheckoutSession(document.id, price, saveForever, token);
+      let token = await user.getIdToken(true);
+      let url: string | null = null;
+      try {
+        const result = await createCheckoutSession(document.id, price, saveForever, token);
+        url = result.url;
+      } catch (firstErr: any) {
+        const msg = firstErr?.message ?? "";
+        if (msg.includes("iniciar sesión") || msg.includes("Debes iniciar")) {
+          token = await user.getIdToken(true);
+          const result = await createCheckoutSession(document.id, price, saveForever, token);
+          url = result.url;
+        } else {
+          throw firstErr;
+        }
+      }
       if (url) {
         window.location.href = url;
       } else {
@@ -484,7 +496,7 @@ export default function DocumentPage() {
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9.]*"
-                          value={rawMoneyDisplay(formData[field.id] ?? "")}
+                          value={formData[field.id] ?? ""}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
                           onBlur={() => handleMoneyBlur(field.id)}
                           placeholder="0.00"
@@ -570,7 +582,7 @@ export default function DocumentPage() {
           <Button
               onClick={handlePayment}
               disabled={loading}
-              className="w-full i18n-stable-btn min-w-[18rem] sm:min-w-[22rem]"
+              className="w-full i18n-stable-btn min-w-[18rem] sm:min-w-[22rem] ring-2 ring-blue-500/50 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 hover:ring-blue-500/60"
               size="lg"
             >
               {loading ? (
