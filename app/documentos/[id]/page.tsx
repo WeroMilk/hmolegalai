@@ -8,7 +8,7 @@ import {
   serializePersonList,
   parseMoneyValue,
   sanitizeMoneyInput,
-  formatMoneyDisplay,
+  rawMoneyDisplay,
   normalizeMoneyOnBlur,
   buildUserInputsForApi,
   type PersonEntry,
@@ -29,6 +29,8 @@ import { shouldSkipPayment } from "@/lib/superuser";
 import { createCheckoutSession } from "@/lib/stripe";
 import { PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
 import { parseDDMMYYYY, isValidDate } from "@/lib/date-utils";
+
+const PENDING_FORM_KEY = "avatar_pending_form";
 
 export default function DocumentPage() {
   const params = useParams();
@@ -57,6 +59,25 @@ export default function DocumentPage() {
             initialData[field.id] = "";
           }
         });
+        try {
+          const pending = typeof window !== "undefined" ? sessionStorage.getItem(PENDING_FORM_KEY) : null;
+          if (pending) {
+            const parsed = JSON.parse(pending) as { documentId: string; formData?: Record<string, string>; saveForever?: boolean; legalAccepted?: boolean };
+            if (parsed.documentId === doc.id && parsed.formData && typeof parsed.formData === "object") {
+              const restored: Record<string, string> = { ...initialData };
+              for (const key of Object.keys(parsed.formData)) {
+                if (key in restored) restored[key] = String(parsed.formData[key] ?? "");
+              }
+              setFormData(restored);
+              if (typeof parsed.saveForever === "boolean") setSaveForever(parsed.saveForever);
+              if (typeof parsed.legalAccepted === "boolean") setLegalAccepted(parsed.legalAccepted);
+              sessionStorage.removeItem(PENDING_FORM_KEY);
+              return;
+            }
+          }
+        } catch {
+          /* ignore */
+        }
         setFormData(initialData);
       }
     }
@@ -124,7 +145,24 @@ export default function DocumentPage() {
 
   const handlePayment = async () => {
     if (!user) {
-      router.push("/auth");
+      if (document) {
+        try {
+          sessionStorage.setItem(
+            PENDING_FORM_KEY,
+            JSON.stringify({
+              documentId: document.id,
+              formData,
+              saveForever,
+              legalAccepted,
+            })
+          );
+        } catch {
+          /* ignore */
+        }
+        router.push(`/auth?returnTo=${encodeURIComponent(`/documentos/${document.id}`)}`);
+      } else {
+        router.push("/auth");
+      }
       return;
     }
 
@@ -261,9 +299,9 @@ export default function DocumentPage() {
         return;
       }
       
-      // Usuario normal: redirigir a Stripe Checkout
+      // Usuario normal: redirigir a Stripe Checkout (token fresco para evitar "Debes iniciar sesión")
       const price = saveForever ? SAVE_FOREVER_PRICE : BASE_PRICE;
-      const token = await user.getIdToken();
+      const token = await user.getIdToken(true);
       const { url } = await createCheckoutSession(document.id, price, saveForever, token);
       if (url) {
         window.location.href = url;
@@ -445,7 +483,8 @@ export default function DocumentPage() {
                         <input
                           type="text"
                           inputMode="decimal"
-                          value={formatMoneyDisplay(formData[field.id] ?? "")}
+                          pattern="[0-9.]*"
+                          value={rawMoneyDisplay(formData[field.id] ?? "")}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
                           onBlur={() => handleMoneyBlur(field.id)}
                           placeholder="0.00"

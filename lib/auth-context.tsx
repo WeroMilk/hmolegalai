@@ -62,18 +62,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       const unsubscribe = onAuthStateChanged(auth, (authUser) => {
-        if (authUser && "emailVerified" in authUser) {
-          const firebaseUser = authUser as User;
-          const isPasswordUnverified =
-            firebaseUser.providerData?.[0]?.providerId === "password" && !firebaseUser.emailVerified;
-          const isAdmin = firebaseUser.email === SUPERUSER_EMAIL;
-          if (isPasswordUnverified && !isAdmin) {
-            if (auth) signOut(auth).catch(() => {});
-            setUser(null);
-            setLoading(false);
-            return;
-          }
-        }
         setUser(authUser);
         setLoading(false);
       }, (error) => {
@@ -101,16 +89,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     try {
-      const result = await signInWithEmailAndPassword(auth, email.trim(), password);
-      const isAdminUnverified =
-        result.user.providerData?.[0]?.providerId === "password" &&
-        !result.user.emailVerified &&
-        result.user.email === SUPERUSER_EMAIL &&
-        password === SUPERUSER_PASSWORD;
-      if (result.user.providerData?.[0]?.providerId === "password" && !result.user.emailVerified && !isAdminUnverified) {
-        await signOut(auth);
-        throw new Error("Verifica tu correo antes de iniciar sesión. Revisa tu bandeja de entrada.");
-      }
+      await signInWithEmailAndPassword(auth, email.trim(), password);
     } catch (signInErr: any) {
       const code = signInErr?.code || "";
       const userNotFound = code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/wrong-password";
@@ -132,13 +111,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!auth) {
       throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
     }
-    const userCred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-    const continueUrl = getContinueUrl();
-    await sendEmailVerification(userCred.user, continueUrl ? {
-      url: continueUrl,
-      handleCodeInApp: false,
-    } : undefined);
-    await signOut(auth);
+    await createUserWithEmailAndPassword(auth, email.trim(), password);
+    // No se exige verificación de correo: el usuario queda logueado y puede usar la app.
   };
 
   const resendVerificationEmail = async (email: string, password: string) => {

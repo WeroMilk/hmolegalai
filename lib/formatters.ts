@@ -37,6 +37,11 @@ export function sanitizeMoneyInput(s: string): string {
   return oneDot;
 }
 
+/** Valor crudo para mostrar en input de dinero: solo dígitos y un punto (sin comas). */
+export function rawMoneyDisplay(raw: string): string {
+  return sanitizeMoneyInput(raw || "");
+}
+
 const MONEY_FORMAT_ESMX = new Intl.NumberFormat("es-MX", {
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,

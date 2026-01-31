@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n-context";
 import { isFirebaseConfigured } from "@/lib/firebase";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,8 @@ export default function AuthPage() {
   const { signIn, signUp, signInWithGoogle, resetPassword, resendVerificationEmail } = useAuth();
   const { t } = useI18n();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
 
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
@@ -51,12 +53,12 @@ export default function AuthPage() {
     try {
       if (isLogin) {
         await signIn(email, password);
-        router.push("/documentos");
+        const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
+        router.push(target);
       } else {
         await signUp(email, password);
-        setVerifyEmail(email);
-        setResendSent(false);
-        setShowVerifyEmail(true);
+        const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
+        router.push(target);
       }
     } catch (err: any) {
       setError(err.message || t("auth_error"));
@@ -70,7 +72,8 @@ export default function AuthPage() {
     setError("");
     try {
       await signInWithGoogle();
-      router.push("/documentos");
+      const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
+      router.push(target);
     } catch (err: any) {
       setError(err.message || t("auth_error_google"));
     } finally {
