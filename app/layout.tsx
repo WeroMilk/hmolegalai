@@ -12,7 +12,9 @@ export const metadata: Metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
+  minimumScale: 0.9,
   maximumScale: 5,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -22,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark theme-transition" suppressHydrationWarning>
-      <body className="antialiased bg-background text-foreground min-h-screen overflow-x-hidden">
+      <body className="antialiased bg-background text-foreground min-h-screen overflow-x-hidden overflow-y-auto">
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-blue-200/25 dark:to-blue-950/20" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)]" />

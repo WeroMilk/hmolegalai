@@ -82,9 +82,9 @@ export default function ComoFuncionaPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-16 text-center"
+            className="mt-16 flex flex-col items-center justify-center w-full"
           >
-            <div className="glass-effect hover-box p-6 sm:p-8 md:p-12 rounded-xl border border-blue-500/40 max-w-3xl mx-auto">
+            <div className="glass-effect hover-box p-6 sm:p-8 md:p-12 rounded-xl border border-blue-500/40 max-w-3xl w-full text-center">
               <h2 className="hover-title text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 leading-tight text-foreground">
                 {t("como_ready_title")}
               </h2>

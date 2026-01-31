@@ -11,7 +11,7 @@ export default function Home() {
   const { t } = useI18n();
 
   return (
-    <main className="min-h-screen text-foreground">
+    <main className="min-h-screen text-foreground w-full min-w-0 max-w-full">
       <Navbar />
 
       <div>

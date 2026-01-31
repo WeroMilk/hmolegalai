@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 
-/** Inicializa Stripe solo en runtime para no fallar el build cuando faltan env vars. */
-function getStripe(): Stripe | null {
+/** Inicializa Stripe solo en runtime (dynamic import) para no fallar el build cuando faltan env vars. */
+async function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key || key === "") return null;
+  const { default: Stripe } = await import("stripe");
   return new Stripe(key, { apiVersion: "2025-02-24.acacia" });
 }
 
 export async function POST(request: NextRequest) {
   try {
-    const stripe = getStripe();
+    const stripe = await getStripe();
     if (!stripe) {
       return NextResponse.json(
         { error: "Stripe no configurado. Configura STRIPE_SECRET_KEY en Vercel." },
