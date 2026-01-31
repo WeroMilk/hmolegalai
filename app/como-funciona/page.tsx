@@ -52,7 +52,7 @@ export default function ComoFuncionaPage() {
                     index % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                   } items-center gap-8 md:gap-12`}
                 >
-                  <div className="flex-shrink-0 w-full sm:w-auto">
+                  <div className="flex-shrink-0 w-full sm:w-auto ml-6 sm:ml-8 md:ml-0">
                     <div className="relative mx-auto sm:mx-0">
                       <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-blue-600/20 rounded-full flex items-center justify-center border-2 border-blue-500/50 transition-all duration-300 hover:scale-110 hover:rotate-6 group-hover:bg-blue-600/30">
                         <Icon className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 text-blue-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" />

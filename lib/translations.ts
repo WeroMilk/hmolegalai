@@ -194,7 +194,7 @@ export const translations = {
 
     // Footer
     footer_location: "Hermosillo, Sonora. México. Todos los derechos reservados.",
-    footer_copyright: "© {{year}} Avatar. Propiedad intelectual y contenidos reservados.",
+    footer_copyright: "© {{year}} Avatar Legal AI. Propiedad intelectual y contenidos reservados.",
 
     // Document names & descriptions (for catalog - by id)
     doc_contrato_arrendamiento_name: "Contrato de Arrendamiento",
@@ -513,7 +513,7 @@ export const translations = {
     mis_docs_date_unavailable: "Date unavailable",
 
     footer_location: "Hermosillo, Sonora. Mexico. All rights reserved.",
-    footer_copyright: "© {{year}} Avatar. Intellectual property and content reserved.",
+    footer_copyright: "© {{year}} Avatar Legal AI. Intellectual property and content reserved.",
 
     doc_contrato_arrendamiento_name: "Lease Agreement",
     doc_contrato_arrendamiento_desc: "Contract to lease a residential or commercial property",
