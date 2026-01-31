@@ -45,35 +45,35 @@ export function AboutSection() {
             </a>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-6 pt-8">
+          <div className="grid sm:grid-cols-2 gap-3 xs:gap-4 sm:gap-6 md:gap-8 pt-8">
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="p-6 rounded-2xl border backdrop-blur-sm bg-blue-500/10 border-blue-500/30 dark:bg-white dark:border-white/30 dark:text-gray-900"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.25, delay: 0 }}
+              className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center dark:bg-blue-500/20">
-                  <Shield className="w-5 h-5 text-blue-500" />
-                </div>
-                <h3 className="font-semibold text-sm">{t("about_trust_title")}</h3>
+              <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
+                <Shield className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125" />
               </div>
-              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-800">{t("about_trust_short")}</p>
+              <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t("about_trust_title")}</h3>
+              <p className="text-muted flex-grow leading-relaxed">{t("about_trust_short")}</p>
+              <div className="mt-4 text-blue-500 font-semibold flex-shrink-0">01</div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, y: 8 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="p-6 rounded-2xl border backdrop-blur-sm bg-blue-500/10 border-blue-500/30 dark:bg-white dark:border-white/30 dark:text-gray-900"
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.25, delay: 0.03 }}
+              className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
             >
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center dark:bg-blue-500/20">
-                  <CreditCard className="w-5 h-5 text-blue-500" />
-                </div>
-                <h3 className="font-semibold text-sm">{t("about_payment_title")}</h3>
+              <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
+                <CreditCard className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125" />
               </div>
-              <p className="text-sm leading-relaxed text-gray-700 dark:text-gray-800">{t("about_payment_short")}</p>
+              <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t("about_payment_title")}</h3>
+              <p className="text-muted flex-grow leading-relaxed">{t("about_payment_short")}</p>
+              <div className="mt-4 text-blue-500 font-semibold flex-shrink-0">02</div>
             </motion.div>
           </div>
         </motion.div>
