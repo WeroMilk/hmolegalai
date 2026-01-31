@@ -4,12 +4,13 @@ import { useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@/lib/i18n-context";
+import { isFirebaseConfigured } from "@/lib/firebase";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/navbar";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Mail, Lock, LogIn, UserPlus } from "lucide-react";
+import { Mail, Lock, LogIn, UserPlus, Settings } from "lucide-react";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -59,6 +60,8 @@ export default function AuthPage() {
     }
   };
 
+  const firebaseReady = isFirebaseConfigured();
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -66,8 +69,28 @@ export default function AuthPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md"
+          className="w-full max-w-md space-y-4"
         >
+          {!firebaseReady && (
+            <div className="glass-effect p-4 sm:p-5 rounded-xl border border-amber-500/50 bg-amber-500/10">
+              <div className="flex items-start gap-3">
+                <Settings className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div className="space-y-2 text-sm">
+                  <h3 className="font-semibold text-foreground">{t("auth_firebase_setup_title")}</h3>
+                  <p className="text-muted">{t("auth_firebase_setup_desc")}</p>
+                  <ol className="list-decimal list-inside space-y-1 text-muted text-xs">
+                    <li>{t("auth_firebase_setup_step1")}</li>
+                    <li>{t("auth_firebase_setup_step2")}</li>
+                    <li>{t("auth_firebase_setup_step3")}</li>
+                    <li>{t("auth_firebase_setup_step4")}</li>
+                    <li>{t("auth_firebase_setup_step5")}</li>
+                  </ol>
+                  <p className="text-amber-600 dark:text-amber-400 text-xs font-medium">{t("auth_firebase_setup_redeploy")}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="glass-effect hover-box p-6 sm:p-8 rounded-xl border border-blue-500/40 w-full">
             <h1 className="hover-title block w-full text-2xl sm:text-3xl font-bold mb-2 text-center text-foreground">
               {isLogin ? t("auth_sign_in") : t("auth_sign_up")}
@@ -161,7 +184,7 @@ export default function AuthPage() {
                 variant="outline"
                 className="w-full mt-4 flex items-center justify-center gap-2"
                 onClick={handleGoogleSignIn}
-                disabled={loading}
+                disabled={loading || !firebaseReady}
               >
                 <Image
                   src="/google-g-logo.png"

@@ -77,5 +77,10 @@ if (typeof window !== "undefined") {
   }
 }
 
+/** Indica si Firebase está configurado y listo para usar (útil en la página de auth). */
+export function isFirebaseConfigured(): boolean {
+  return typeof auth !== "undefined" && auth != null;
+}
+
 export { auth, db, storage, analytics };
 export default app;
