@@ -8,7 +8,6 @@ import {
   serializePersonList,
   parseMoneyValue,
   sanitizeMoneyInput,
-  formatMoneyDisplayLive,
   buildUserInputsForApi,
   type PersonEntry,
 } from "@/lib/formatters";
@@ -435,7 +434,7 @@ export default function DocumentPage() {
                         <input
                           type="text"
                           inputMode="decimal"
-                          value={formatMoneyDisplayLive(formData[field.id] || "")}
+                          value={formData[field.id] || ""}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
                           placeholder="0.00"
                           className="flex-1 min-w-0 px-3 py-3 bg-transparent text-foreground dark:text-gray-100 placeholder:text-muted dark:placeholder:text-gray-400 focus:outline-none"
