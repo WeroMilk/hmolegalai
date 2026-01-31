@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useI18n } from "@/lib/i18n-context";
@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { Mail, Lock, LogIn, UserPlus, Settings } from "lucide-react";
 
-export default function AuthPage() {
+function AuthPageContent() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -391,5 +391,24 @@ export default function AuthPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+function AuthPageFallback() {
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      <div className="flex justify-center items-center min-h-screen pt-24">
+        <p className="text-muted">Cargando...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<AuthPageFallback />}>
+      <AuthPageContent />
+    </Suspense>
   );
 }
