@@ -127,6 +127,8 @@ export const translations = {
     doc_error_generate: "Error al generar el documento",
     doc_error_payment: "Error al procesar el pago",
     doc_payment_form_title: "Datos de pago",
+    doc_promo_badge: "¡Eres uno de los primeros 10! Tienes {{count}} documentos gratis",
+    doc_promo_use_free: "Generar con documento gratis (te quedan {{count}})",
 
     // Preview page
     preview_title: "Vista previa — revisa antes de imprimir",
@@ -442,6 +444,8 @@ export const translations = {
     doc_error_generate: "Error generating document",
     doc_error_payment: "Error processing payment",
     doc_payment_form_title: "Payment details",
+    doc_promo_badge: "You're one of the first 10! You have {{count}} free documents",
+    doc_promo_use_free: "Generate with free document ({{count}} left)",
 
     preview_title: "Preview — review before printing",
     preview_edit: "Edit",

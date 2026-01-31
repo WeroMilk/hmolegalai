@@ -44,6 +44,13 @@ export function formatMoneyDisplay(raw: string): string {
   return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 }
 
+/** Formato en vivo mientras se escribe: 1,500 o 1,500.50 (solo 2 decimales) */
+export function formatMoneyDisplayLive(raw: string): string {
+  const n = parseMoneyValue(raw);
+  if (n === null || isNaN(n)) return raw;
+  return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 0, maximumFractionDigits: 2 }).format(n);
+}
+
 export function buildUserInputsForApi(
   formData: Record<string, string>,
   document: LegalDocument

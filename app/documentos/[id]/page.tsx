@@ -8,7 +8,7 @@ import {
   serializePersonList,
   parseMoneyValue,
   sanitizeMoneyInput,
-  formatMoneyDisplay,
+  formatMoneyDisplayLive,
   buildUserInputsForApi,
   type PersonEntry,
 } from "@/lib/formatters";
@@ -37,13 +37,13 @@ export default function DocumentPage() {
   const parentescoOptions = locale === "en" ? PARENTESCO_OPTIONS_EN : PARENTESCO_OPTIONS;
   const [document, setDocument] = useState<LegalDocument | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
-  const [focusedMoneyField, setFocusedMoneyField] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [saveForever, setSaveForever] = useState(false);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [paymentClientSecret, setPaymentClientSecret] = useState<string | null>(null);
+  const [promoInfo, setPromoInfo] = useState<{ hasPromo: boolean; freeDocsRemaining: number } | null>(null);
 
   useEffect(() => {
     if (params.id) {
@@ -62,6 +62,27 @@ export default function DocumentPage() {
       }
     }
   }, [params.id]);
+
+  useEffect(() => {
+    const fetchPromo = async () => {
+      if (!user || !document) return;
+      if (shouldSkipPayment(user.email)) return;
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch("/api/promo-check", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        setPromoInfo({
+          hasPromo: !!data.hasPromo,
+          freeDocsRemaining: data.freeDocsRemaining ?? 0,
+        });
+      } catch {
+        setPromoInfo({ hasPromo: false, freeDocsRemaining: 0 });
+      }
+    };
+    fetchPromo();
+  }, [user, document?.id]);
 
   const handleInputChange = (fieldId: string, value: string) => {
     setFormData((prev) => ({ ...prev, [fieldId]: value }));
@@ -144,6 +165,56 @@ export default function DocumentPage() {
       // Guardar datos del formulario en sessionStorage
       sessionStorage.setItem(`formData_${document.id}`, JSON.stringify(formData));
       
+      // Si tiene documentos gratis (promo primeros 10), usar uno
+      const canUsePromo = promoInfo?.hasPromo && (promoInfo?.freeDocsRemaining ?? 0) > 0;
+      if (canUsePromo) {
+        const token = await user.getIdToken();
+        const useRes = await fetch("/api/promo-use", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (!useRes.ok) {
+          const useData = await useRes.json().catch(() => ({}));
+          throw new Error(useData.error || "No se pudo usar el documento gratis");
+        }
+        const useData = await useRes.json();
+        setPromoInfo((p) => (p ? { ...p, freeDocsRemaining: useData.remaining } : p));
+        const genRes = await fetch("/api/generate-document", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            documentId: document.id,
+            documentType: document.name,
+            userInputs: buildUserInputsForApi(formData, document),
+            sessionId: `promo-${Date.now()}`,
+            saveToAccount: saveForever,
+          }),
+        });
+        if (!genRes.ok) {
+          let msg = t("doc_error_generate");
+          try {
+            const body = await genRes.json();
+            if (body?.error && typeof body.error === "string") msg = body.error;
+          } catch { /* ignore */ }
+          throw new Error(msg);
+        }
+        const data = await genRes.json();
+        const content = data.content as string;
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, content);
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "5");
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, "2");
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, document.id);
+        router.push(`/documentos/${document.id}/preview`);
+        return;
+      }
+
       // Si es superusuario, saltar el pago y generar directamente
       if (shouldSkipPayment(user.email)) {
         const token = await user.getIdToken();
@@ -377,10 +448,8 @@ export default function DocumentPage() {
                         <input
                           type="text"
                           inputMode="decimal"
-                          value={focusedMoneyField === field.id ? (formData[field.id] || "") : formatMoneyDisplay(formData[field.id] || "")}
+                          value={formatMoneyDisplayLive(formData[field.id] || "")}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
-                          onFocus={() => setFocusedMoneyField(field.id)}
-                          onBlur={() => setFocusedMoneyField(null)}
                           placeholder="0.00"
                           className="flex-1 min-w-0 px-3 py-3 bg-transparent text-foreground dark:text-gray-100 placeholder:text-muted dark:placeholder:text-gray-400 focus:outline-none"
                         />
@@ -423,6 +492,12 @@ export default function DocumentPage() {
           {isSuperUser(user?.email) && (
             <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">
               ⭐ {t("doc_superuser_badge")}
+            </div>
+          )}
+
+          {!isSuperUser(user?.email) && user && promoInfo?.hasPromo && (promoInfo?.freeDocsRemaining ?? 0) > 0 && (
+            <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">
+              🎉 {t("doc_promo_badge").replace("{{count}}", String(promoInfo.freeDocsRemaining))}
             </div>
           )}
 
@@ -494,6 +569,8 @@ export default function DocumentPage() {
                 </>
               ) : isSuperUser(user?.email) ? (
                 t("doc_generate_free")
+              ) : (promoInfo?.hasPromo && (promoInfo?.freeDocsRemaining ?? 0) > 0) ? (
+                t("doc_promo_use_free").replace("{{count}}", String(promoInfo.freeDocsRemaining))
               ) : (
                 saveForever ? t("doc_pay_49_and_generate") : t("doc_pay_29_and_generate")
               )}
