@@ -8,6 +8,7 @@ import {
   serializePersonList,
   parseMoneyValue,
   sanitizeMoneyInput,
+  formatMoneyDisplay,
   normalizeMoneyOnBlur,
   buildUserInputsForApi,
   type PersonEntry,
@@ -516,7 +517,7 @@ export default function DocumentPage() {
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9.]*"
-                          value={formData[field.id] ?? ""}
+                          value={formatMoneyDisplay(formData[field.id] ?? "")}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
                           onBlur={() => handleMoneyBlur(field.id)}
                           placeholder="0.00"
