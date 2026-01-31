@@ -47,7 +47,13 @@ const MONEY_FORMAT_ESMX = new Intl.NumberFormat("es-MX", {
   maximumFractionDigits: 2,
 });
 
-/** Formato para mostrar en inputs de dinero: 15,000.00 (vacío → ""). Respeta comas y centavos. */
+/** Mientras se escribe: comas de miles, 0–2 decimales (no fuerza .00). Así "1"→"1", "10000"→"10,000", "10000.5"→"10,000.5". */
+const MONEY_FORMAT_LIVE = new Intl.NumberFormat("es-MX", {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 2,
+});
+
+/** Formato con 2 decimales (para mostrar después de blur o en resúmenes). */
 export function formatMoneyDisplay(raw: string): string {
   if (!raw || !raw.trim()) return "";
   const n = parseMoneyValue(raw);
@@ -55,9 +61,19 @@ export function formatMoneyDisplay(raw: string): string {
   return MONEY_FORMAT_ESMX.format(n);
 }
 
-/** Igual que formatMoneyDisplay; para uso en vivo en inputs. */
+/** Formato en vivo en el input: comas, sin forzar .00, para poder escribir 1 → 10 → 100 → 10000 sin saltar a centavos. */
 export function formatMoneyDisplayLive(raw: string): string {
-  return formatMoneyDisplay(raw);
+  if (!raw || !raw.trim()) return "";
+  const n = parseMoneyValue(raw);
+  if (n === null || isNaN(n)) return raw;
+  return MONEY_FORMAT_LIVE.format(n);
+}
+
+/** Valor a mostrar en el input de dinero: mientras escribes sin .XX usa live (sin .00); si ya tiene 2 decimales usa formato con .00. */
+export function formatMoneyInputValue(raw: string): string {
+  if (!raw || !raw.trim()) return "";
+  if (/\.\d{2}$/.test(raw.trim())) return formatMoneyDisplay(raw);
+  return formatMoneyDisplayLive(raw);
 }
 
 /** Al salir del campo (blur): si hay número sin decimales, normaliza a "XXXX.00". Vacío se deja vacío. */
