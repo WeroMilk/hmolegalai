@@ -11,8 +11,12 @@ async function getStripe() {
 
 export async function POST(request: NextRequest) {
   try {
+    const body = await request.json();
+    const { documentId, price, saveToAccount, idToken: bodyToken } = body;
+
     const authHeader = request.headers.get("authorization");
-    const token = authHeader?.replace("Bearer ", "").trim();
+    const headerToken = authHeader?.replace("Bearer ", "").trim();
+    const token = headerToken || (typeof bodyToken === "string" ? bodyToken.trim() : "");
     const isDemoSuperuser = token === "demo-superuser";
     let userId: string | undefined;
 
@@ -23,7 +27,15 @@ export async function POST(request: NextRequest) {
         try {
           const decoded = await verifyIdToken(token);
           userId = decoded.uid;
-        } catch {
+        } catch (err: any) {
+          const msg = err?.message ?? "";
+          console.error("Checkout auth failed:", msg, err);
+          if (msg.includes("no está configurado") || msg.includes("not configured")) {
+            return NextResponse.json(
+              { error: "Error del servidor: Firebase Admin no configurado. Revisa las variables de entorno en Vercel (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL)." },
+              { status: 503 }
+            );
+          }
           return NextResponse.json(
             { error: "Debes iniciar sesión para realizar el pago." },
             { status: 401 }
@@ -46,7 +58,6 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    const { documentId, price, saveToAccount } = await request.json();
 
     if (!documentId || typeof price !== "number" || price < 1) {
       return NextResponse.json(

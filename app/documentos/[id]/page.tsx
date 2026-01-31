@@ -298,19 +298,25 @@ export default function DocumentPage() {
         return;
       }
       
-      // Usuario normal: redirigir a Stripe Checkout (token fresco; retry una vez si 401)
+      // Usuario normal: redirigir a Stripe Checkout (token en header + body; retry con token fresco si 401)
       const price = saveForever ? SAVE_FOREVER_PRICE : BASE_PRICE;
-      let token = await user.getIdToken(true);
+      const tryPayment = async (): Promise<string | null> => {
+        const token = await user.getIdToken(true);
+        const result = await createCheckoutSession(document.id, price, saveForever, token);
+        return result.url;
+      };
       let url: string | null = null;
       try {
-        const result = await createCheckoutSession(document.id, price, saveForever, token);
-        url = result.url;
+        url = await tryPayment();
       } catch (firstErr: any) {
         const msg = firstErr?.message ?? "";
         if (msg.includes("iniciar sesión") || msg.includes("Debes iniciar")) {
-          token = await user.getIdToken(true);
-          const result = await createCheckoutSession(document.id, price, saveForever, token);
-          url = result.url;
+          await new Promise((r) => setTimeout(r, 400));
+          try {
+            url = await tryPayment();
+          } catch (secondErr) {
+            throw secondErr;
+          }
         } else {
           throw firstErr;
         }

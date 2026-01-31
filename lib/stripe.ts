@@ -24,14 +24,16 @@ export async function createCheckoutSession(
     headers.Authorization = `Bearer ${idToken}`;
   }
 
+  const body = {
+    documentId,
+    price: price * 100, // centavos
+    saveToAccount: !!saveToAccount,
+    ...(idToken ? { idToken } : {}),
+  };
   const response = await fetch("/api/create-checkout-session", {
     method: "POST",
     headers,
-    body: JSON.stringify({
-      documentId,
-      price: price * 100, // centavos
-      saveToAccount: !!saveToAccount,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
