@@ -41,6 +41,7 @@ interface AuthContextType {
   signUp: (email: string, password: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  resendVerificationEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -114,12 +115,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const getContinueUrl = () => {
+    if (typeof window !== "undefined") return window.location.origin + "/auth";
+    return process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/auth` : undefined;
+  };
+
   const signUp = async (email: string, password: string) => {
     if (!auth) {
       throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
     }
     const userCred = await createUserWithEmailAndPassword(auth, email.trim(), password);
-    await sendEmailVerification(userCred.user);
+    const continueUrl = getContinueUrl();
+    await sendEmailVerification(userCred.user, continueUrl ? {
+      url: continueUrl,
+      handleCodeInApp: false,
+    } : undefined);
+    await signOut(auth);
+  };
+
+  const resendVerificationEmail = async (email: string, password: string) => {
+    if (!auth) {
+      throw new Error("Firebase no está configurado.");
+    }
+    const result = await signInWithEmailAndPassword(auth, email.trim(), password);
+    if (result.user.emailVerified) {
+      await signOut(auth);
+      throw new Error("Tu correo ya está verificado. Puedes iniciar sesión.");
+    }
+    const continueUrl = getContinueUrl();
+    await sendEmailVerification(result.user, continueUrl ? {
+      url: continueUrl,
+      handleCodeInApp: false,
+    } : undefined);
     await signOut(auth);
   };
 
@@ -151,7 +178,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signUp, signInWithGoogle, resetPassword, logout }}
+      value={{ user, loading, signIn, signUp, signInWithGoogle, resetPassword, resendVerificationEmail, logout }}
     >
       {children}
     </AuthContext.Provider>

@@ -20,8 +20,22 @@ npm install
 ### 3. Configuración de Stripe
 
 1. Crea una cuenta en [Stripe](https://stripe.com/)
-2. Obtén tus API keys desde el Dashboard
+2. Obtén tus API keys desde el [Dashboard de Stripe](https://dashboard.stripe.com/apikeys)
 3. Configura webhooks para recibir notificaciones de pagos (opcional pero recomendado)
+
+#### Pagos reales (tarjetas de verdad)
+
+Por defecto Stripe muestra **claves de prueba** (pk_test_..., sk_test_...). Con esas claves solo funcionan tarjetas de prueba (ej. 4242 4242 4242 4242) y verás el mensaje "modo prueba".
+
+Para aceptar **pagos reales**:
+
+1. En [Stripe Dashboard](https://dashboard.stripe.com) **activa tu cuenta**: completa identidad, banco y datos fiscales (Stripe te guía).
+2. Ve a [API keys](https://dashboard.stripe.com/apikeys) y **desactiva el interruptor "Modo de prueba"** (arriba a la derecha) para ver las claves **Live**.
+3. Copia la **Clave pública** (empieza con `pk_live_`) y la **Clave secreta** (empieza con `sk_live_`).
+4. En tu proyecto, en `.env.local` (y en Vercel si ya desplegaste), pon **solo** esas claves live:
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...`
+   - `STRIPE_SECRET_KEY=sk_live_...`
+5. Reinicia el servidor (o haz un nuevo deploy en Vercel). A partir de ahí Stripe aceptará tarjetas reales y no mostrará "modo prueba".
 
 ### 4. Configuración de OpenAI
 
@@ -97,5 +111,5 @@ El proyecto estará disponible en `http://localhost:3000`
 
 - Asegúrate de que todas las variables de entorno estén configuradas correctamente
 - Firebase Admin requiere configuración adicional para funcionar en producción
-- Stripe funciona en modo test con claves de prueba
+- Para pagos reales usa claves **Live** de Stripe (pk_live_ / sk_live_); con claves de prueba solo acepta tarjetas de prueba
 - OpenAI requiere créditos en tu cuenta para generar documentos

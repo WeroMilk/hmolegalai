@@ -253,7 +253,8 @@ export default function DocumentPage() {
       
       // Usuario normal: redirigir a Stripe Checkout
       const price = saveForever ? SAVE_FOREVER_PRICE : BASE_PRICE;
-      const { url } = await createCheckoutSession(document.id, price, saveForever);
+      const token = await user.getIdToken();
+      const { url } = await createCheckoutSession(document.id, price, saveForever, token);
       if (url) {
         window.location.href = url;
       } else {

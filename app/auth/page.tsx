@@ -20,9 +20,11 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showVerifyEmail, setShowVerifyEmail] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState("");
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetSent, setResetSent] = useState(false);
-  const { signIn, signUp, signInWithGoogle, resetPassword } = useAuth();
+  const [resendSent, setResendSent] = useState(false);
+  const { signIn, signUp, signInWithGoogle, resetPassword, resendVerificationEmail } = useAuth();
   const { t } = useI18n();
   const router = useRouter();
 
@@ -52,6 +54,8 @@ export default function AuthPage() {
         router.push("/documentos");
       } else {
         await signUp(email, password);
+        setVerifyEmail(email);
+        setResendSent(false);
         setShowVerifyEmail(true);
       }
     } catch (err: any) {
@@ -139,6 +143,46 @@ export default function AuthPage() {
                 <p className="text-muted text-sm sm:text-base">
                   {t("auth_verify_email_desc")}
                 </p>
+                {error && (
+                  <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm text-left">
+                    {error}
+                  </div>
+                )}
+                {resendSent ? (
+                  <p className="text-sm text-green-500 font-medium">{t("auth_verify_email_resend_success")}</p>
+                ) : (
+                  <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-left space-y-2">
+                    <p className="text-sm text-muted">{t("auth_verify_email_resend")}</p>
+                    <div className="flex gap-2">
+                      <Input
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        className="flex-1"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        disabled={loading || password.length < 6}
+                        onClick={async () => {
+                          setError("");
+                          setLoading(true);
+                          try {
+                            await resendVerificationEmail(verifyEmail, password);
+                            setResendSent(true);
+                          } catch (err: any) {
+                            setError(err.message || t("auth_error"));
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                      >
+                        {loading ? t("auth_loading") : t("auth_reset_send")}
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 <Button
                   variant="outline"
                   className="w-full"
@@ -146,6 +190,7 @@ export default function AuthPage() {
                     setShowVerifyEmail(false);
                     setIsLogin(true);
                     setError("");
+                    setPassword("");
                   }}
                 >
                   {t("auth_verify_email_back")}

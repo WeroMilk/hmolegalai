@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useI18n } from "@/lib/i18n-context";
@@ -21,16 +21,19 @@ export default function SuccessPage() {
   const [generating, setGenerating] = useState(true);
   const [documentContent, setDocumentContent] = useState("");
   const [error, setError] = useState("");
+  const generationStarted = useRef(false);
 
   useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    const paymentIntent = searchParams.get("payment_intent");
+    const contentParam = searchParams.get("content");
+    const validPaymentId = sessionId || paymentIntent;
+
+    // Evitar doble ejecución solo cuando ya vamos a generar (tenemos pago y usuario)
+    if (validPaymentId && user && generationStarted.current) return;
+    if (validPaymentId && user) generationStarted.current = true;
+
     const generateDocument = async () => {
-      const sessionId = searchParams.get("session_id");
-      const paymentIntent = searchParams.get("payment_intent");
-      const contentParam = searchParams.get("content");
-
-      // sessionId = Checkout, payment_intent = Stripe Elements
-      const validPaymentId = sessionId || paymentIntent;
-
       // Si viene contenido en la URL (superusuario legacy), ir a preview
       if (contentParam) {
         const content = decodeURIComponent(contentParam);
@@ -91,6 +94,7 @@ export default function SuccessPage() {
 
         const data = await response.json();
         const content = data.content as string;
+        setDocumentContent(content);
 
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, content);

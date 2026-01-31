@@ -14,13 +14,19 @@ export const getStripe = () => {
 export async function createCheckoutSession(
   documentId: string,
   price: number,
-  saveToAccount?: boolean
+  saveToAccount?: boolean,
+  idToken?: string
 ): Promise<{ sessionId: string; url: string | null }> {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+  if (idToken) {
+    headers.Authorization = `Bearer ${idToken}`;
+  }
+
   const response = await fetch("/api/create-checkout-session", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers,
     body: JSON.stringify({
       documentId,
       price: price * 100, // centavos
@@ -29,7 +35,8 @@ export async function createCheckoutSession(
   });
 
   if (!response.ok) {
-    throw new Error("Error al crear la sesión de pago");
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data?.error || "Error al crear la sesión de pago");
   }
 
   const data = await response.json();

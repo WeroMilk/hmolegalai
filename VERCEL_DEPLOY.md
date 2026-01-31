@@ -60,6 +60,7 @@ Para habilitar **inicio de sesión con Google** en producción:
 |----------|----------|
 | «Stripe no configurado» | Añade `STRIPE_SECRET_KEY` y `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` en Vercel → Settings → Environment Variables |
 | Firebase `auth/unauthorized-domain` | Firebase Console → Authentication → Settings → Dominios autorizados → añade `avatarlegalai.com.mx` y `www.avatarlegalai.com.mx` |
+| Correos de verificación no llegan | Revisa [FIREBASE_VERIFICACION.md](./FIREBASE_VERIFICACION.md). Añade tu dominio en Dominios autorizados y `NEXT_PUBLIC_APP_URL` en Vercel. |
 
 ---
 

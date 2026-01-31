@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifyIdToken } from "@/lib/auth-server";
 
 /** Inicializa Stripe solo en runtime (dynamic import) para no fallar el build cuando faltan env vars. */
 async function getStripe() {
@@ -10,6 +11,34 @@ async function getStripe() {
 
 export async function POST(request: NextRequest) {
   try {
+    const authHeader = request.headers.get("authorization");
+    const token = authHeader?.replace("Bearer ", "").trim();
+    const isDemoSuperuser = token === "demo-superuser";
+    let userId: string | undefined;
+
+    if (token) {
+      if (isDemoSuperuser) {
+        userId = "demo-superuser";
+      } else {
+        try {
+          const decoded = await verifyIdToken(token);
+          userId = decoded.uid;
+        } catch {
+          return NextResponse.json(
+            { error: "Debes iniciar sesión para realizar el pago." },
+            { status: 401 }
+          );
+        }
+      }
+    }
+
+    if (!userId) {
+      return NextResponse.json(
+        { error: "Debes iniciar sesión para realizar el pago." },
+        { status: 401 }
+      );
+    }
+
     const stripe = await getStripe();
     if (!stripe) {
       return NextResponse.json(
@@ -18,6 +47,14 @@ export async function POST(request: NextRequest) {
       );
     }
     const { documentId, price, saveToAccount } = await request.json();
+
+    if (!documentId || typeof price !== "number" || price < 1) {
+      return NextResponse.json(
+        { error: "documentId y price requeridos (price en centavos)" },
+        { status: 400 }
+      );
+    }
+
     const origin = request.headers.get("origin") || "";
     const successBase = `${origin}/documentos/${documentId}/success?session_id={CHECKOUT_SESSION_ID}`;
     const successUrl = saveToAccount ? `${successBase}&save=1` : successBase;
@@ -45,6 +82,7 @@ export async function POST(request: NextRequest) {
       metadata: {
         documentId,
         saveToAccount: saveToAccount ? "1" : "0",
+        userId,
       },
     });
 
