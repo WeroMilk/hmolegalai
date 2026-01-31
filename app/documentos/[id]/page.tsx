@@ -532,7 +532,7 @@ export default function DocumentPage() {
 
           {showPaymentForm && paymentClientSecret ? (
             <div className="space-y-4">
-              <div className="p-4 rounded-xl border-2 border-blue-500/30 bg-blue-500/5 dark:bg-blue-500/10">
+              <div className="p-4 rounded-xl border-2 border-blue-500/30 bg-blue-500/5 dark:bg-blue-500/10 overflow-visible">
                 <h3 className="text-sm font-semibold text-foreground mb-4">
                   {t("doc_payment_form_title")} — {saveForever ? t("doc_price_plus_save") : t("doc_price_base")}
                 </h3>

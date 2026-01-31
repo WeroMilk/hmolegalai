@@ -79,21 +79,23 @@ function PaymentFormInner({
           layout: "tabs",
         }}
       />
-      <Button
-        type="submit"
-        disabled={!stripe || !elements || isProcessing}
-        className="w-full"
-        size="lg"
-      >
-        {isProcessing ? (
-          <>
-            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-            Procesando...
-          </>
-        ) : (
-          "Pagar ahora"
-        )}
-      </Button>
+      <div className="flex justify-center pt-2 pb-1 overflow-visible">
+        <Button
+          type="submit"
+          disabled={!stripe || !elements || isProcessing}
+          className="w-auto px-6 py-2 text-sm shadow-lg ring-2 ring-blue-500/40 -translate-y-0.5 hover:shadow-xl hover:-translate-y-1 hover:scale-105 transition-all duration-200"
+          size="sm"
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Procesando...
+            </>
+          ) : (
+            "Pagar ahora"
+          )}
+        </Button>
+      </div>
     </form>
   );
 }
