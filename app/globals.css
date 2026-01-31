@@ -42,6 +42,10 @@ img, video, canvas {
 html {
   -webkit-text-size-adjust: 100%;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  /* En móviles Android: asegurar que el contenido se ajuste al viewport */
+  -webkit-overflow-scrolling: touch;
   transition:
     background-color var(--theme-transition-duration) var(--theme-transition-ease),
     color var(--theme-transition-duration) var(--theme-transition-ease);
@@ -62,6 +66,9 @@ html.theme-transition *::after {
 body {
   color: var(--foreground);
   background: var(--background);
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
@@ -209,5 +216,17 @@ input[type="number"] {
   .i18n-stable-btn {
     min-width: 10rem;
     text-align: center;
+  }
+}
+
+/* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
+@media (max-width: 430px) {
+  html {
+    font-size: 14px;
+  }
+}
+@media (max-width: 380px) {
+  html {
+    font-size: 13px;
   }
 }

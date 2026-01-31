@@ -23,14 +23,14 @@ export default function ComoFuncionaPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <div className="pt-28 sm:pt-32 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
+      <div className="pt-24 xs:pt-28 sm:pt-32 pb-12 xs:pb-16 px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto w-full min-w-0">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12 md:mb-16 px-4 pb-4"
+            className="text-center mb-8 xs:mb-12 md:mb-16 px-2 xs:px-4 pb-4"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 sm:mb-6 leading-tight text-foreground">
+            <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 xs:mb-3 sm:mb-6 leading-tight text-foreground">
               <span className="gradient-text hover-title">{t("como_title")}</span>
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-muted max-w-3xl mx-auto mt-2">

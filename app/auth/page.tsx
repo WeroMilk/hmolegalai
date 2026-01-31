@@ -65,7 +65,7 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <div className="flex justify-center items-start min-h-screen px-4 sm:px-6 pt-28 sm:pt-32 pb-12 sm:pb-20">
+      <div className="flex justify-center items-start min-h-screen px-3 xs:px-4 sm:px-6 pt-24 xs:pt-28 sm:pt-32 pb-10 xs:pb-12 sm:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,16 +75,35 @@ export default function AuthPage() {
             <div className="glass-effect p-4 sm:p-5 rounded-xl border border-amber-500/50 bg-amber-500/10">
               <div className="flex items-start gap-3">
                 <Settings className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                <div className="space-y-2 text-sm">
+                <div className="space-y-3 text-sm min-w-0">
                   <h3 className="font-semibold text-foreground">{t("auth_firebase_setup_title")}</h3>
-                  <p className="text-muted">{t("auth_firebase_setup_desc")}</p>
-                  <ol className="list-decimal list-inside space-y-1 text-muted text-xs">
+                  <p className="text-muted text-xs">{t("auth_firebase_setup_desc")}</p>
+                  <ol className="list-decimal list-inside space-y-1.5 text-muted text-xs leading-relaxed">
                     <li>{t("auth_firebase_setup_step1")}</li>
                     <li>{t("auth_firebase_setup_step2")}</li>
                     <li>{t("auth_firebase_setup_step3")}</li>
                     <li>{t("auth_firebase_setup_step4")}</li>
                     <li>{t("auth_firebase_setup_step5")}</li>
                   </ol>
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    <a
+                      href="https://console.firebase.google.com/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 hover:underline"
+                    >
+                      → {t("auth_firebase_link_firebase")}
+                    </a>
+                    <span className="text-border">|</span>
+                    <a
+                      href="https://vercel.com/dashboard"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 hover:underline"
+                    >
+                      → {t("auth_firebase_link_vercel")}
+                    </a>
+                  </div>
                   <p className="text-amber-600 dark:text-amber-400 text-xs font-medium">{t("auth_firebase_setup_redeploy")}</p>
                 </div>
               </div>

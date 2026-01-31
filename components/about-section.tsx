@@ -8,19 +8,19 @@ export function AboutSection() {
   const { t } = useI18n();
 
   return (
-    <section id="quienes-somos" className="relative z-10 pt-12 md:pt-16 pb-20 md:pb-28 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
+    <section id="quienes-somos" className="relative z-10 pt-10 xs:pt-12 md:pt-16 pb-16 xs:pb-20 md:pb-28 px-3 xs:px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto w-full min-w-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.25 }}
-          className="text-center mb-16 pb-4"
+          className="text-center mb-10 xs:mb-16 pb-4"
         >
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-foreground">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-4 xs:mb-6 leading-tight text-foreground">
             <span className="gradient-text hover-title">{t("about_title")}</span>
           </h2>
-          <p className="text-xl text-muted max-w-2xl mx-auto mt-2">
+          <p className="text-sm xs:text-base sm:text-xl text-muted max-w-2xl mx-auto mt-2">
             {t("about_subtitle")}
           </p>
         </motion.div>

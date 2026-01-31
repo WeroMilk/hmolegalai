@@ -15,14 +15,14 @@ export function Navbar() {
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border navbar-no-frame">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+      <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-14 xs:h-16">
           <Link
             href="/"
-            className="flex items-center space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left"
+            className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left min-w-0"
           >
-            <div className="text-2xl font-bold gradient-text">AVATAR</div>
-            <span className="text-sm text-blue-500 font-medium">{t("nav_legal_ai")}</span>
+            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text">AVATAR</div>
+            <span className="text-xs xs:text-sm text-blue-500 font-medium hidden xs:inline">{t("nav_legal_ai")}</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-4 flex-shrink-0">

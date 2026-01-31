@@ -40,6 +40,8 @@ export const translations = {
     auth_firebase_setup_step4: "4. En Vercel → Settings → Environment Variables, añade NEXT_PUBLIC_FIREBASE_ENABLED=true y las claves API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID",
     auth_firebase_setup_step5: "5. Añade tu dominio Vercel (ej: hmolegalai.vercel.app) en Firebase → Authentication → Settings → Dominios autorizados",
     auth_firebase_setup_redeploy: "Después, redeploy en Vercel para aplicar los cambios.",
+    auth_firebase_link_firebase: "Firebase Console",
+    auth_firebase_link_vercel: "Vercel Dashboard",
 
     // Home
     home_hero_title1: "Documentos Legales",
@@ -353,6 +355,8 @@ export const translations = {
     auth_firebase_setup_step4: "4. In Vercel → Settings → Environment Variables, add NEXT_PUBLIC_FIREBASE_ENABLED=true and API_KEY, AUTH_DOMAIN, PROJECT_ID, STORAGE_BUCKET, MESSAGING_SENDER_ID, APP_ID",
     auth_firebase_setup_step5: "5. Add your Vercel domain (e.g. hmolegalai.vercel.app) in Firebase → Authentication → Settings → Authorized domains",
     auth_firebase_setup_redeploy: "Then redeploy on Vercel to apply changes.",
+    auth_firebase_link_firebase: "Firebase Console",
+    auth_firebase_link_vercel: "Vercel Dashboard",
 
     home_hero_title1: "Legal Documents",
     home_hero_title2: "AI-Generated",

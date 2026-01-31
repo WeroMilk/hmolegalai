@@ -18,11 +18,11 @@ export default function Home() {
         <Hero />
         <Features />
         <AboutSection />
-        <div className="text-center px-4 sm:px-6 lg:px-8 pb-10">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 md:mb-4 leading-tight">
+        <div className="text-center px-3 xs:px-4 sm:px-6 lg:px-8 pb-8 xs:pb-10">
+          <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-2 xs:mb-3 md:mb-4 leading-tight">
             <span className="gradient-text hover-title">{t("home_docs_section_title")}</span>
           </h2>
-          <p className="text-lg sm:text-xl text-muted max-w-2xl mx-auto">
+          <p className="text-sm xs:text-base sm:text-lg md:text-xl text-muted max-w-2xl mx-auto">
             {t("home_docs_section_subtitle")}
           </p>
         </div>

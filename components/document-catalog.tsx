@@ -12,8 +12,8 @@ export function DocumentCatalog({ compactTop, reduceTopPadding }: { compactTop?:
   const paddingClass = compactTop ? "pt-12 pb-24" : reduceTopPadding ? "pt-6 pb-24" : "py-24";
 
   return (
-    <section className={`px-4 sm:px-6 lg:px-8 overflow-visible ${paddingClass}`}>
-      <div className="max-w-7xl mx-auto">
+    <section className={`px-3 xs:px-4 sm:px-6 lg:px-8 overflow-visible w-full min-w-0 ${paddingClass}`}>
+      <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {LEGAL_DOCUMENTS.map((document, index) => {
             const keys = DOC_NAME_DESC_KEYS[document.id];
