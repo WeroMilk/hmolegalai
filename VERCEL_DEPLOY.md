@@ -18,27 +18,25 @@ Para que la app funcione en producción, configura en **Settings → Environment
 
 Para habilitar **inicio de sesión con Google** en producción:
 
-### Paso 1: Firebase Console
+**Enlaces rápidos:** [Firebase Console](https://console.firebase.google.com/) | [Vercel Dashboard](https://vercel.com/dashboard)
 
-1. Ve a [Firebase Console](https://console.firebase.google.com/)
-2. Selecciona tu proyecto (o crea uno nuevo)
-3. **Configuración** (engranaje) → **General**
-4. En «Tus apps», crea una **app web** si no tienes
-5. Copia las credenciales: `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`
+1. **[Firebase Console](https://console.firebase.google.com/)** → tu proyecto → **Configuración** (engranaje) → **General**
+2. En «Tus apps», crea o selecciona una **app web** y copia las credenciales
+3. **Firebase** → **Authentication** → **Sign-in method** → habilita **Google**
+4. **[Vercel](https://vercel.com/dashboard)** → tu proyecto → **Settings** → **Environment Variables** → añade:
 
-### Paso 2: Habilitar Google Sign-In en Firebase
+   - `NEXT_PUBLIC_FIREBASE_ENABLED` = `true`
+   - `NEXT_PUBLIC_FIREBASE_API_KEY`
+   - `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`
+   - `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`
+   - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
+   - `NEXT_PUBLIC_FIREBASE_APP_ID`
 
-1. **Authentication** → **Sign-in method**
-2. Haz clic en **Google** → **Activar** → Guardar
+5. **Firebase** → **Authentication** → **Settings** → **Dominios autorizados** → añade tu dominio Vercel (ej: `hmolegalai.vercel.app`)
+6. **Redeploy** en Vercel para aplicar los cambios
 
-### Paso 3: Dominios autorizados
-
-1. **Authentication** → **Settings** (pestaña) → **Authorized domains**
-2. Añade tu dominio de Vercel, por ejemplo: `hmolegalai.vercel.app` (y también `tu-proyecto.vercel.app` si usas el preview)
-
-### Paso 4: Variables en Vercel
-
-En **Vercel** → tu proyecto → **Settings** → **Environment Variables**, añade:
+**Referencia** — Valores sugeridos para las variables (Production y Preview):
 
 | Variable | Valor | Entorno |
 |----------|-------|---------|
@@ -50,10 +48,6 @@ En **Vercel** → tu proyecto → **Settings** → **Environment Variables**, a�
 | `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | (tu senderId numérico) | Production, Preview |
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | (tu appId) | Production, Preview |
 | `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | (opcional, para Analytics) | Production, Preview |
-
-### Paso 5: Redeploy
-
-Después de añadir las variables, haz **Redeploy** en Vercel para que se apliquen.
 
 ---
 
