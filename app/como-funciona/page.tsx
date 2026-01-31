@@ -54,10 +54,10 @@ export default function ComoFuncionaPage() {
                 >
                   <div className="flex-shrink-0 w-full sm:w-auto ml-6 sm:ml-8 md:ml-0">
                     <div className="relative mx-auto sm:mx-0">
-                      <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 bg-blue-600/20 rounded-full flex items-center justify-center border-2 border-blue-500/50 transition-all duration-300 hover:scale-110 hover:rotate-6 group-hover:bg-blue-600/30">
+                      <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 ml-4 sm:ml-6 md:ml-0 bg-blue-600/20 rounded-full flex items-center justify-center border-2 border-blue-500/50 transition-all duration-300 hover:scale-110 hover:rotate-6 group-hover:bg-blue-600/30">
                         <Icon className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 text-blue-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" />
                       </div>
-                      <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 text-4xl sm:text-6xl md:text-7xl">
+                      <div className="absolute -top-2 -right-2 sm:-top-4 sm:-right-4 mr-4 sm:mr-6 md:mr-0 text-4xl sm:text-6xl md:text-7xl">
                         {EMOJIS[index]}
                       </div>
                       <div className="absolute -bottom-1 -left-1 sm:-bottom-2 sm:-left-2 text-xl sm:text-2xl md:text-3xl font-bold text-blue-500">

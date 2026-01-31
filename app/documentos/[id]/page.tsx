@@ -384,6 +384,20 @@ export default function DocumentPage() {
           <div className="space-y-6 mb-8">
             <h2 className="text-2xl font-semibold text-foreground">{t("doc_complete_info")}</h2>
 
+            {!user && (
+              <div className="p-4 rounded-lg border-2 border-amber-500/50 bg-amber-500/10 dark:bg-amber-500/15 dark:border-amber-400/50">
+                <p className="text-sm font-medium text-foreground">
+                  {t("doc_login_first_note")}
+                </p>
+                <Link
+                  href={`/auth?returnTo=${encodeURIComponent(`/documentos/${document.id}`)}`}
+                  className="inline-block mt-2 text-sm font-semibold text-blue-500 hover:text-blue-400"
+                >
+                  → {t("auth_sign_in")}
+                </Link>
+              </div>
+            )}
+
             {error && (
               <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400">
                 {error}
