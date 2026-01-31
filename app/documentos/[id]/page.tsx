@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getDocumentById, type LegalDocument, PARENTESCO_OPTIONS, BASE_PRICE, SAVE_FOREVER_PRICE } from "@/lib/documents";
+import { getDocumentById, getFieldsForForm, type LegalDocument, PARENTESCO_OPTIONS, BASE_PRICE, SAVE_FOREVER_PRICE } from "@/lib/documents";
 import {
   parsePersonList,
   serializePersonList,
@@ -52,7 +52,7 @@ export default function DocumentPage() {
       setDocument(doc || null);
       if (doc) {
         const initialData: Record<string, string> = {};
-        doc.fields.forEach((field) => {
+        getFieldsForForm(doc).forEach((field) => {
           if (field.type === "person_list") {
             initialData[field.id] = serializePersonList([{ nombre: "", parentesco: "" }]);
           } else {
@@ -405,7 +405,7 @@ export default function DocumentPage() {
               </div>
             )}
 
-            {document.fields.map((field) => {
+            {getFieldsForForm(document).map((field) => {
               const label = t(getFieldLabelKey(document.id, field.id));
               return (
                 <div key={field.id}>

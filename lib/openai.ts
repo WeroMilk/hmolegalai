@@ -65,7 +65,7 @@ export async function generateLegalDocument(
 
   const instruccionBienesMuebles =
     documentType.toLowerCase().includes("compraventa") || documentType.toLowerCase().includes("donación") || documentType.toLowerCase().includes("donacion")
-      ? " 4. Si el documento es de COMPRAVENTA o DONACIÓN: indica explícitamente que aplica ÚNICAMENTE a bienes muebles (no a inmuebles como terrenos o casas); para inmuebles se requiere formalización notarial."
+      ? " 5. Si el documento es de COMPRAVENTA o DONACIÓN: indica explícitamente que aplica ÚNICAMENTE a bienes muebles (no a inmuebles como terrenos o casas); para inmuebles se requiere formalización notarial."
       : "";
 
   const prompt = `Eres un abogado experto en derecho mexicano (civil y mercantil). Genera un documento legal profesional del tipo "${documentType}" en español.
@@ -79,8 +79,12 @@ INSTRUCCIONES OBLIGATORIAS:
 
 2. El documento debe incluir de manera clara: identificación completa de las partes, declaraciones, cláusulas específicas (objeto, obligaciones, duración, causales de terminación), domicilio para oír y recibir notificaciones, y un bloque de firmas con espacios para nombre, firma y fecha.
 
-3. Usa la estructura y formato estándar reconocidos en la legislación mexicana (Código Civil Federal, Código Civil del Estado de Sonora cuando aplique, Código de Comercio, Ley Federal del Trabajo, según corresponda). Lenguaje claro y sin ambigüedades.
+3. Si el usuario proporcionó ciudad_pie y/o fecha_pie, úsalos en el pie del documento con el formato: "En [ciudad_pie], a [día] de [mes] de [año]" (si solo hay fecha_pie, usa esa fecha; si solo hay ciudad_pie, usa la ciudad y la fecha del contrato si aplica). Si proporcionó domicilio_notificaciones_1 y domicilio_notificaciones_2, úsalos literalmente como domicilios para oír y recibir notificaciones de la Parte 1 y Parte 2 respectivamente. Si solo proporcionó uno, úsalo para la parte que corresponda.
+
+4. Usa la estructura y formato estándar reconocidos en la legislación mexicana (Código Civil Federal, Código Civil del Estado de Sonora cuando aplique, Código de Comercio, Ley Federal del Trabajo, según corresponda). Lenguaje claro y sin ambigüedades.
 ${instruccionBienesMuebles}
+
+6. Los domicilios y la ciudad/fecha del pie deben usar exactamente el formato que el usuario haya indicado en los campos correspondientes.
 
 Responde SOLO con el contenido del documento legal, sin comentarios adicionales.`;
 

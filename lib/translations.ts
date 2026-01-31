@@ -331,6 +331,10 @@ export const translations = {
     field_pretensiones: "Pretensiones (qué se pide)",
     field_valor_controversia: "Valor de la Controversia (MXN)",
     field_juzgado: "Juzgado o Tribunal (opcional)",
+    field_ciudad_pie: "Ciudad (para el pie del documento)",
+    field_fecha_pie: "Fecha para el pie del documento",
+    field_domicilio_notificaciones_1: "Domicilio para oír y recibir notificaciones (Parte 1)",
+    field_domicilio_notificaciones_2: "Domicilio para oír y recibir notificaciones (Parte 2)",
   } as const,
 
   en: {
@@ -645,6 +649,10 @@ export const translations = {
     field_pretensiones: "Relief Sought",
     field_valor_controversia: "Amount in Controversy (MXN)",
     field_juzgado: "Court or Tribunal (optional)",
+    field_ciudad_pie: "City (for document footer)",
+    field_fecha_pie: "Date for document footer",
+    field_domicilio_notificaciones_1: "Address for service of process (Party 1)",
+    field_domicilio_notificaciones_2: "Address for service of process (Party 2)",
   } as const,
 } as const;
 
@@ -749,6 +757,10 @@ const FIELD_LABEL_KEYS: Record<string, TranslationKey> = {
   pretensiones: "field_pretensiones",
   valor_controversia: "field_valor_controversia",
   juzgado: "field_juzgado",
+  ciudad_pie: "field_ciudad_pie",
+  fecha_pie: "field_fecha_pie",
+  domicilio_notificaciones_1: "field_domicilio_notificaciones_1",
+  domicilio_notificaciones_2: "field_domicilio_notificaciones_2",
 };
 
 export function t(locale: Locale, key: TranslationKey, vars?: Record<string, string | number>): string {

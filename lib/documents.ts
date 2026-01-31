@@ -21,6 +21,43 @@ export interface DocumentField {
   money?: boolean;
 }
 
+/** Campos comunes en todos los contratos: ciudad para el pie del documento y domicilios para notificaciones. */
+export const COMMON_FIELDS: DocumentField[] = [
+  {
+    id: "ciudad_pie",
+    label: "Ciudad (para el pie del documento)",
+    type: "text",
+    required: false,
+    placeholder: "Ej: Hermosillo, Sonora",
+  },
+  {
+    id: "fecha_pie",
+    label: "Fecha para el pie del documento",
+    type: "date",
+    required: false,
+    placeholder: "dd/mm/aaaa",
+  },
+  {
+    id: "domicilio_notificaciones_1",
+    label: "Domicilio para oír y recibir notificaciones (Parte 1)",
+    type: "textarea",
+    required: false,
+    placeholder: "Calle, número, colonia, CP, ciudad, estado",
+  },
+  {
+    id: "domicilio_notificaciones_2",
+    label: "Domicilio para oír y recibir notificaciones (Parte 2)",
+    type: "textarea",
+    required: false,
+    placeholder: "Calle, número, colonia, CP, ciudad, estado",
+  },
+];
+
+/** Devuelve los campos del documento más los comunes (ciudad, fecha pie, domicilios). */
+export function getFieldsForForm(doc: LegalDocument): DocumentField[] {
+  return [...doc.fields, ...COMMON_FIELDS];
+}
+
 /** Precio estándar por documento (solo descarga). */
 export const BASE_PRICE = 59;
 /** Precio para guardar el documento de por vida en la cuenta y verlo en "Mis documentos". */

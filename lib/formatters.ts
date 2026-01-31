@@ -1,4 +1,4 @@
-import type { LegalDocument } from "./documents";
+import { getFieldsForForm, type LegalDocument } from "./documents";
 
 export type PersonEntry = { nombre: string; parentesco: string };
 
@@ -89,7 +89,7 @@ export function buildUserInputsForApi(
   document: LegalDocument
 ): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const field of document.fields) {
+  for (const field of getFieldsForForm(document)) {
     const raw = formData[field.id] ?? "";
     if (field.type === "person_list") {
       out[field.id] = formatPersonListForApi(raw);
