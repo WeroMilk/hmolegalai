@@ -37,19 +37,30 @@ export function sanitizeMoneyInput(s: string): string {
   return oneDot;
 }
 
-/** Formato para mostrar: 1,500.00 (el $ va en un span aparte) */
+const MONEY_FORMAT_ESMX = new Intl.NumberFormat("es-MX", {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+/** Formato para mostrar en inputs de dinero: 15,000.00 (vacío → ""). Respeta comas y centavos. */
 export function formatMoneyDisplay(raw: string): string {
+  if (!raw || !raw.trim()) return "";
   const n = parseMoneyValue(raw);
   if (n === null || isNaN(n)) return raw;
-  return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  return MONEY_FORMAT_ESMX.format(n);
 }
 
-/** Formato en vivo mientras se escribe: 1,500 o 1,500.50 (solo 2 decimales). Vacío → 0.00 */
+/** Igual que formatMoneyDisplay; para uso en vivo en inputs. */
 export function formatMoneyDisplayLive(raw: string): string {
-  if (!raw || !raw.trim()) return "0.00";
+  return formatMoneyDisplay(raw);
+}
+
+/** Al salir del campo (blur): si hay número sin decimales, normaliza a "XXXX.00". Vacío se deja vacío. */
+export function normalizeMoneyOnBlur(raw: string): string {
+  if (!raw || !raw.trim()) return "";
   const n = parseMoneyValue(raw);
-  if (n === null || isNaN(n)) return "0.00";
-  return new Intl.NumberFormat("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  if (n === null || isNaN(n)) return raw;
+  return n.toFixed(2);
 }
 
 export function buildUserInputsForApi(

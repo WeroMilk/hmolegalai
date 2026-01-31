@@ -8,6 +8,8 @@ import {
   serializePersonList,
   parseMoneyValue,
   sanitizeMoneyInput,
+  formatMoneyDisplay,
+  normalizeMoneyOnBlur,
   buildUserInputsForApi,
   type PersonEntry,
 } from "@/lib/formatters";
@@ -108,8 +110,16 @@ export default function DocumentPage() {
   };
 
   const handleMoneyChange = (fieldId: string, value: string) => {
-    const sanitized = sanitizeMoneyInput(value);
+    const sinComas = value.replace(/,/g, "");
+    const sanitized = sanitizeMoneyInput(sinComas);
     setFormData((prev) => ({ ...prev, [fieldId]: sanitized }));
+  };
+
+  const handleMoneyBlur = (fieldId: string) => {
+    const raw = formData[fieldId] ?? "";
+    if (!raw.trim()) return;
+    const normalized = normalizeMoneyOnBlur(raw);
+    if (normalized !== raw) setFormData((prev) => ({ ...prev, [fieldId]: normalized }));
   };
 
   const handlePayment = async () => {
@@ -435,8 +445,9 @@ export default function DocumentPage() {
                         <input
                           type="text"
                           inputMode="decimal"
-                          value={formData[field.id] || ""}
+                          value={formatMoneyDisplay(formData[field.id] ?? "")}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
+                          onBlur={() => handleMoneyBlur(field.id)}
                           placeholder="0.00"
                           className="flex-1 min-w-0 px-3 py-3 bg-transparent text-foreground dark:text-gray-100 placeholder:text-muted dark:placeholder:text-gray-400 focus:outline-none"
                         />
