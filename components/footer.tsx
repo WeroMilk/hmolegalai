@@ -2,6 +2,7 @@
 
 import { useI18n } from "@/lib/i18n-context";
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   const { t } = useI18n();
@@ -9,6 +10,12 @@ export function Footer() {
 
   return (
     <footer className="relative z-10 py-8 px-4 border-t border-border bg-background">
+      <div className="flex justify-center mb-4">
+        <Link href="/" className="inline-flex items-center gap-2 text-muted hover:text-foreground transition-colors">
+          <Image src="/logo.png" alt="" width={32} height={32} className="w-8 h-8" />
+          <span className="font-semibold text-foreground">Avatar Legal AI</span>
+        </Link>
+      </div>
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm mb-4">
         <Link
           href="/terminos"

@@ -7,6 +7,10 @@ export const metadata: Metadata = {
   title: "Avatar Legal AI",
   description: "Avatar Legal AI — Genera documentos legales profesionales utilizando inteligencia artificial",
   keywords: "documentos legales, IA, inteligencia artificial, contratos, documentos, Avatar Legal AI",
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export const viewport = {

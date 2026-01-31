@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
@@ -21,6 +22,7 @@ export function Navbar() {
             href="/"
             className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left min-w-0"
           >
+            <Image src="/logo.png" alt="" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
             <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text">AVATAR</div>
             <span className="text-xs xs:text-sm text-blue-500 font-medium hidden xs:inline">{t("nav_legal_ai")}</span>
           </Link>
