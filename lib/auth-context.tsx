@@ -9,6 +9,7 @@ import {
   onAuthStateChanged,
   GoogleAuthProvider,
   signInWithPopup,
+  sendEmailVerification,
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from "./superuser";
@@ -102,7 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!auth) {
       throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
     }
-    await createUserWithEmailAndPassword(auth, email, password);
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(userCred.user);
   };
 
   const signInWithGoogle = async () => {

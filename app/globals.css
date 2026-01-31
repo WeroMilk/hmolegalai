@@ -125,8 +125,9 @@ input[type="number"] {
   .dark .glass-effect {
     border-color: rgba(255, 255, 255, 0.4);
   }
-  /* Header: sin marco blanco en dark mode */
-  .dark .navbar-no-frame.glass-effect {
+  /* Header: sin marco en dark y light (igual que dark) */
+  .dark .navbar-no-frame.glass-effect,
+  .light .navbar-no-frame.glass-effect {
     border-color: transparent;
   }
   .dark .glass-effect.hover-box {

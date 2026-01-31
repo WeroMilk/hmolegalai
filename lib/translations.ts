@@ -42,6 +42,9 @@ export const translations = {
     auth_firebase_setup_redeploy: "Después, redeploy en Vercel para aplicar los cambios.",
     auth_firebase_link_firebase: "Firebase Console",
     auth_firebase_link_vercel: "Vercel Dashboard",
+    auth_verify_email_title: "Revisa tu correo",
+    auth_verify_email_desc: "Te enviamos un enlace de verificación a tu correo. Haz clic en el enlace para activar tu cuenta.",
+    auth_verify_email_back: "¿Ya verificaste? Iniciar sesión",
 
     // Home
     home_hero_title1: "Documentos Legales",
@@ -359,6 +362,9 @@ export const translations = {
     auth_firebase_setup_redeploy: "Then redeploy on Vercel to apply changes.",
     auth_firebase_link_firebase: "Firebase Console",
     auth_firebase_link_vercel: "Vercel Dashboard",
+    auth_verify_email_title: "Check your email",
+    auth_verify_email_desc: "We sent you a verification link. Click the link in the email to activate your account.",
+    auth_verify_email_back: "Already verified? Sign in",
 
     home_hero_title1: "Legal Documents",
     home_hero_title2: "AI-Generated",

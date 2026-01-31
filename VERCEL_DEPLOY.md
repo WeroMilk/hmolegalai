@@ -33,8 +33,11 @@ Para habilitar **inicio de sesión con Google** en producción:
    - `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`
    - `NEXT_PUBLIC_FIREBASE_APP_ID`
 
-5. **Firebase** → **Authentication** → **Settings** → **Dominios autorizados** → añade tu dominio Vercel (ej: `hmolegalai.vercel.app`)
-6. **Redeploy** en Vercel para aplicar los cambios
+5. **Firebase** → **Authentication** → **Settings** → **Dominios autorizados** → añade:
+   - `hmolegalai.vercel.app`
+   - `avatarlegalai.com.mx`
+   - `www.avatarlegalai.com.mx`
+6. **Redeploy** en Vercel para aplicar los cambios.
 
 **Referencia** — Valores sugeridos para las variables (Production y Preview):
 
@@ -51,8 +54,20 @@ Para habilitar **inicio de sesión con Google** en producción:
 
 ---
 
-## 4. Otras variables (Stripe, OpenAI)
+## 4. Checklist producción (avatarlegalai.com.mx)
 
-- **Stripe**: `STRIPE_SECRET_KEY`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+| Problema | Solución |
+|----------|----------|
+| «Stripe no configurado» | Añade `STRIPE_SECRET_KEY` y `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` en Vercel → Settings → Environment Variables |
+| Firebase `auth/unauthorized-domain` | Firebase Console → Authentication → Settings → Dominios autorizados → añade `avatarlegalai.com.mx` y `www.avatarlegalai.com.mx` |
+
+---
+
+## 5. Otras variables (Stripe, OpenAI)
+
+- **Stripe** (obligatorio para pagos): En Vercel → Settings → Environment Variables añade:
+  - `STRIPE_SECRET_KEY` = tu clave secreta (sk_test_... o sk_live_...)
+  - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` = tu clave pública (pk_test_... o pk_live_...)
+  - Sin estas variables aparecerá «Stripe no configurado. Configura STRIPE_SECRET_KEY en Vercel»
 - **OpenAI**: `OPENAI_API_KEY`
 - **Firebase Admin** (verificación de tokens en servidor): `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`

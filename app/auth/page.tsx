@@ -19,6 +19,7 @@ export default function AuthPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showVerifyEmail, setShowVerifyEmail] = useState(false);
   const { signIn, signUp, signInWithGoogle } = useAuth();
   const { t } = useI18n();
   const router = useRouter();
@@ -36,10 +37,11 @@ export default function AuthPage() {
     try {
       if (isLogin) {
         await signIn(email, password);
+        router.push("/documentos");
       } else {
         await signUp(email, password);
+        setShowVerifyEmail(true);
       }
-      router.push("/documentos");
     } catch (err: any) {
       setError(err.message || t("auth_error"));
     } finally {
@@ -114,6 +116,31 @@ export default function AuthPage() {
           )}
 
           <div className="glass-effect hover-box p-6 sm:p-8 rounded-xl border border-blue-500/40 w-full">
+            {showVerifyEmail ? (
+              <div className="space-y-4 text-center">
+                <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
+                  <Mail className="w-8 h-8 text-green-500" />
+                </div>
+                <h1 className="hover-title text-2xl sm:text-3xl font-bold text-foreground">
+                  {t("auth_verify_email_title")}
+                </h1>
+                <p className="text-muted text-sm sm:text-base">
+                  {t("auth_verify_email_desc")}
+                </p>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setShowVerifyEmail(false);
+                    setIsLogin(true);
+                    setError("");
+                  }}
+                >
+                  {t("auth_verify_email_back")}
+                </Button>
+              </div>
+            ) : (
+              <>
             <h1 className="hover-title block w-full text-2xl sm:text-3xl font-bold mb-2 text-center text-foreground">
               {isLogin ? t("auth_sign_in") : t("auth_sign_up")}
             </h1>
@@ -232,6 +259,8 @@ export default function AuthPage() {
                 {isLogin ? t("auth_no_account") : t("auth_has_account")}
               </button>
             </div>
+            </>
+            )}
           </div>
         </motion.div>
       </div>
