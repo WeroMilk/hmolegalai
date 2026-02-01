@@ -16,6 +16,10 @@ export interface DocumentGenerationParams {
   documentType: string;
   userInputs: Record<string, string>;
   language?: string;
+  /** Nombre de la primera parte (ej. "Arrendador", "Empleador") para el texto del documento. */
+  parte1Label?: string;
+  /** Nombre de la segunda parte (ej. "Arrendatario", "Trabajador"). */
+  parte2Label?: string;
 }
 
 /**
@@ -59,7 +63,7 @@ export function generateFallbackDocument(params: DocumentGenerationParams): stri
 export async function generateLegalDocument(
   params: DocumentGenerationParams
 ): Promise<string> {
-  const { documentType, userInputs, language = "es" } = params;
+  const { documentType, userInputs, language = "es", parte1Label: parte1, parte2Label: parte2 } = params;
 
   const notaValidezText = `DOCUMENTO PRIVADO: El presente instrumento es un documento privado celebrado de conformidad con la legislación aplicable en los Estados Unidos Mexicanos (Código Civil Federal y, en su caso, Código Civil del Estado de Sonora). Surtirá efectos jurídicos entre las partes signantes una vez que sea firmado por ellas. Para su validez frente a terceros o su inscripción en el Registro Público, podrá requerirse su formalización ante Notario Público o fedatario competente. No constituye asesoría legal ni garantía de resultado.`;
 
@@ -79,7 +83,7 @@ INSTRUCCIONES OBLIGATORIAS:
 
 2. El documento debe incluir de manera clara: identificación completa de las partes, declaraciones, cláusulas específicas (objeto, obligaciones, duración, causales de terminación), domicilio para oír y recibir notificaciones, y un bloque de firmas con espacios para nombre, firma y fecha.
 
-3. Si el usuario proporcionó ciudad_pie y/o fecha_pie, úsalos en el pie del documento con el formato: "En [ciudad_pie], a [día] de [mes] de [año]" (si solo hay fecha_pie, usa esa fecha; si solo hay ciudad_pie, usa la ciudad y la fecha del contrato si aplica). Si proporcionó domicilio_notificaciones_1 y domicilio_notificaciones_2, úsalos literalmente como domicilios para oír y recibir notificaciones de la Parte 1 y Parte 2 respectivamente. Si solo proporcionó uno, úsalo para la parte que corresponda.
+3. Si el usuario proporcionó ciudad_pie y/o fecha_pie, úsalos en el pie del documento con el formato: "En [ciudad_pie], a [día] de [mes] de [año]" (si solo hay fecha_pie, usa esa fecha; si solo hay ciudad_pie, usa la ciudad y la fecha del contrato si aplica). Si proporcionó domicilio_notificaciones_1 y domicilio_notificaciones_2, úsalos literalmente como domicilios para oír y recibir notificaciones${parte1 && parte2 ? ` de ${parte1} y de ${parte2}` : " de la Parte 1 y Parte 2"} respectivamente. Si solo proporcionó uno, úsalo para la parte que corresponda.
 
 4. Usa la estructura y formato estándar reconocidos en la legislación mexicana (Código Civil Federal, Código Civil del Estado de Sonora cuando aplique, Código de Comercio, Ley Federal del Trabajo, según corresponda). Lenguaje claro y sin ambigüedades.
 ${instruccionBienesMuebles}

@@ -20,12 +20,12 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 const THEME_BG = { dark: "#0a0a0a", light: "#f8fafc" } as const;
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
   const [transition, setTransition] = useState<{
     active: boolean;
     fromTheme: Theme;
-  }>({ active: false, fromTheme: "dark" });
+  }>({ active: false, fromTheme: "light" });
 
   useEffect(() => {
     setMounted(true);
@@ -34,8 +34,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const stored = localStorage.getItem(THEME_STORAGE) as Theme | null;
     if (stored === "light" || stored === "dark") {
       setThemeState(stored);
-    } else if (window.matchMedia("(prefers-color-scheme: light)").matches) {
-      setThemeState("light");
     }
   }, []);
 

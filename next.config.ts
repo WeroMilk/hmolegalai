@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
   },
+  // Para que Google y otros crawlers que piden /favicon.ico obtengan nuestro logo
+  async rewrites() {
+    return [{ source: "/favicon.ico", destination: "/logo.png" }];
+  },
   // Mitiga ChunkLoadError (timeout al cargar chunks en dev)
   webpack: (config, { dev }) => {
     if (dev) {

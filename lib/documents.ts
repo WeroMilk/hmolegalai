@@ -6,6 +6,10 @@ export interface LegalDocument {
   category: string;
   icon: string;
   fields: DocumentField[];
+  /** Nombre de la primera parte para domicilio notificaciones (ej. "Arrendador", "Empleador"). */
+  parte1Label?: string;
+  /** Nombre de la segunda parte (ej. "Arrendatario", "Trabajador"). */
+  parte2Label?: string;
 }
 
 export interface DocumentField {
@@ -53,9 +57,16 @@ export const COMMON_FIELDS: DocumentField[] = [
   },
 ];
 
-/** Devuelve los campos del documento más los comunes (ciudad, fecha pie, domicilios). */
+/** Devuelve los campos del documento más los comunes (ciudad, fecha pie, domicilios). Las etiquetas "Parte 1" y "Parte 2" se sustituyen por parte1Label y parte2Label del documento. */
 export function getFieldsForForm(doc: LegalDocument): DocumentField[] {
-  return [...doc.fields, ...COMMON_FIELDS];
+  const parte1 = doc.parte1Label ?? "Parte 1";
+  const parte2 = doc.parte2Label ?? "Parte 2";
+  const common: DocumentField[] = [
+    ...COMMON_FIELDS.slice(0, 2),
+    { ...COMMON_FIELDS[2], label: `Domicilio para oír y recibir notificaciones (${parte1})` },
+    { ...COMMON_FIELDS[3], label: `Domicilio para oír y recibir notificaciones (${parte2})` },
+  ];
+  return [...doc.fields, ...common];
 }
 
 /** Precio estándar por documento (solo descarga). */
@@ -89,6 +100,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "🏠",
+    parte1Label: "Arrendador",
+    parte2Label: "Arrendatario",
     fields: [
       { id: "arrendador", label: "Nombre del Arrendador", type: "text", required: true },
       { id: "arrendatario", label: "Nombre del Arrendatario", type: "text", required: true },
@@ -105,6 +118,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "💼",
+    parte1Label: "Contratante",
+    parte2Label: "Prestador de Servicios",
     fields: [
       { id: "contratante", label: "Nombre del Contratante", type: "text", required: true },
       { id: "prestador", label: "Nombre del Prestador de Servicios", type: "text", required: true },
@@ -121,6 +136,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "🏢",
+    parte1Label: "Vendedor",
+    parte2Label: "Comprador",
     fields: [
       { id: "vendedor", label: "Nombre del Vendedor", type: "text", required: true },
       { id: "comprador", label: "Nombre del Comprador", type: "text", required: true },
@@ -136,6 +153,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Poderes",
     icon: "📋",
+    parte1Label: "Otorgante",
+    parte2Label: "Apoderado",
     fields: [
       { id: "otorgante", label: "Nombre del Otorgante", type: "text", required: true },
       { id: "apoderado", label: "Nombre del Apoderado", type: "text", required: true },
@@ -150,6 +169,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Laboral",
     icon: "👔",
+    parte1Label: "Empleador",
+    parte2Label: "Trabajador",
     fields: [
       { id: "empleador", label: "Nombre del Empleador", type: "text", required: true },
       { id: "trabajador", label: "Nombre del Trabajador", type: "text", required: true },
@@ -165,6 +186,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "🔒",
+    parte1Label: "Primera Parte",
+    parte2Label: "Segunda Parte",
     fields: [
       { id: "parte1", label: "Nombre de la Primera Parte", type: "text", required: true },
       { id: "parte2", label: "Nombre de la Segunda Parte", type: "text", required: true },
@@ -179,6 +202,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "📜",
+    parte1Label: "Parte Reveladora",
+    parte2Label: "Parte Receptora",
     fields: [
       { id: "parte_reveladora", label: "Nombre de la Parte Reveladora", type: "text", required: true },
       { id: "parte_receptora", label: "Nombre de la Parte Receptora", type: "text", required: true },
@@ -194,6 +219,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "🎁",
+    parte1Label: "Donante",
+    parte2Label: "Donatario",
     fields: [
       { id: "donante", label: "Nombre del Donante", type: "text", required: true },
       { id: "donatario", label: "Nombre del Donatario", type: "text", required: true },
@@ -209,6 +236,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "🤝",
+    parte1Label: "Primer Socio/Colaborador",
+    parte2Label: "Segundo Socio/Colaborador",
     fields: [
       { id: "socio1", label: "Nombre del Primer Socio/Colaborador", type: "text", required: true },
       { id: "socio2", label: "Nombre del Segundo Socio/Colaborador", type: "text", required: true },
@@ -225,6 +254,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "📤",
+    parte1Label: "Quien da por terminado",
+    parte2Label: "Otra Parte",
     fields: [
       { id: "quien_termina", label: "Nombre de Quien Da por Terminado", type: "text", required: true },
       { id: "otra_parte", label: "Nombre de la Otra Parte", type: "text", required: true },
@@ -241,6 +272,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Contratos",
     icon: "📦",
+    parte1Label: "Comodante",
+    parte2Label: "Comodatario",
     fields: [
       { id: "comodante", label: "Nombre del Comodante (quien presta)", type: "text", required: true },
       { id: "comodatario", label: "Nombre del Comodatario (quien recibe)", type: "text", required: true },
@@ -256,6 +289,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     price: BASE_PRICE,
     category: "Otros",
     icon: "⚖️",
+    parte1Label: "Actor (demandante)",
+    parte2Label: "Demandado",
     fields: [
       { id: "actor", label: "Nombre del Actor (demandante)", type: "text", required: true },
       { id: "demandado", label: "Nombre del Demandado", type: "text", required: true },

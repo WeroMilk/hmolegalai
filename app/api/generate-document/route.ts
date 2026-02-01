@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { generateLegalDocument, generateFallbackDocument } from "@/lib/openai";
+import { getDocumentById } from "@/lib/documents";
 import { FieldValue } from "firebase-admin/firestore";
 import { verifyIdToken, adminDb } from "@/lib/auth-server";
 
@@ -23,11 +24,17 @@ export async function POST(request: NextRequest) {
 
     const { documentId, documentType, userInputs, sessionId, saveToAccount } = await request.json();
 
+    const doc = getDocumentById(documentId);
+    const parte1Label = doc?.parte1Label;
+    const parte2Label = doc?.parte2Label;
+
     let documentContent: string;
     try {
       documentContent = await generateLegalDocument({
         documentType,
         userInputs,
+        parte1Label,
+        parte2Label,
       });
     } catch (openaiError) {
       // Superusuario sin OpenAI configurado: devolver documento de ejemplo
@@ -35,6 +42,8 @@ export async function POST(request: NextRequest) {
         documentContent = generateFallbackDocument({
           documentType,
           userInputs,
+          parte1Label,
+          parte2Label,
         });
       } else {
         throw openaiError;

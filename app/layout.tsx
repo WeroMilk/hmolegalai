@@ -8,8 +8,21 @@ export const metadata: Metadata = {
   description: "Avatar Legal AI — Genera documentos legales profesionales utilizando inteligencia artificial",
   keywords: "documentos legales, IA, inteligencia artificial, contratos, documentos, Avatar Legal AI",
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/logo.png", type: "image/png", sizes: "48x48" },
+      { url: "/logo.png", type: "image/png", sizes: "96x96" },
+      { url: "/logo.png", type: "image/png", sizes: "192x192" },
+    ],
     apple: "/logo.png",
+  },
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Avatar Legal AI",
+  },
+  other: {
+    "theme-color": "#2563eb",
   },
 };
 
@@ -27,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className="dark theme-transition" suppressHydrationWarning>
+    <html lang="es" className="light theme-transition" suppressHydrationWarning>
       <body className="antialiased bg-background text-foreground min-h-screen overflow-x-hidden overflow-y-auto">
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-blue-200/25 dark:to-blue-950/20" />
