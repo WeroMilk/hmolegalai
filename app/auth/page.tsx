@@ -32,6 +32,19 @@ function AuthPageContent() {
 
   const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.trim());
 
+  /** Mensaje amigable si el error viene crudo de Firebase (evitar "Firebase: Error (auth/invalid-credential)"). */
+  const friendlyAuthError = (msg: string, fallback: string) => {
+    if (!msg || typeof msg !== "string") return fallback;
+    const raw = msg.trim();
+    if (/Firebase|auth\/|invalid-credential|user-not-found|wrong-password/i.test(raw)) {
+      return "Usuario no encontrado o contraseña incorrecta.";
+    }
+    if (/email-already-in-use/i.test(raw)) return "Este correo ya está registrado.";
+    if (/weak-password/i.test(raw)) return "La contraseña debe tener al menos 6 caracteres.";
+    if (/too-many-requests/i.test(raw)) return "Demasiados intentos. Intenta más tarde.";
+    return raw;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -61,7 +74,7 @@ function AuthPageContent() {
         router.push(target);
       }
     } catch (err: any) {
-      setError(err.message || t("auth_error"));
+      setError(friendlyAuthError(err.message || "", t("auth_error")));
     } finally {
       setLoading(false);
     }
@@ -75,7 +88,7 @@ function AuthPageContent() {
       const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
       router.push(target);
     } catch (err: any) {
-      setError(err.message || t("auth_error_google"));
+      setError(friendlyAuthError(err.message || "", t("auth_error_google")));
     } finally {
       setLoading(false);
     }
@@ -289,7 +302,7 @@ function AuthPageContent() {
                               await resetPassword(email);
                               setResetSent(true);
                             } catch (err: any) {
-                              setError(err.message || t("auth_error"));
+                              setError(friendlyAuthError(err.message || "", t("auth_error")));
                             } finally {
                               setLoading(false);
                             }

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
+import { isDidiUser } from "@/lib/didi";
 import { User, LogOut, Menu, X, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 
@@ -40,6 +41,14 @@ export function Navbar() {
             >
               {t("nav_documents")}
             </Link>
+            {user && isDidiUser(user.email) && (
+              <Link
+                href="/didi"
+                className="i18n-nav-link min-w-[4.5rem] text-center text-muted hover:text-foreground transition-colors py-2 border-b-2 border-transparent hover:border-transparent font-semibold"
+              >
+                DIDI
+              </Link>
+            )}
             {user ? (
               <>
                 <Link
@@ -185,6 +194,15 @@ export function Navbar() {
             >
               {t("nav_documents")}
             </Link>
+            {user && isDidiUser(user.email) && (
+              <Link
+                href="/didi"
+                className="block py-3 px-4 min-h-[44px] flex items-center text-muted hover:text-foreground hover:bg-card/50 rounded-lg active:bg-card transition-colors font-semibold"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                DIDI
+              </Link>
+            )}
             {user ? (
               <>
                 <Link

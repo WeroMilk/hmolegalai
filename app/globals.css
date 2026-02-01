@@ -232,6 +232,91 @@ input[type="number"] {
   }
 }
 
+/* ========== Tema DIDI: solo en /didi todo lo azul se vuelve morado ========== */
+body.didi-theme {
+  --didi-purple-200: 233 213 255;
+  --didi-purple-950: 59 7 100;
+  --didi-purple-500: 168 85 247;
+  --didi-purple-600: 147 51 234;
+  --didi-purple-400: 192 132 252;
+}
+body.didi-theme .to-blue-200\/25 {
+  --tw-gradient-to: rgb(var(--didi-purple-200) / 0.25);
+}
+html.dark body.didi-theme .to-blue-950\/20,
+.dark body.didi-theme .to-blue-950\/20 {
+  --tw-gradient-to: rgb(var(--didi-purple-950) / 0.2);
+}
+body.didi-theme .bg-blue-500\/20 {
+  background-color: rgb(var(--didi-purple-500) / 0.2);
+}
+body.didi-theme .bg-blue-600\/20 {
+  background-color: rgb(var(--didi-purple-600) / 0.2);
+}
+body.didi-theme [class*="circle_at_50%"] {
+  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.1), transparent 50%) !important;
+}
+body.didi-theme .gradient-text {
+  @apply bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 bg-clip-text text-transparent;
+}
+body.didi-theme .text-blue-500,
+body.didi-theme .text-blue-400,
+body.didi-theme .text-blue-600 {
+  color: rgb(168 85 247);
+}
+body.didi-theme .bg-blue-500,
+body.didi-theme .bg-blue-600,
+body.didi-theme .bg-blue-700 {
+  background-color: rgb(147 51 234);
+}
+body.didi-theme .bg-blue-600\/20,
+body.didi-theme .bg-blue-500\/10,
+body.didi-theme .bg-blue-500\/5 {
+  background-color: rgb(168 85 247 / 0.2);
+}
+body.didi-theme .border-blue-500,
+body.didi-theme .border-blue-500\/40,
+body.didi-theme .border-blue-500\/50 {
+  border-color: rgb(168 85 247 / 0.5);
+}
+body.didi-theme .focus\:border-blue-500:focus,
+body.didi-theme .focus\:ring-blue-500:focus,
+body.didi-theme .focus-within\:border-blue-500:focus-within,
+body.didi-theme .focus-within\:ring-blue-500:focus-within {
+  border-color: rgb(168 85 247);
+  --tw-ring-color: rgb(168 85 247 / 0.5);
+}
+body.didi-theme .hover\:text-blue-400:hover,
+body.didi-theme .hover\:text-blue-500:hover {
+  color: rgb(192 132 252);
+}
+body.didi-theme .hover\:bg-blue-700:hover {
+  background-color: rgb(126 34 206);
+}
+body.didi-theme .hover\:border-blue-500\/50:hover {
+  border-color: rgb(168 85 247 / 0.5);
+}
+body.didi-theme .dark .glass-effect.hover-box:hover,
+body.didi-theme.dark .glass-effect.hover-box:hover {
+  border-color: rgba(168, 85, 247, 0.55);
+}
+body.didi-theme .light .glass-effect.hover-box {
+  border-color: rgba(168, 85, 247, 0.5);
+}
+body.didi-theme .hover-box:hover {
+  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+}
+body.didi-theme .hover-button:hover,
+body.didi-theme .hover-button.btn-primary:hover {
+  box-shadow: 0 0 28px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.35);
+}
+body.didi-theme .dark .hover-title:hover {
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.6), 0 0 22px rgba(168, 85, 247, 0.45), 0 0 32px rgba(168, 85, 247, 0.3);
+}
+body.didi-theme .border-border {
+  border-color: rgba(168, 85, 247, 0.2);
+}
+
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
 @media (max-width: 430px) {
   html {

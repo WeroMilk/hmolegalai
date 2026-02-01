@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
+  UserCredential,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
@@ -16,6 +17,25 @@ import { auth } from "./firebase";
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from "./superuser";
 
 const DEMO_USER_STORAGE = "avatar_demo_superuser";
+
+/** Mensajes amigables para errores de Firebase Auth (evitar "auth/invalid-credential" etc.) */
+function getFriendlyAuthMessage(code: string, fallback: string): string {
+  const msg: Record<string, string> = {
+    "auth/invalid-credential": "Usuario no encontrado o contraseña incorrecta.",
+    "auth/user-not-found": "Usuario no encontrado.",
+    "auth/wrong-password": "Contraseña incorrecta.",
+    "auth/invalid-email": "Correo electrónico no válido.",
+    "auth/email-already-in-use": "Este correo ya está registrado.",
+    "auth/weak-password": "La contraseña debe tener al menos 6 caracteres.",
+    "auth/too-many-requests": "Demasiados intentos. Intenta más tarde.",
+    "auth/network-request-failed": "Error de conexión. Revisa tu internet.",
+    "auth/popup-closed-by-user": "Inicio de sesión cancelado.",
+    "auth/cancelled-popup-request": "Inicio de sesión cancelado.",
+    "auth/operation-not-allowed": "Operación no permitida.",
+    "auth/requires-recent-login": "Por seguridad, cierra sesión y vuelve a entrar.",
+  };
+  return msg[code] || fallback;
+}
 
 /** Usuario demo cuando Firebase no está configurado (superusuario local) */
 export interface DemoUser {
@@ -97,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await createUserWithEmailAndPassword(auth, SUPERUSER_EMAIL, SUPERUSER_PASSWORD);
         await signInWithEmailAndPassword(auth, SUPERUSER_EMAIL, SUPERUSER_PASSWORD);
       } else {
-        throw signInErr;
+        throw new Error(getFriendlyAuthMessage(code, signInErr?.message || "Error al iniciar sesión."));
       }
     }
   };
@@ -111,7 +131,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!auth) {
       throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
     }
-    await createUserWithEmailAndPassword(auth, email.trim(), password);
+    try {
+      await createUserWithEmailAndPassword(auth, email.trim(), password);
+    } catch (err: any) {
+      const code = err?.code || "";
+      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al crear la cuenta."));
+    }
     // No se exige verificación de correo: el usuario queda logueado y puede usar la app.
   };
 
@@ -119,7 +144,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!auth) {
       throw new Error("Firebase no está configurado.");
     }
-    const result = await signInWithEmailAndPassword(auth, email.trim(), password);
+    let result: UserCredential;
+    try {
+      result = await signInWithEmailAndPassword(auth, email.trim(), password);
+    } catch (err: any) {
+      const code = err?.code || "";
+      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al iniciar sesión."));
+    }
     if (result.user.emailVerified) {
       await signOut(auth);
       throw new Error("Tu correo ya está verificado. Puedes iniciar sesión.");
@@ -136,7 +167,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!auth) {
       throw new Error("Firebase no está configurado.");
     }
-    await sendPasswordResetEmail(auth, email.trim());
+    try {
+      await sendPasswordResetEmail(auth, email.trim());
+    } catch (err: any) {
+      const code = err?.code || "";
+      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al enviar el correo."));
+    }
   };
 
   const signInWithGoogle = async () => {
@@ -144,7 +180,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
     }
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (err: any) {
+      const code = err?.code || "";
+      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al iniciar sesión con Google."));
+    }
   };
 
   const logout = async () => {
