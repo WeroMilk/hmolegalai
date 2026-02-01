@@ -11,6 +11,7 @@ import {
   formatMoneyInputValue,
   normalizeMoneyOnBlur,
   buildUserInputsForApi,
+  toTitleCase,
   type PersonEntry,
 } from "@/lib/formatters";
 import { useAuth } from "@/lib/auth-context";
@@ -340,7 +341,7 @@ export default function DocumentPage() {
 
   if (!document) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="min-h-screen text-foreground flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">{t("doc_not_found")}</h1>
           <Link href="/documentos" className="text-blue-500 hover:text-blue-400">
@@ -352,7 +353,7 @@ export default function DocumentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-24">
         <Link
@@ -406,7 +407,7 @@ export default function DocumentPage() {
             )}
 
             {getFieldsForForm(document).map((field) => {
-              const label = t(getFieldLabelKey(document.id, field.id));
+              const label = (field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2") ? field.label : t(getFieldLabelKey(document.id, field.id));
               return (
                 <div key={field.id}>
                   {field.type === "person_list" ? (
@@ -421,6 +422,10 @@ export default function DocumentPage() {
                             <Input
                               value={person.nombre}
                               onChange={(e) => handlePersonChange(field.id, idx, "nombre", e.target.value)}
+                              onBlur={() => {
+                                const title = toTitleCase(person.nombre);
+                                if (title !== person.nombre) handlePersonChange(field.id, idx, "nombre", title);
+                              }}
                               placeholder={t("doc_name")}
                             />
                           </div>
@@ -535,6 +540,15 @@ export default function DocumentPage() {
                         type={field.type}
                         value={formData[field.id] || ""}
                         onChange={(e) => handleInputChange(field.id, e.target.value)}
+                        onBlur={
+                          field.capitalizeWords
+                            ? () => {
+                                const val = formData[field.id] || "";
+                                const title = toTitleCase(val);
+                                if (title !== val) handleInputChange(field.id, title);
+                              }
+                            : undefined
+                        }
                         required={field.required}
                         placeholder={field.placeholder}
                       />
@@ -560,7 +574,7 @@ export default function DocumentPage() {
           </div>
 
           {isSuperUser(user?.email) && (
-            <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 text-sm">
+            <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg text-black dark:text-white text-sm">
               ⭐ {t("doc_superuser_badge")}
             </div>
           )}

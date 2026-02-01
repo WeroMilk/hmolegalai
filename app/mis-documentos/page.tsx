@@ -90,7 +90,7 @@ export default function MisDocumentosPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="min-h-screen text-foreground">
         <Navbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -103,7 +103,7 @@ export default function MisDocumentosPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <Navbar />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
         <h1 className="text-4xl font-bold mb-8 text-foreground">

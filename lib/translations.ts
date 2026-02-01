@@ -14,6 +14,8 @@ export const translations = {
     nav_aria_dark: "Modo oscuro",
     nav_aria_spanish: "Español",
     nav_aria_english: "English",
+    nav_aria_open_menu: "Abrir menú",
+    nav_aria_close_menu: "Cerrar menú",
 
     // Auth
     auth_sign_in: "Iniciar Sesión",
@@ -196,6 +198,7 @@ export const translations = {
     // Footer
     footer_location: "Hermosillo, Sonora. México. Todos los derechos reservados.",
     footer_copyright: "© {{year}} Avatar Legal AI. Propiedad intelectual y contenidos reservados.",
+    footer_copyright_suffix: " Propiedad intelectual y contenidos reservados.",
 
     // Document names & descriptions (for catalog - by id)
     doc_contrato_arrendamiento_name: "Contrato de Arrendamiento",
@@ -226,7 +229,7 @@ export const translations = {
     // Legal warnings (catalog, checkout, preview)
     legal_catalog_warning: "ADVERTENCIA: Los documentos generados son plantillas de documentos privados. No constituyen asesoría legal personalizada. Para transacciones complejas o de alto valor, consulte a un abogado. El uso de la plataforma es bajo su propio riesgo.",
     legal_checkout_title: "Declaración de aceptación",
-    legal_checkout_text: "He leído y entendido que este servicio es un generador de plantillas de documentos; que la plataforma no asume responsabilidad por el uso que se dé al documento generado; y que se recomienda consultar a un profesional para casos particulares. Acepto los términos y uso la plataforma bajo mi propio riesgo.",
+    legal_checkout_text: "He leído y entendido que este servicio genera plantillas de documentos con inteligencia artificial, alineadas con la legislación vigente en México; que se recomienda consultar a un profesional para casos particulares. Acepto los términos de uso de la plataforma. Todos nuestros documentos tienen completa validez jurídica.",
     legal_checkout_agree: "He leído y acepto lo anterior",
     legal_preview_legend: "Documento generado automáticamente. Es responsabilidad de las partes verificar la exactitud de los datos y la idoneidad del contenido para su propósito. AVATAR LEGAL AI no es un bufete de abogados.",
 
@@ -349,6 +352,8 @@ export const translations = {
     nav_aria_dark: "Dark mode",
     nav_aria_spanish: "Spanish",
     nav_aria_english: "English",
+    nav_aria_open_menu: "Open menu",
+    nav_aria_close_menu: "Close menu",
 
     auth_sign_in: "Sign In",
     auth_sign_up: "Create Account",
@@ -520,6 +525,7 @@ export const translations = {
 
     footer_location: "Hermosillo, Sonora. Mexico. All rights reserved.",
     footer_copyright: "© {{year}} Avatar Legal AI. Intellectual property and content reserved.",
+    footer_copyright_suffix: " Intellectual property and content reserved.",
 
     doc_contrato_arrendamiento_name: "Lease Agreement",
     doc_contrato_arrendamiento_desc: "Contract to lease a residential or commercial property",
@@ -548,7 +554,7 @@ export const translations = {
 
     legal_catalog_warning: "WARNING: Generated documents are private document templates. They do not constitute personalized legal advice. For complex or high-value transactions, consult a lawyer. Use of the platform is at your own risk.",
     legal_checkout_title: "Acceptance statement",
-    legal_checkout_text: "I have read and understood that this service is a document template generator; that the platform assumes no responsibility for the use given to the generated document; and that consulting a professional is recommended for specific cases. I accept the terms and use the platform at my own risk.",
+    legal_checkout_text: "I have read and understood that this service generates document templates using artificial intelligence, aligned with current legislation in Mexico; that consulting a professional is recommended for specific cases. I accept the platform's terms of use. All our documents have full legal validity.",
     legal_checkout_agree: "I have read and accept the above",
     legal_preview_legend: "Document generated automatically. It is the responsibility of the parties to verify the accuracy of the data and the suitability of the content for its purpose. AVATAR LEGAL AI is not a law firm.",
 

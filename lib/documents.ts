@@ -23,6 +23,8 @@ export interface DocumentField {
   personLabel?: string;
   /** true si el campo es monto/precio (usa $ y formato 10,000.00) */
   money?: boolean;
+  /** true = al salir del campo, poner primera letra de cada palabra en mayúscula (nombres) */
+  capitalizeWords?: boolean;
 }
 
 /** Campos comunes en todos los contratos: ciudad para el pie del documento y domicilios para notificaciones. */
@@ -103,8 +105,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Arrendador",
     parte2Label: "Arrendatario",
     fields: [
-      { id: "arrendador", label: "Nombre del Arrendador", type: "text", required: true },
-      { id: "arrendatario", label: "Nombre del Arrendatario", type: "text", required: true },
+      { id: "arrendador", label: "Nombre del Arrendador", type: "text", required: true, capitalizeWords: true },
+      { id: "arrendatario", label: "Nombre del Arrendatario", type: "text", required: true, capitalizeWords: true },
       { id: "direccion", label: "Dirección de la Propiedad", type: "textarea", required: true },
       { id: "monto", label: "Monto Mensual de Renta", type: "number", required: true, money: true },
       { id: "duracion", label: "Duración del Contrato (meses)", type: "number", required: true },
@@ -121,8 +123,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Contratante",
     parte2Label: "Prestador de Servicios",
     fields: [
-      { id: "contratante", label: "Nombre del Contratante", type: "text", required: true },
-      { id: "prestador", label: "Nombre del Prestador de Servicios", type: "text", required: true },
+      { id: "contratante", label: "Nombre del Contratante", type: "text", required: true, capitalizeWords: true },
+      { id: "prestador", label: "Nombre del Prestador de Servicios", type: "text", required: true, capitalizeWords: true },
       { id: "servicio", label: "Descripción del Servicio", type: "textarea", required: true },
       { id: "monto", label: "Monto del Contrato", type: "number", required: true, money: true },
       { id: "fecha-inicio", label: "Fecha de Inicio", type: "date", required: true },
@@ -156,8 +158,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Otorgante",
     parte2Label: "Apoderado",
     fields: [
-      { id: "otorgante", label: "Nombre del Otorgante", type: "text", required: true },
-      { id: "apoderado", label: "Nombre del Apoderado", type: "text", required: true },
+      { id: "otorgante", label: "Nombre del Otorgante", type: "text", required: true, capitalizeWords: true },
+      { id: "apoderado", label: "Nombre del Apoderado", type: "text", required: true, capitalizeWords: true },
       { id: "tramite", label: "Trámite a Realizar", type: "textarea", required: true },
       { id: "fecha", label: "Fecha", type: "date", required: true },
     ],
@@ -189,8 +191,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Primera Parte",
     parte2Label: "Segunda Parte",
     fields: [
-      { id: "parte1", label: "Nombre de la Primera Parte", type: "text", required: true },
-      { id: "parte2", label: "Nombre de la Segunda Parte", type: "text", required: true },
+      { id: "parte1", label: "Nombre de la Primera Parte", type: "text", required: true, capitalizeWords: true },
+      { id: "parte2", label: "Nombre de la Segunda Parte", type: "text", required: true, capitalizeWords: true },
       { id: "informacion", label: "Información Confidencial", type: "textarea", required: true },
       { id: "duracion", label: "Duración del Convenio (meses)", type: "number", required: true },
     ],
@@ -222,8 +224,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Donante",
     parte2Label: "Donatario",
     fields: [
-      { id: "donante", label: "Nombre del Donante", type: "text", required: true },
-      { id: "donatario", label: "Nombre del Donatario", type: "text", required: true },
+      { id: "donante", label: "Nombre del Donante", type: "text", required: true, capitalizeWords: true },
+      { id: "donatario", label: "Nombre del Donatario", type: "text", required: true, capitalizeWords: true },
       { id: "bien", label: "Descripción del Bien Donado", type: "textarea", required: true },
       { id: "valor_estimado", label: "Valor Estimado (opcional)", type: "number", required: false, money: true },
       { id: "fecha", label: "Fecha de la Donación", type: "date", required: true },
@@ -257,8 +259,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Quien da por terminado",
     parte2Label: "Otra Parte",
     fields: [
-      { id: "quien_termina", label: "Nombre de Quien Da por Terminado", type: "text", required: true },
-      { id: "otra_parte", label: "Nombre de la Otra Parte", type: "text", required: true },
+      { id: "quien_termina", label: "Nombre de Quien Da por Terminado", type: "text", required: true, capitalizeWords: true },
+      { id: "otra_parte", label: "Nombre de la Otra Parte", type: "text", required: true, capitalizeWords: true },
       { id: "tipo_contrato", label: "Tipo de Contrato (Arrendamiento / Prestación de Servicios)", type: "text", required: true },
       { id: "referencia", label: "Dirección del Inmueble o Descripción del Servicio", type: "textarea", required: true },
       { id: "fecha_terminacion", label: "Fecha de Terminación", type: "date", required: true },
@@ -292,8 +294,8 @@ export const LEGAL_DOCUMENTS: LegalDocument[] = [
     parte1Label: "Actor (demandante)",
     parte2Label: "Demandado",
     fields: [
-      { id: "actor", label: "Nombre del Actor (demandante)", type: "text", required: true },
-      { id: "demandado", label: "Nombre del Demandado", type: "text", required: true },
+      { id: "actor", label: "Nombre del Actor (demandante)", type: "text", required: true, capitalizeWords: true },
+      { id: "demandado", label: "Nombre del Demandado", type: "text", required: true, capitalizeWords: true },
       { id: "hechos", label: "Hechos y Fundamentos", type: "textarea", required: true },
       { id: "pretensiones", label: "Pretensiones (qué se pide)", type: "textarea", required: true },
       { id: "valor_controversia", label: "Valor de la Controversia (MXN)", type: "number", required: true, money: true },

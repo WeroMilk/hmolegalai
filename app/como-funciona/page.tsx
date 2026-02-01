@@ -21,7 +21,7 @@ export default function ComoFuncionaPage() {
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <Navbar />
       <div className="pt-24 xs:pt-28 sm:pt-32 pb-12 xs:pb-16 px-3 xs:px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto w-full min-w-0">

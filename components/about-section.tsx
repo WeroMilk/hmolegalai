@@ -15,12 +15,12 @@ export function AboutSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.25 }}
-          className="text-center mb-10 xs:mb-16 pb-4"
+          className="text-center mb-0"
         >
           <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-4 xs:mb-6 leading-tight text-foreground">
             <span className="gradient-text hover-title">{t("about_title")}</span>
           </h2>
-          <p className="text-sm xs:text-base sm:text-xl text-muted max-w-2xl mx-auto mt-2">
+          <p className="text-sm xs:text-base sm:text-xl text-muted max-w-2xl mx-auto mt-2 mb-0">
             {t("about_subtitle")}
           </p>
         </motion.div>
@@ -31,7 +31,7 @@ export function AboutSection() {
           viewport={{ once: true }}
           className="space-y-8"
         >
-          <p className="text-foreground/90 text-base md:text-lg leading-relaxed text-center max-w-2xl mx-auto">
+          <p className="text-foreground/90 text-base md:text-lg leading-relaxed text-center max-w-2xl mx-auto mt-1">
             {t("about_who")}
           </p>
 
@@ -58,7 +58,6 @@ export function AboutSection() {
               </div>
               <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t("about_trust_title")}</h3>
               <p className="text-muted flex-grow leading-relaxed">{t("about_trust_short")}</p>
-              <div className="mt-4 text-blue-500 font-semibold flex-shrink-0">01</div>
             </motion.div>
 
             <motion.div
@@ -73,7 +72,6 @@ export function AboutSection() {
               </div>
               <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t("about_payment_title")}</h3>
               <p className="text-muted flex-grow leading-relaxed">{t("about_payment_short")}</p>
-              <div className="mt-4 text-blue-500 font-semibold flex-shrink-0">02</div>
             </motion.div>
           </div>
         </motion.div>

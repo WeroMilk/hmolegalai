@@ -87,7 +87,7 @@ function AuthPageContent() {
   useEffect(() => setMounted(true), []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <Navbar />
       <div className="flex justify-center items-start min-h-screen px-3 xs:px-4 sm:px-6 pt-24 xs:pt-28 sm:pt-32 pb-10 xs:pb-12 sm:pb-20">
         <motion.div
@@ -396,7 +396,7 @@ function AuthPageContent() {
 
 function AuthPageFallback() {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <Navbar />
       <div className="flex justify-center items-center min-h-screen pt-24">
         <p className="text-muted">Cargando...</p>

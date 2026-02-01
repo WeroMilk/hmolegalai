@@ -17,23 +17,7 @@ export function LegalDocLayout({ title, children, highlight }: LegalDocLayoutPro
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
-      {/* Fondo futurista: gradiente sutil + grid muy tenue */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        aria-hidden
-      >
-        <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-blue-200/20 dark:to-blue-950/20" />
-        <div
-          className="absolute inset-0 opacity-[0.02] dark:opacity-[0.04]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(59,130,246,0.3) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(59,130,246,0.3) 1px, transparent 1px)`,
-            backgroundSize: "48px 48px",
-          }}
-        />
-      </div>
-
+    <div className="min-h-screen text-foreground relative overflow-hidden">
       <Navbar />
 
       <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-20">

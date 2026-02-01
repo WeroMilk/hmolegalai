@@ -152,7 +152,7 @@ export default function PreviewPage() {
 
   if (!ready || !doc) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
+      <div className="min-h-screen text-foreground flex items-center justify-center">
         <Navbar />
         <div className="animate-pulse text-muted">{t("preview_loading")}</div>
       </div>
@@ -160,7 +160,7 @@ export default function PreviewPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
         <motion.div

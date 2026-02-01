@@ -27,17 +27,19 @@ export function DocumentCatalog({ compactTop, reduceTopPadding }: { compactTop?:
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.25, delay: index * 0.03 }}
               >
-                <Link href={`/documentos/${document.id}`}>
-                  <div className="glass-effect hover-box p-5 sm:p-6 rounded-xl border border-blue-500/40 group h-full flex flex-col min-h-[200px]">
-                    <div className="text-4xl mb-4 origin-left transition-transform duration-300 ease-out group-hover:scale-125 group-hover:translate-x-1">{document.icon}</div>
-                    <h3 className="hover-title glow-white text-xl font-semibold mb-2 group-hover:text-blue-500 text-foreground">
+                <Link href={`/documentos/${document.id}`} className="block h-full">
+                  <div className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group h-full flex flex-col min-h-[220px] xs:min-h-[280px]">
+                    <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0 text-3xl">
+                      {document.icon}
+                    </div>
+                    <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">
                       {name}
                     </h3>
-                    <p className="text-muted mb-4 flex-grow">
+                    <p className="text-muted flex-grow leading-relaxed">
                       {description}
                     </p>
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-                      <span className="text-2xl font-bold text-blue-500">
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-border flex-shrink-0">
+                      <span className="text-xl font-bold text-blue-500">
                         ${document.price}
                         <span className="text-sm text-muted font-normal"> MXN</span>
                       </span>

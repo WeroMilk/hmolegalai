@@ -90,6 +90,8 @@ ${instruccionBienesMuebles}
 
 6. Los domicilios y la ciudad/fecha del pie deben usar exactamente el formato que el usuario haya indicado en los campos correspondientes.
 
+7. OBLIGATORIO: En todo el documento NUNCA uses las expresiones "Parte 1" ni "Parte 2". Siempre refiere a las partes usando sus nombres específicos según el tipo de documento:${parte1 && parte2 ? ` la primera parte como "el/la ${parte1}" o "${parte1}", y la segunda como "el/la ${parte2}" o "${parte2}" (ej. "el Arrendador", "el Arrendatario", "el Contratante", "el Prestador de Servicios", "el Empleador", "el Trabajador", etc.).` : " Usa la lógica del tipo de documento (ej. Arrendador/Arrendatario, Contratante/Prestador, Empleador/Trabajador, Vendedor/Comprador) para nombrar a las partes."}
+
 Responde SOLO con el contenido del documento legal, sin comentarios adicionales.`;
 
   const rawKey = process.env.OPENAI_API_KEY?.trim() ?? "";
@@ -113,7 +115,7 @@ Responde SOLO con el contenido del documento legal, sin comentarios adicionales.
         {
           role: "system",
           content:
-            "Eres un asistente legal experto en derecho mexicano (civil y mercantil), con conocimiento del Código Civil Federal y del Estado de Sonora. Generas documentos legales profesionales. Siempre incluyes la NOTA DE VALIDEZ al inicio (después del título) y estructuras estándar con partes, cláusulas, domicilios y firmas. En compraventa y donación, limitas explícitamente el alcance a bienes muebles.",
+            "Eres un asistente legal experto en derecho mexicano (civil y mercantil), con conocimiento del Código Civil Federal y del Estado de Sonora. Generas documentos legales profesionales. Siempre incluyes la NOTA DE VALIDEZ al inicio (después del título) y estructuras estándar con partes, cláusulas, domicilios y firmas. NUNCA uses 'Parte 1' ni 'Parte 2' en el texto: siempre refiere a las partes por su rol (ej. el Arrendador, el Arrendatario, el Contratante, el Prestador de Servicios, el Empleador, el Trabajador). En compraventa y donación, limitas explícitamente el alcance a bienes muebles.",
         },
         {
           role: "user",

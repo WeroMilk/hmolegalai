@@ -162,7 +162,7 @@ export function Navbar() {
               type="button"
               className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 text-foreground rounded-lg hover:bg-card transition-colors"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label={mobileMenuOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-label={mobileMenuOpen ? t("nav_aria_close_menu") : t("nav_aria_open_menu")}
             >
               {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
