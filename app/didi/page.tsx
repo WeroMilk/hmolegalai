@@ -12,6 +12,8 @@ import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatter
 import { Leaf, Loader2, FileText, Download, ArrowLeft, ImageDown } from "lucide-react";
 import Link from "next/link";
 import html2canvas from "html2canvas";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const SEXO_OPTIONS = ["Hombre", "Mujer", "Otro"];
 const ACTIVIDAD_OPTIONS = [
@@ -436,30 +438,16 @@ export default function DidiPage() {
                   </Button>
                 </div>
               </div>
-              <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground">
-                <pre className="whitespace-pre-wrap font-sans text-sm sm:text-base leading-relaxed text-foreground">
-                  {planContent}
-                </pre>
+              <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground prose prose-slate dark:prose-invert max-w-none prose-table:text-sm prose-th:bg-purple-600 prose-th:text-white prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2 prose-table:border-collapse">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
               </div>
 
-              {/* Div para exportar a PNG: fuera de vista, estilo minimalista */}
+              {/* Div para exportar a PNG: fuera de vista, mismo contenido formateado */}
               <div
                 ref={planExportRef}
-                className="absolute left-[-9999px] top-0 w-[800px] bg-white text-[#1a1a1a] p-10 font-sans"
-                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+                className="absolute left-[-9999px] top-0 w-[800px] bg-white text-[#1a1a1a] p-10 font-sans [&_table]:w-full [&_th]:bg-blue-600 [&_th]:text-white [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2 [&_table]:border-collapse [&_th]:border [&_td]:border [&_h1]:text-xl [&_h2]:text-base [&_ul]:list-disc [&_ul]:pl-5"
               >
-                <div className="text-center border-b border-gray-200 pb-4 mb-6">
-                  <h1 className="text-2xl font-bold tracking-tight text-[#1a1a1a] mb-2">
-                    PLAN NUTRICIONAL
-                  </h1>
-                  <div className="flex justify-center gap-8 text-sm text-gray-600">
-                    <span>LNH. Diana Gallardo</span>
-                    <span>PX. {form.nombrePaciente || "Paciente"}</span>
-                  </div>
-                </div>
-                <pre className="whitespace-pre-wrap text-[15px] leading-[1.65] text-[#333] font-normal">
-                  {planContent}
-                </pre>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
               </div>
             </div>
           </motion.div>
