@@ -32,11 +32,6 @@ export function DocumentSelect({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (isOpen) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [isOpen]);
 
   const selected = options.find((o) => o.value === value);
   const displayValue = selected ? selected.label : placeholder;
@@ -65,7 +60,7 @@ export function DocumentSelect({
           onClick={() => handleSelect("")}
           className={`${optionBase} text-muted`}
         >
-          {placeholder}
+          Seleccionar
         </li>
       )}
       {options.map((opt) => (
@@ -106,41 +101,12 @@ export function DocumentSelect({
       </button>
 
       {isOpen && (
-        <>
-          {/* Desktop: dropdown bajo el trigger */}
-          <ul
-            className="absolute z-50 w-full mt-1.5 py-1 bg-card dark:bg-gray-800 border border-border rounded-xl shadow-xl max-h-60 overflow-auto hidden sm:block"
-            role="listbox"
-          >
-            {listContent}
-          </ul>
-          {/* Mobile: popup centrado */}
-          <div className="fixed inset-0 z-[100] sm:hidden" role="dialog" aria-modal="true" aria-label="Seleccionar opción">
-            <div
-              className="absolute inset-0 bg-black/50"
-              onClick={() => setIsOpen(false)}
-              aria-hidden="true"
-            />
-            <div className="absolute inset-x-4 top-1/2 -translate-y-1/2 max-h-[70vh] flex flex-col rounded-2xl bg-card dark:bg-gray-800 border border-border shadow-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
-                <span className="text-sm font-medium text-foreground">{placeholder}</span>
-                <button
-                  type="button"
-                  onClick={() => setIsOpen(false)}
-                  className="p-2 -m-2 text-muted hover:text-foreground rounded-lg transition-colors"
-                  aria-label="Cerrar"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-              <ul className="py-1 overflow-auto overscroll-contain [&>li]:py-3.5 [&>li]:text-base" role="listbox">
-                {listContent}
-              </ul>
-            </div>
-          </div>
-        </>
+        <ul
+          className="absolute z-50 w-full mt-1.5 py-1 bg-card dark:bg-gray-800 border border-border rounded-xl shadow-xl max-h-60 overflow-auto"
+          role="listbox"
+        >
+          {listContent}
+        </ul>
       )}
     </div>
   );

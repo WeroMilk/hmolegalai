@@ -184,6 +184,22 @@ input[type="number"] {
     text-align: center;
   }
 
+  /* Popup estilo Apple: bottom sheet y backdrop */
+  @keyframes document-select-backdrop-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes document-select-sheet-in {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  .document-select-backdrop {
+    animation: document-select-backdrop-in 0.25s ease-out forwards;
+  }
+  .document-select-sheet {
+    animation: document-select-sheet-in 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+  }
+
   /* Títulos: efecto azul en hover (todo el sitio excepto DIDI) */
   .hover-title {
     @apply transition-all duration-300 ease-out inline-block;

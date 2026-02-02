@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: `${siteUrl}/favicon.ico`, sizes: "48x48", type: "image/x-icon" },
-      { url: `${siteUrl}/logo.png`, type: "image/png", sizes: "96x96" },
-      { url: `${siteUrl}/logo.png`, type: "image/png", sizes: "192x192" },
+      { url: `${siteUrl}/icon-192.png`, type: "image/png", sizes: "192x192" },
+      { url: `${siteUrl}/icon-512.png`, type: "image/png", sizes: "512x512" },
     ],
-    apple: `${siteUrl}/logo.png`,
+    apple: `${siteUrl}/icon-192.png`,
   },
   openGraph: {
     type: "website",

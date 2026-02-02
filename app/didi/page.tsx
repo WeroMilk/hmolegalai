@@ -10,7 +10,9 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
-import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy } from "lucide-react";
+import { getEditsRemaining } from "@/lib/preview-utils";
+import { generateDidiPdf } from "@/lib/didi-pdf";
+import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy, Edit3, Check } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -119,7 +121,11 @@ export default function DidiPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [planContent, setPlanContent] = useState("");
+  const [originalPlanContent, setOriginalPlanContent] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+
+  const editsRemaining = getEditsRemaining(originalPlanContent, planContent);
 
   const handleCopyPrompt = () => {
     const fullPrompt = PROMPT_FORMATEAR_TABLA + planContent;
@@ -172,7 +178,10 @@ export default function DidiPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al generar el plan");
-      setPlanContent(data.content ?? "");
+      const content = data.content ?? "";
+      setPlanContent(content);
+      setOriginalPlanContent(content);
+      setIsEditing(false);
     };
     try {
       await doRequest(false);
@@ -197,7 +206,7 @@ export default function DidiPage() {
     }
   };
 
-  const handleDownload = () => {
+  const handleDownloadTxt = () => {
     if (!planContent) return;
     const blob = new Blob([planContent], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -208,6 +217,15 @@ export default function DidiPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadPdf = () => {
+    if (!planContent) return;
+    generateDidiPdf(planContent, form.nombrePaciente || "Paciente");
+  };
+
+  const handleSaveEdit = () => {
+    setIsEditing(false);
   };
 
   const isDidi = user ? isDidiUser(user.email) : false;
@@ -444,7 +462,7 @@ export default function DidiPage() {
             className="space-y-6"
           >
             <div className="glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
                   <FileText className="w-5 h-5 text-purple-500" />
                   Plan listo para enviar al cliente
@@ -453,35 +471,86 @@ export default function DidiPage() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setPlanContent("")}
+                    onClick={() => {
+                      setPlanContent("");
+                      setOriginalPlanContent("");
+                    }}
                     className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
                   >
                     Nuevo plan
                   </Button>
                   <Button
                     type="button"
-                    onClick={handleDownload}
+                    onClick={handleDownloadPdf}
                     className="bg-purple-600 hover:bg-purple-700 text-white"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Descargar TXT
+                    Descargar PDF
                   </Button>
                 </div>
               </div>
+
+              {/* 2 ediciones como en documentos legales */}
+              <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
+                <Button
+                  variant="outline"
+                  onClick={isEditing ? handleSaveEdit : () => { setIsEditing(true); handleDownloadTxt(); }}
+                  disabled={editsRemaining <= 0 && !isEditing}
+                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10 flex items-center gap-2 min-w-[11rem]"
+                >
+                  {isEditing ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Guardar cambios
+                    </>
+                  ) : (
+                    <>
+                      <Edit3 className="w-4 h-4" />
+                      Editar
+                    </>
+                  )}
+                </Button>
+                <span
+                  className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-bold border-2 ${
+                    editsRemaining > 0
+                      ? "bg-purple-500/90 text-white border-purple-400/50"
+                      : "bg-card text-muted border-border"
+                  }`}
+                >
+                  {editsRemaining} de 2
+                </span>
+              </div>
+              <p className="text-center text-muted text-xs sm:text-sm max-w-xl mx-auto mb-4">
+                Puedes editar el plan hasta 2 veces antes de descargar el PDF. El PDF se genera en tamaño oficio, con tabla organizada y colores rosa y morado pastel.
+              </p>
+
               <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
-                <div className="didi-plan-content w-full min-w-0">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
-                </div>
+                {isEditing ? (
+                  <textarea
+                    value={planContent}
+                    onChange={(e) => setPlanContent(e.target.value)}
+                    className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 border border-border rounded-xl p-6 text-foreground font-sans text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    placeholder="Plan nutricional..."
+                    spellCheck
+                  />
+                ) : (
+                  <div className="didi-plan-content w-full min-w-0">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
+                  </div>
+                )}
               </div>
 
-              {/* Prompt para formatear en tabla con IA */}
-              <div className="mt-6 p-4 rounded-xl border border-purple-500/30 bg-purple-500/5">
-                <h3 className="text-sm font-semibold text-foreground mb-2">Formatear como tabla profesional (ChatGPT, Claude, etc.)</h3>
-                <p className="text-xs text-muted mb-3">Copia el prompt con tu plan y pégalo en una IA para que genere una tabla como el PDF de referencia.</p>
-                <pre className="text-xs bg-card/50 rounded-lg p-4 overflow-x-auto max-h-32 overflow-y-auto whitespace-pre-wrap font-sans border border-border mb-3">
-                  {PROMPT_FORMATEAR_TABLA}
-                  <span className="text-muted">[tu plan se incluye al copiar]</span>
-                </pre>
+              <div className="mt-6 flex flex-wrap gap-3 justify-center">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDownloadTxt}
+                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
+                >
+                  <Download className="w-4 h-4 mr-1" />
+                  Descargar TXT
+                </Button>
                 <Button
                   type="button"
                   variant="outline"
@@ -490,10 +559,9 @@ export default function DidiPage() {
                   className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
                 >
                   <Copy className="w-4 h-4 mr-1" />
-                  {copiedPrompt ? "¡Copiado!" : "Copiar prompt + plan"}
+                  {copiedPrompt ? "¡Copiado!" : "Copiar prompt para ChatGPT"}
                 </Button>
               </div>
-
             </div>
           </motion.div>
         )}

@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/generate-favicon.js",
+    "prebuild": "node scripts/generate-favicon.js && node scripts/generate-pwa-icons.js",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -22,6 +22,8 @@
     "firebase": "^11.10.0",
     "firebase-admin": "^13.0.0",
     "framer-motion": "^11.11.0",
+    "jspdf": "^4.1.0",
+    "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.460.0",
     "next": "^15.1.0",
     "openai": "^4.70.0",
