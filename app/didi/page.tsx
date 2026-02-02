@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
+import { toTitleCase } from "@/lib/formatters";
 import { Leaf, Loader2, FileText, Download, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -26,6 +27,11 @@ const TIPO_DIETA_OPTIONS = [
   "Baja en carbohidratos",
   "Sin restricciones (mantenimiento)",
 ];
+const OBJETIVO_OPTIONS = [
+  "Mantener peso",
+  "Bajar de peso",
+  "Subir de peso",
+];
 
 export default function DidiPage() {
   const router = useRouter();
@@ -37,7 +43,7 @@ export default function DidiPage() {
     edad: "",
     sexo: "",
     actividadFisica: "",
-    caloriasRequeridas: "",
+    objetivo: "",
     tipoDieta: "",
   });
   const [loading, setLoading] = useState(false);
@@ -67,8 +73,8 @@ export default function DidiPage() {
     setLoading(true);
     setError("");
     setPlanContent("");
-    try {
-      const token = await user.getIdToken();
+    const doRequest = async (): Promise<void> => {
+      const token = await user!.getIdToken(true);
       const res = await fetch("/api/didi-generate", {
         method: "POST",
         headers: {
@@ -80,8 +86,22 @@ export default function DidiPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al generar el plan");
       setPlanContent(data.content ?? "");
+    };
+    try {
+      await doRequest();
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Error al generar el plan");
+      const msg = err instanceof Error ? err.message : "";
+      if (msg.includes("Sesión inválida") || msg.includes("iniciar sesión")) {
+        await new Promise((r) => setTimeout(r, 400));
+        try {
+          await doRequest();
+          return;
+        } catch (retryErr) {
+          setError(retryErr instanceof Error ? retryErr.message : "Error al generar el plan");
+        }
+      } else {
+        setError(msg || "Error al generar el plan");
+      }
     } finally {
       setLoading(false);
     }
@@ -116,7 +136,7 @@ export default function DidiPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16">
         <Link
           href="/documentos"
-          className="inline-flex items-center text-purple-500 hover:text-purple-400 mb-8 py-2 -my-2 min-h-[44px]"
+          className="inline-flex items-center text-purple-500 hover:text-purple-400 mb-0 py-2 -my-2 min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
           Volver
@@ -156,6 +176,10 @@ export default function DidiPage() {
                 <Input
                   value={form.nombrePaciente}
                   onChange={(e) => handleChange("nombrePaciente", e.target.value)}
+                  onBlur={() => {
+                    const t = toTitleCase(form.nombrePaciente);
+                    if (t !== form.nombrePaciente) handleChange("nombrePaciente", t);
+                  }}
                   placeholder="Ej. María García López"
                   required
                   className="focus:border-purple-500/50 focus:ring-purple-500/20"
@@ -165,29 +189,32 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Peso (kg) *
                 </label>
+                <p className="text-xs text-muted mb-1">Formato: 55.202 kg. Peso máximo: 150 kg.</p>
                 <Input
                   type="number"
-                  step="0.1"
+                  step="0.001"
                   min="20"
-                  max="300"
+                  max="150"
                   value={form.peso}
                   onChange={(e) => handleChange("peso", e.target.value)}
-                  placeholder="Ej. 68"
+                  placeholder="Ej. 55.202"
                   required
                   className="focus:border-purple-500/50 focus:ring-purple-500/20"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Estatura (cm) *
+                  Estatura (m) *
                 </label>
+                <p className="text-xs text-muted mb-1">En metros, ej. 1.45 M</p>
                 <Input
                   type="number"
-                  min="100"
-                  max="250"
+                  step="0.01"
+                  min="0.5"
+                  max="2.5"
                   value={form.estatura}
                   onChange={(e) => handleChange("estatura", e.target.value)}
-                  placeholder="Ej. 165"
+                  placeholder="Ej. 1.45"
                   required
                   className="focus:border-purple-500/50 focus:ring-purple-500/20"
                 />
@@ -215,7 +242,7 @@ export default function DidiPage() {
                   value={form.sexo}
                   onChange={(e) => handleChange("sexo", e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20"
+                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
                 >
                   <option value="">Selecciona</option>
                   {SEXO_OPTIONS.map((o) => (
@@ -231,7 +258,7 @@ export default function DidiPage() {
                   value={form.actividadFisica}
                   onChange={(e) => handleChange("actividadFisica", e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20"
+                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
                 >
                   <option value="">Selecciona</option>
                   {ACTIVIDAD_OPTIONS.map((o) => (
@@ -241,18 +268,20 @@ export default function DidiPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  Calorías requeridas (kcal/día) *
+                  Objetivo del plan *
                 </label>
-                <Input
-                  type="number"
-                  min="800"
-                  max="5000"
-                  value={form.caloriasRequeridas}
-                  onChange={(e) => handleChange("caloriasRequeridas", e.target.value)}
-                  placeholder="Ej. 1800"
+                <p className="text-xs text-muted mb-1">La IA calculará las calorías según peso, estatura, edad, sexo y actividad.</p>
+                <select
+                  value={form.objetivo}
+                  onChange={(e) => handleChange("objetivo", e.target.value)}
                   required
-                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
-                />
+                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
+                >
+                  <option value="">Selecciona</option>
+                  {OBJETIVO_OPTIONS.map((o) => (
+                    <option key={o} value={o}>{o}</option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
@@ -262,7 +291,7 @@ export default function DidiPage() {
                   value={form.tipoDieta}
                   onChange={(e) => handleChange("tipoDieta", e.target.value)}
                   required
-                  className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20"
+                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
                 >
                   <option value="">Selecciona</option>
                   {TIPO_DIETA_OPTIONS.map((o) => (

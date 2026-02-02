@@ -358,7 +358,7 @@ export default function DocumentPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-24">
         <Link
           href="/documentos"
-          className="inline-flex items-center text-blue-500 hover:text-blue-400 mb-8 py-2 -my-2 min-h-[44px]"
+          className="inline-flex items-center text-blue-500 hover:text-blue-400 mb-0 py-2 -my-2 min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
           {t("doc_back_catalog")}

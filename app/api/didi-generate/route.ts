@@ -55,20 +55,24 @@ export async function POST(request: NextRequest) {
       edad,
       sexo,
       actividadFisica,
-      caloriasRequeridas,
+      objetivo,
       tipoDieta,
     } = body as Record<string, string>;
 
-    const userPrompt = `Genera un plan nutricional SEMANAL (Lunes a Domingo) para el siguiente paciente. Sigue el formato que te indiqué: encabezado, luego cada día con DESAYUNO, COMIDA, CENA y MERIENDA/COLACIÓN (o entre comidas) cuando aplique, con porciones y calorías. Total de calorías por día debe aproximarse a las calorías requeridas. Usa SOLO comidas regionales de Hermosillo/Sonora/México (asequibles).
+    const userPrompt = `Genera un plan nutricional SEMANAL (Lunes a Domingo) para el siguiente paciente.
+
+PASO 1 - CALCULA LAS CALORÍAS: A partir de peso (kg), estatura (m), edad, sexo, actividad física y objetivo del plan, calcula las calorías diarias recomendadas de forma profesional (usa fórmulas estándar como Harris-Benedict o Mifflin-St Jeor: TMB y luego factor de actividad; para "Bajar de peso" resta 300-500 kcal, para "Subir de peso" suma 300-500 kcal, para "Mantener peso" mantén el resultado). Indica en el encabezado del plan la meta calórica calculada.
+
+PASO 2 - GENERA EL PLAN: Sigue el formato indicado: encabezado con nombre, fecha, datos del paciente y calorías objetivo calculadas; luego cada día (Lunes a Domingo) con DESAYUNO, COMIDA, CENA y MERIENDA/COLACIÓN cuando aplique, con porciones y calorías. Total de calorías por día debe aproximarse a la meta que calculaste. Usa SOLO comidas regionales de Hermosillo/Sonora/México (asequibles).
 
 Datos del paciente:
 - Nombre: ${nombrePaciente || "No indicado"}
 - Peso: ${peso || "—"} kg
-- Estatura: ${estatura || "—"} cm
+- Estatura: ${estatura || "—"} m
 - Edad: ${edad || "—"} años
 - Sexo: ${sexo || "—"}
 - Actividad física: ${actividadFisica || "—"}
-- Calorías requeridas: ${caloriasRequeridas || "—"} kcal/día
+- Objetivo del plan: ${objetivo || "—"}
 - Tipo de dieta: ${tipoDieta || "—"}
 
 Entrega el plan bonito, ordenado, con títulos por día (LUNES, MARTES, etc.), secciones Desayuno / Comida / Cena / Merienda o colación, y total calórico por día. Listo para enviar al cliente.`;

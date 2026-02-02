@@ -317,6 +317,24 @@ body.didi-theme .border-border {
   border-color: rgba(168, 85, 247, 0.2);
 }
 
+/* Dark mode: listas desplegables (select) en morado, texto blanco */
+.dark select,
+html.dark select {
+  background-color: rgba(88, 28, 135, 0.95);
+  color: #fafafa;
+  border-color: rgba(168, 85, 247, 0.4);
+}
+.dark select option,
+html.dark select option {
+  background-color: rgb(59, 7, 100);
+  color: #fafafa;
+}
+.dark select:focus,
+html.dark select:focus {
+  border-color: rgba(168, 85, 247, 0.6);
+  outline: none;
+}
+
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
 @media (max-width: 430px) {
   html {
