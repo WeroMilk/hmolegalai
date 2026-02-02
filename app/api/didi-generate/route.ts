@@ -27,7 +27,7 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
    - "Huevos con espinaca. (3 huevos revueltos con ½ taza de espinacas cocidas) 2 piezas de tortilla de maíz y ½ taza de frijol."
    - "Pollo a la plancha. (120 gr de pechuga de pollo a la plancha) 2 tazas de ensalada mixta, 1 cdita de vinagreta."
    - "Sándwich de pollo. (120 gr de pollo cocido) 1 taza de verduras mixtas, 1 cdita de mayonesa."
-   Usa: "cdita" para cucharadita, "cda" para cucharada, "gr" para gramos, "½" para medio, "rebanadas" para jamón/pan cuando aplique. Medidas SMAE: taza, pieza, cdita, cda, gr.
+   Usa SIEMPRE medidas del SMAE (Sistema Mexicano de Alimentos Equivalentes): "cdita" (cucharadita), "cda" (cucharada), "gr", "taza", "pieza", "½" para medio, "rebanadas" cuando aplique. Las porciones y equivalentes deben basarse en el SMAE.
 
    ESTRUCTURA VERTICAL (obligatorio, sin tabla): Cada día como bloque que baja hacia abajo. NO uses tabla horizontal. Formato:
 
@@ -53,21 +53,24 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
 
 IMPORTANTE: NO uses tabla. USA formato VERTICAL día por día: ## LUNES, luego lista con - **Desayuno:**, - **Comida:**, etc. Todo hacia abajo, bien organizado, sin scroll horizontal. Ejemplo: "- **Desayuno:** Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas cocidas) 2 piezas tortilla de maíz y ½ taza frijol."
 
-CÁLCULO CALÓRICO SEGÚN EDAD (OBLIGATORIO - CRÍTICO):
+CÁLCULO CALÓRICO BASADO EN SMAE Y RECOMENDACIONES PARA LA POBLACIÓN MEXICANA (OBLIGATORIO - CRÍTICO):
 
-**NO uses Harris-Benedict ni Mifflin-St Jeor en menores de 18 años.** Esas fórmulas subestiman o sobreestiman en población pediátrica. Usa rangos de referencia FAO/OMS por grupo etario:
+Las calorías de cada dieta DEBEN basarse en el SMAE (Sistema Mexicano de Alimentos Equivalentes) y en las recomendaciones de ingestión de nutrimentos para la población mexicana (NOM-043, Lineamientos de Nutrición). **NUNCA uses Harris-Benedict ni Mifflin-St Jeor en menores de 18 años.**
 
-| Grupo etario | Edad | kcal/día aproximadas (referencia) | Consideraciones |
-|--------------|------|-----------------------------------|-----------------|
-| Lactantes    | 1-2 años | 800-1,200 | Texturas blandas, purés, evitar atragantamiento. Porciones muy pequeñas (½ cdita a 2 cdas). 4-5 comidas. |
-| Preescolares | 2-5 años | 1,000-1,400 | Porciones reducidas (¼ a ½ de adulto). Alimentos fáciles de masticar. Evitar uvas enteras, frutos secos, caramelos duros. 4-5 comidas. |
-| Escolares    | 5-12 años | 1,400-2,200 | Varía por sexo y actividad. Niñas 1,400-1,900; niños 1,600-2,200. Porciones moderadas. |
-| Adolescentes | 12-18 años | 1,800-3,200 | Similar a adultos pero considerar crecimiento. Chicos 2,200-3,200; chicas 1,800-2,400 según actividad. |
-| Adultos      | 18-59 años | Mifflin-St Jeor + factor actividad | Fórmula estándar. "Bajar peso" -300 a -500 kcal; "Subir peso" +300 a +500 kcal. |
-| Adultos mayores | 60+ años | Reducir 10-20% vs adulto | 60-70 años: -10%. 70+ años: -20%. Priorizar proteína, fibra, hidratación. Texturas suaves si hay limitaciones. |
+| Grupo etario        | Edad      | kcal/día (referencia SMAE / México) | Consideraciones |
+|---------------------|-----------|-------------------------------------|-----------------|
+| Lactantes           | 0-6 meses | Lactancia exclusiva; no plan sólido | Si se pide plan, solo orientación: energía vía leche. |
+| Lactantes           | 6-12 meses | **500-650** (alimentación complementaria) | Porciones muy pequeñas (½ cdita a 2 cdas). 4-5 comidas. Texturas blandas, purés. NUNCA 1,200 kcal. |
+| Infantes            | 1-2 años  | **500-700** (sólidos/complemento)   | Infantes deben consumir aprox. 500 kcal diarias; NUNCA dar 1,200 kcal a un infante. Purés, picado fino, 4-5 comidas. |
+| Preescolares        | 2-5 años   | 1,000-1,400                         | Porciones ¼ a ½ de adulto. Alimentos fáciles de masticar. 4-5 comidas. |
+| Escolares           | 5-12 años | 1,400-2,200 (según sexo y actividad) | Niñas 1,400-1,900; niños 1,600-2,200. Porciones moderadas. |
+| Adolescentes         | 12-18 años | 1,800-3,200                         | Chicos 2,200-3,200; chicas 1,800-2,400 según actividad. |
+| Adultos             | 18-59 años | Mifflin-St Jeor + factor actividad  | "Bajar peso" -300 a -500 kcal; "Subir peso" +300 a +500 kcal. |
+| Adultos mayores     | 60+ años   | Reducir 10-20% vs adulto            | 60-70 años: -10%. 70+ años: -20%. Proteína, fibra, hidratación. |
 
-**Ejemplo 3 años:** Rango 1,000-1,400 kcal. Un niño de 3 años sedentario ≈ 1,100 kcal; activo ≈ 1,300 kcal. NUNCA dar 1,800+ kcal a un niño de 3 años.
-**Ejemplo 80 años:** Aplicar fórmula adulta y reducir ~20%. Evitar porciones muy grandes.
+**REGLA DE ORO:** Un infante (0-2 años) debe consumir aproximadamente **500 kcal/día** (rango 500-700 según edad y complemento). Si generas 1,200 kcal para un infante, ESTÁ MAL. Corrige siempre a rangos SMAE/población mexicana.
+**Ejemplo 3 años:** 1,000-1,400 kcal. NUNCA 1,800+ kcal a un niño de 3 años.
+**Ejemplo 80 años:** Mifflin-St Jeor reducido ~20%.
 
 ALIMENTOS Y TEXTURAS POR EDAD:
 - 1-5 años: Purés, alimentos bien cocidos, picados finos, sin huesos/espinas. Tortilla suave, arroz, huevo revuelto, fruta madura en trozos pequeños, yogur.
@@ -105,6 +108,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const {
       nombrePaciente,
+      nombreLnh,
       peso,
       estatura,
       edad,
@@ -115,14 +119,23 @@ export async function POST(request: NextRequest) {
       condiciones,
     } = body as Record<string, unknown>;
     const condicionesList = Array.isArray(condiciones) ? (condiciones as string[]) : [];
+    const lnhNombre = typeof nombreLnh === "string" && nombreLnh.trim() ? nombreLnh.trim() : "L.N.H. Diana Gallardo";
 
     const userPrompt = `Genera un plan nutricional SEMANAL (Lunes a Domingo) para el siguiente paciente.
 
-PASO 1 - CALCULA LAS CALORÍAS (OBLIGATORIO SEGÚN EDAD):
-- **Si edad < 18 años:** NO uses Harris-Benedict ni Mifflin-St Jeor. Usa rangos FAO/OMS por grupo etario: 1-2 años 800-1,200 kcal; 2-5 años 1,000-1,400 kcal; 5-12 años 1,400-2,200 kcal según sexo/actividad; 12-18 años 1,800-3,200 kcal. Un niño de 3 años NUNCA debe superar ~1,400 kcal.
-- **Si edad 18-59 años:** Usa Mifflin-St Jeor + factor de actividad. "Bajar de peso" resta 300-500 kcal; "Subir de peso" suma 300-500 kcal; "Mantener peso" mantén.
-- **Si edad ≥ 60 años:** Calcula como adulto y reduce 10% (60-70 años) o 20% (70+ años).
-Indica en el encabezado la meta calórica calculada. La edad del paciente es CRÍTICA para el cálculo.
+NOMBRE DEL NUTRIÓLOGO (LNH): Usa en todo el plan el nombre: "${lnhNombre}". Debajo del título # PLAN NUTRICIONAL escribe exactamente ## L.N.H. [este nombre en mayúsculas]. Al final del plan, en el pie, escribe "L.N.H. [nombre tal cual]".
+
+PASO 1 - CALCULA LAS CALORÍAS BASADO EN SMAE (OBLIGATORIO):
+Las calorías DEBEN basarse en el Sistema Mexicano de Alimentos Equivalentes (SMAE) y recomendaciones para la población mexicana (NOM-043). La edad es CRÍTICA.
+- **0-6 meses:** Lactancia exclusiva; si piden plan, solo orientación (no 1,200 kcal).
+- **6-12 meses:** 500-650 kcal/día (alimentación complementaria). NUNCA 1,200 kcal.
+- **1-2 años (infantes):** 500-700 kcal/día. Los infantes deben consumir aprox. 500 kcal diarias; NUNCA dar 1,200 kcal a un infante.
+- **2-5 años:** 1,000-1,400 kcal.
+- **5-12 años:** 1,400-2,200 kcal según sexo y actividad.
+- **12-18 años:** 1,800-3,200 kcal.
+- **18-59 años:** Mifflin-St Jeor + factor de actividad. "Bajar de peso" -300 a -500 kcal; "Subir de peso" +300 a +500 kcal.
+- **≥ 60 años:** Como adulto menos 10% (60-70) o 20% (70+).
+Indica en el encabezado la meta calórica calculada. Usa porciones y equivalentes SMAE (taza, pieza, cdita, cda, gr).
 
 PASO 2 - ADAPTA PORCIONES Y TEXTURAS SEGÚN EDAD:
 - 1-5 años: Porciones muy reducidas (¼ a ½ de adulto), texturas blandas, alimentos cocidos/picados, sin riesgo de atragantamiento. 4-5 comidas pequeñas.

@@ -108,6 +108,7 @@ export default function DidiPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [form, setForm] = useState({
+    nombreLnh: "L.N.H. Diana Gallardo",
     nombrePaciente: "",
     peso: "",
     estatura: "",
@@ -165,7 +166,7 @@ export default function DidiPage() {
     setLoading(true);
     setError("");
     setPlanContent("");
-    const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones };
+    const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones, nombreLnh: form.nombreLnh || "L.N.H. Diana Gallardo" };
     const doRequest = async (forceRefreshToken: boolean): Promise<void> => {
       const token = await user!.getIdToken(forceRefreshToken);
       const res = await fetch("/api/didi-generate", {
@@ -221,7 +222,7 @@ export default function DidiPage() {
 
   const handleDownloadPdf = () => {
     if (!planContent) return;
-    generateDidiPdf(planContent, form.nombrePaciente || "Paciente");
+    generateDidiPdf(planContent, form.nombrePaciente || "Paciente", form.nombreLnh || "L.N.H. Diana Gallardo");
   };
 
   const handleSaveEdit = () => {
@@ -262,7 +263,7 @@ export default function DidiPage() {
             DIDI · Plan Nutricional
           </h1>
           <p className="text-muted text-base sm:text-lg max-w-xl mx-auto">
-            LNH. Diana Gallardo
+            {form.nombreLnh || "L.N.H. Diana Gallardo"}
           </p>
         </motion.div>
 
@@ -277,6 +278,18 @@ export default function DidiPage() {
               Datos del paciente
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="sm:col-span-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Nombre del nutriólogo (LNH)
+                </label>
+                <Input
+                  value={form.nombreLnh}
+                  onChange={(e) => handleChange("nombreLnh", e.target.value)}
+                  placeholder="L.N.H. Diana Gallardo"
+                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
+                />
+                <p className="text-xs text-muted mt-1">Aparece en el plan y en el PDF. Por defecto: L.N.H. Diana Gallardo.</p>
+              </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Nombre del paciente *

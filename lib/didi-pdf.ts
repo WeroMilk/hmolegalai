@@ -56,6 +56,49 @@ function extractTotalKcal(block: string): string {
 /**
  * Parsea el markdown del plan (## LUNES, - **Desayuno:**, etc.) a estructura para la tabla.
  */
+/** Quita líneas de markdown (# PLAN NUTRICIONAL, ## L.N.H. ...) del bloque de paciente */
+function stripMarkdownFromPatientBlock(block: string): string {
+  return block
+    .split("\n")
+    .filter((line) => !/^\s*#+\s*/.test(line.trim()))
+    .join("\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/** Etiquetas que van en negrita en datos del paciente (orden: más largas primero) */
+const PATIENT_LABELS = [
+  "Datos del Paciente",
+  "Calorías objetivo",
+  "Tipo de dieta",
+  "Fecha del plan",
+  "Consideraciones",
+  "Nombre",
+  "Estatura",
+  "Sexo",
+  "Peso",
+  "Edad",
+];
+
+/** Parsea el bloque de paciente en pares label: valor para dibujar con etiquetas en negrita */
+function parsePatientBlockToPairs(block: string): { label: string; value: string }[] {
+  const text = stripMarkdownFromPatientBlock(block);
+  if (!text) return [];
+  const escaped = PATIENT_LABELS.map((l) => l.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
+  const re = new RegExp(
+    "(" + escaped + "):\\s*([\\s\\S]*?)(?=\\s*(?:" + escaped + "):|$)",
+    "gi"
+  );
+  const pairs: { label: string; value: string }[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(text)) !== null) {
+    const label = m[1].trim();
+    const value = (m[2] || "").trim();
+    pairs.push({ label, value });
+  }
+  return pairs;
+}
+
 export function parsePlanContent(markdown: string): ParsedPlan {
   const raw = (markdown || "").trim();
   const patientEnd = raw.search(/\n##\s*(LUNES|MARTES|MIÉRCOLES|JUEVES|VIERNES|SÁBADO|DOMINGO)/i);
@@ -97,42 +140,60 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
     hotfixes: ["px_scaling"],
   });
 
-  const margin = 12;
+  const margin = 10;
   const pageWidth = OFICIO_WIDTH - margin * 2;
   let y = margin;
 
-  // Título
+  // Título (estructura como referencia, compacto para una sola hoja)
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(0, 0, OFICIO_WIDTH, 22, "F");
+  doc.rect(0, 0, OFICIO_WIDTH, 14, "F");
   doc.setTextColor(...PASTEL.textDark);
-  doc.setFontSize(16);
+  doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", OFICIO_WIDTH / 2, 12, { align: "center" });
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
-  doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, 18, { align: "center" });
-  y = 26;
-
-  // Bloque de datos del paciente (legible, sin encimar)
+  doc.text("PLAN NUTRICIONAL", OFICIO_WIDTH / 2, 8, { align: "center" });
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
-  const patientLines = doc.splitTextToSize(patientBlock, pageWidth);
-  const maxPatientLines = 14;
-  patientLines.slice(0, maxPatientLines).forEach((line: string, i: number) => {
-    doc.text(line, margin, y + i * 4);
-  });
-  y += Math.min(patientLines.length, maxPatientLines) * 4 + 8;
+  doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, 12, { align: "center" });
+  y = 18;
 
-  // Subtítulo tipo referencia ChatGPT
+  // Datos del paciente: etiquetas en negrita, sin markdown, compacto
+  doc.setFontSize(6);
+  doc.setTextColor(...PASTEL.textDark);
+  const patientPairs = parsePatientBlockToPairs(patientBlock);
+  const lineH = 2.8;
+  const maxPatientLines = 8;
+  for (let i = 0; i < Math.min(patientPairs.length, maxPatientLines); i++) {
+    const { label, value } = patientPairs[i];
+    if (y > OFICIO_HEIGHT - 220) break;
+    doc.setFont("helvetica", "bold");
+    const labelText = label + (value ? ": " : "");
+    doc.text(labelText, margin, y);
+    if (!value) {
+      y += lineH;
+      continue;
+    }
+    const labelW = doc.getTextWidth(labelText);
+    doc.setFont("helvetica", "normal");
+    const valueLines = doc.splitTextToSize(value, pageWidth - labelW - 2);
+    doc.text(valueLines[0], margin + labelW, y);
+    let usedY = y;
+    for (let j = 1; j < valueLines.length; j++) {
+      usedY += lineH;
+      doc.text(valueLines[j], margin, usedY);
+    }
+    y = usedY + lineH;
+  }
+  y += 4;
+
+  // Plan de Alimentación Semanal: tabla en UNA sola hoja, todo visible sin cortar ni encimar
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(margin, y - 1, pageWidth, 7, "F");
+  doc.rect(margin, y - 1, pageWidth, 5, "F");
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(9);
-  doc.text("Plan de Alimentación Semanal", margin + 2, y + 4);
-  y += 10;
+  doc.setFontSize(8);
+  doc.text("Plan de Alimentación Semanal", margin + 2, y + 3);
+  y += 7;
 
-  // Tabla: Día | Desayuno | Comida | Cena | Colación | Aprox. calorías
-  const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. calorías"]];
+  const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
   const body = days.map((d) => [
     d.day,
     d.desayuno,
@@ -147,11 +208,12 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
     body,
     startY: y,
     margin: { left: margin, right: margin },
-    tableWidth: "wrap",
+    tableWidth: pageWidth,
     theme: "plain",
+    pageBreak: "avoid",
     styles: {
-      fontSize: 7,
-      cellPadding: 2,
+      fontSize: 4,
+      cellPadding: 0.5,
       overflow: "linebreak",
       textColor: PASTEL.textDark,
     },
@@ -159,54 +221,57 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
       fillColor: PASTEL.purpleHead,
       textColor: PASTEL.textDark,
       fontStyle: "bold",
-      fontSize: 7,
+      fontSize: 4,
+      cellPadding: 0.5,
     },
     bodyStyles: {
       fillColor: PASTEL.purpleRow,
       textColor: PASTEL.textDark,
+      fontSize: 4,
+      cellPadding: 0.5,
+      overflow: "linebreak",
     },
     alternateRowStyles: {
       fillColor: PASTEL.purpleRowAlt,
     },
     columnStyles: {
-      0: { cellWidth: 18 },
-      1: { cellWidth: "auto" },
-      2: { cellWidth: "auto" },
-      3: { cellWidth: "auto" },
-      4: { cellWidth: "auto" },
-      5: { cellWidth: 22 },
+      0: { cellWidth: 12 },
+      1: { cellWidth: 38 },
+      2: { cellWidth: 38 },
+      3: { cellWidth: 38 },
+      4: { cellWidth: 38 },
+      5: { cellWidth: 18 },
     },
     tableLineColor: PASTEL.lineLight,
-    tableLineWidth: 0.1,
+    tableLineWidth: 0.06,
   });
 
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-  y = (tbl?.finalY ?? y + 40) + 8;
+  y = (tbl?.finalY ?? y + 40) + 4;
 
-  // Recomendaciones
-  if (recommendations) {
+  // Recomendaciones (compactas)
+  if (recommendations && y < OFICIO_HEIGHT - 18) {
     doc.setFillColor(...PASTEL.purpleLight);
-    doc.rect(margin, y - 2, pageWidth, 6, "F");
+    doc.rect(margin, y - 1, pageWidth, 4, "F");
     doc.setFont("helvetica", "bold");
-    doc.setFontSize(9);
-    doc.text("Recomendaciones generales", margin + 2, y + 2);
-    y += 8;
+    doc.setFontSize(6);
+    doc.text("Recomendaciones generales", margin + 2, y + 2.5);
+    y += 5;
     doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
+    doc.setFontSize(5);
     const recLines = doc.splitTextToSize(recommendations, pageWidth);
-    const maxRec = 20;
+    const maxRec = 5;
     recLines.slice(0, maxRec).forEach((line: string) => {
-      if (y > OFICIO_HEIGHT - margin - 10) return;
+      if (y > OFICIO_HEIGHT - 12) return;
       doc.text(line, margin, y);
-      y += 4;
+      y += 2.5;
     });
   }
 
   // Pie
-  y = OFICIO_HEIGHT - 10;
-  doc.setFontSize(8);
+  doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
-  doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, y, { align: "center" });
+  doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, OFICIO_HEIGHT - 6, { align: "center" });
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
