@@ -50,6 +50,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Quitar bloques de código markdown (```plaintext, ```) si la IA los incluyó en header/footer
+    documentContent = documentContent
+      .replace(/^\s*```(?:plaintext|text)?\s*\r?\n?/i, "")
+      .replace(/\r?\n?\s*```\s*$/m, "")
+      .replace(/^\s*```\s*\r?\n?/m, "")
+      .trim();
+
     // Guardar en Firestore solo si el usuario pagó la opción "guardar en Mi cuenta" ($99)
     if (adminDb && saveToAccount === true) {
       try {

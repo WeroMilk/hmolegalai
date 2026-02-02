@@ -120,6 +120,28 @@ export function normalizeMoneyOnBlur(raw: string): string {
   return n.toFixed(2);
 }
 
+/** Convierte el JSON de domicilio (selector) a string para la API. */
+function domicilioJsonToDisplayString(raw: string): string {
+  if (!raw?.trim() || !raw.trim().startsWith("{")) return raw;
+  try {
+    const o = JSON.parse(raw) as Record<string, string>;
+    const parts: string[] = [];
+    if (o.calle?.trim()) {
+      let calle = o.calle.trim();
+      if (o.numeroExterior?.trim()) calle += ` ${o.numeroExterior.trim()}`;
+      if (o.numeroInterior?.trim()) calle += `, Int. ${o.numeroInterior.trim()}`;
+      parts.push(calle);
+    }
+    if (o.colonia?.trim()) parts.push(`Col. ${o.colonia.trim()}`);
+    if (o.cp?.trim()) parts.push(`CP ${o.cp.trim()}`);
+    if (o.municipio?.trim()) parts.push(o.municipio.trim());
+    if (o.estado?.trim()) parts.push(o.estado.trim());
+    return parts.join(", ");
+  } catch {
+    return raw;
+  }
+}
+
 export function buildUserInputsForApi(
   formData: Record<string, string>,
   document: LegalDocument
@@ -132,6 +154,11 @@ export function buildUserInputsForApi(
     } else if (field.money && raw) {
       const n = parseMoneyValue(raw);
       out[field.id] = n !== null ? n.toFixed(2) : raw;
+    } else if (
+      (field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2") &&
+      raw.trim().startsWith("{")
+    ) {
+      out[field.id] = domicilioJsonToDisplayString(raw);
     } else {
       out[field.id] = raw;
     }

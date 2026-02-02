@@ -92,7 +92,7 @@ ${instruccionBienesMuebles}
 
 7. OBLIGATORIO: En todo el documento NUNCA uses las expresiones "Parte 1" ni "Parte 2". Siempre refiere a las partes usando sus nombres específicos según el tipo de documento:${parte1 && parte2 ? ` la primera parte como "el/la ${parte1}" o "${parte1}", y la segunda como "el/la ${parte2}" o "${parte2}" (ej. "el Arrendador", "el Arrendatario", "el Contratante", "el Prestador de Servicios", "el Empleador", "el Trabajador", etc.).` : " Usa la lógica del tipo de documento (ej. Arrendador/Arrendatario, Contratante/Prestador, Empleador/Trabajador, Vendedor/Comprador) para nombrar a las partes."}
 
-Responde SOLO con el contenido del documento legal, sin comentarios adicionales.`;
+Responde SOLO con el contenido del documento legal, sin comentarios adicionales. NO uses bloques de código markdown: no escribas \`\`\` ni \`\`\`plaintext; entrega únicamente el texto plano del documento.`;
 
   const rawKey = process.env.OPENAI_API_KEY?.trim() ?? "";
   const isPlaceholder =

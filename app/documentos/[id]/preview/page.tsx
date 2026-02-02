@@ -242,7 +242,7 @@ export default function PreviewPage() {
             <button
               type="button"
               onClick={() => router.push("/documentos")}
-              className="text-blue-500 hover:text-blue-400 text-sm mr-4"
+              className="text-blue-500 hover:text-blue-400 text-sm mr-8"
             >
               ← {t("preview_back_catalog")}
             </button>

@@ -30,6 +30,8 @@ import { shouldSkipPayment } from "@/lib/superuser";
 import { createCheckoutSession } from "@/lib/stripe";
 import { PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
 import { parseDDMMYYYY, isValidDate } from "@/lib/date-utils";
+import { CiudadPieSelector } from "@/components/ciudad-pie-selector";
+import { DomicilioNotificacionesSelector } from "@/components/domicilio-notificaciones-selector";
 
 const PENDING_FORM_KEY = "avatar_pending_form";
 
@@ -410,7 +412,21 @@ export default function DocumentPage() {
               const label = (field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2") ? field.label : t(getFieldLabelKey(document.id, field.id));
               return (
                 <div key={field.id}>
-                  {field.type === "person_list" ? (
+                  {field.id === "ciudad_pie" ? (
+                    <CiudadPieSelector
+                      value={formData[field.id] || ""}
+                      onChange={(val) => handleInputChange(field.id, val)}
+                      label={t(getFieldLabelKey(document.id, field.id))}
+                      required={field.required}
+                    />
+                  ) : field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2" ? (
+                    <DomicilioNotificacionesSelector
+                      value={formData[field.id] || ""}
+                      onChange={(val) => handleInputChange(field.id, val)}
+                      label={label}
+                      required={field.required}
+                    />
+                  ) : field.type === "person_list" ? (
                     <div className="space-y-4">
                       <label className="block text-sm font-medium mb-2 text-foreground">
                         {label}
