@@ -129,8 +129,10 @@ export function parsePlanContent(markdown: string): ParsedPlan {
 
 /**
  * Genera el PDF y dispara la descarga. Usa contenido ya editado por el usuario.
+ * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
  */
-export function generateDidiPdf(planContent: string, nombrePaciente: string): void {
+export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
+  const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
   const { patientBlock, days, recommendations } = parsePlanContent(planContent);
 
   const doc = new jsPDF({
@@ -153,7 +155,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
   doc.text("PLAN NUTRICIONAL", OFICIO_WIDTH / 2, 8, { align: "center" });
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
-  doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, 12, { align: "center" });
+  doc.text(lnh, OFICIO_WIDTH / 2, 12, { align: "center" });
   y = 18;
 
   // Datos del paciente: etiquetas en negrita, sin markdown, compacto
@@ -271,7 +273,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
   // Pie
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
-  doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, OFICIO_HEIGHT - 6, { align: "center" });
+  doc.text(lnh, OFICIO_WIDTH / 2, OFICIO_HEIGHT - 6, { align: "center" });
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
