@@ -8,7 +8,7 @@ const sharp = require("sharp");
 const toIco = require("to-ico");
 
 const logoPath = path.join(__dirname, "..", "public", "logo.png");
-const outputPath = path.join(__dirname, "..", "app", "favicon.ico");
+const outputPath = path.join(__dirname, "..", "public", "favicon.ico");
 
 async function generate() {
   try {
@@ -20,7 +20,7 @@ async function generate() {
 
     const icoBuffer = await toIco([resizedBuffer]);
     fs.writeFileSync(outputPath, icoBuffer);
-    console.log("✓ favicon.ico generado correctamente en app/favicon.ico");
+    console.log("✓ favicon.ico generado correctamente en public/favicon.ico");
   } catch (err) {
     console.error("Error generando favicon:", err.message);
     process.exit(1);

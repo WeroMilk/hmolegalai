@@ -11,11 +11,11 @@ export const metadata: Metadata = {
   keywords: "documentos legales, IA, inteligencia artificial, contratos, documentos, Avatar Legal AI",
   icons: {
     icon: [
-      { url: "/logo.png", type: "image/png", sizes: "48x48" },
-      { url: "/logo.png", type: "image/png", sizes: "96x96" },
-      { url: "/logo.png", type: "image/png", sizes: "192x192" },
+      { url: `${siteUrl}/favicon.ico`, sizes: "48x48", type: "image/x-icon" },
+      { url: `${siteUrl}/logo.png`, type: "image/png", sizes: "96x96" },
+      { url: `${siteUrl}/logo.png`, type: "image/png", sizes: "192x192" },
     ],
-    apple: "/logo.png",
+    apple: `${siteUrl}/logo.png`,
   },
   openGraph: {
     type: "website",
