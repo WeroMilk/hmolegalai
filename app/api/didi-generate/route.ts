@@ -30,18 +30,21 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
    - Calorías objetivo: X,XXX kcal/día
    - Tipo de dieta: X
 
-4. TABLA SEMANAL (en Markdown): Una tabla con las porciones DENTRO de cada celda. Usa medidas SMAE: TAZA, CUCHARADA, PIEZA y GRAMO.
-   - Columnas: | | LUNES | MARTES | MIÉRCOLES | JUEVES | VIERNES | SÁBADO | DOMINGO |
-   - Filas: Desayuno | Comida | Cena | Colación | Total
-   - En CADA celda escribe las cantidades + (kcal). Formato: "2 piezas de huevo con 90 g de jamón (500 kcal)" o "4 tacos con 2 tortillas c/u, 50 g carne/taco (700 kcal)"
-   - Las porciones van ADENTRO del cuadro, no en sección aparte. Cada celda con su desglose completo.
-   - Fila Total: suma del día, ej. "2,290 kcal"
-   Ejemplos de celdas:
-   - Desayuno: "2 piezas de huevo con 90 g de jamón, 1 cucharada de aceite (500 kcal)"
-   - Comida: "4 tacos, 2 tortillas c/u, 50 g carne por taco (700 kcal)"
-   - Cena: "3 tostadas, 40 g tinga por tostada, 1 cucharada crema c/u (450 kcal)"
-   - Colación: "1 pieza de plátano y 30 g de nueces (190 kcal)"
-   NO hay sección separada de porciones: TODO va dentro de la tabla. Usa TAZA, CUCHARADA, PIEZA, GRAMO según SMAE.
+4. PLAN SEMANAL (formato vertical, día por día): NO uses tabla horizontal. Escribe cada día como bloque vertical para que se vea bien en móvil y sin scroll horizontal. Formato:
+
+   ## LUNES
+   - **Desayuno:** 2 piezas de huevo con 90 g de jamón, 1 cucharada de aceite (500 kcal)
+   - **Comida:** 4 tacos, 2 tortillas c/u, 50 g carne por taco (700 kcal)
+   - **Cena:** 3 tostadas, 40 g tinga por tostada, 1 cucharada crema c/u (450 kcal)
+   - **Colación:** 1 pieza de plátano, 30 g de nueces (190 kcal)
+   - **Total del día:** 2,000 kcal
+
+   ## MARTES
+   - **Desayuno:** ...
+   - **Comida:** ...
+   (y así para MIÉRCOLES, JUEVES, VIERNES, SÁBADO, DOMINGO)
+
+   Usa medidas SMAE: TAZA, CUCHARADA, PIEZA, GRAMO. Porciones dentro de cada línea. Formato vertical = sin scroll horizontal.
 
 5. RECOMENDACIONES GENERALES (lista con guiones, 2-4 ítems):
    - Mantén una buena hidratación...
@@ -50,16 +53,18 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
 
 6. PIE: "Elaborado por: Diana Gallardo, Lic. en Nutriología."
 
-IMPORTANTE: La tabla DEBE incluir las 7 columnas (LUNES a DOMINGO). Las porciones van DENTRO de cada celda. Ejemplo:
-| | LUNES | MARTES |
-|--|-------|--------|
-| **Desayuno** | 2 piezas de huevo con 90 g de jamón (500 kcal) | 2 piezas de pan con 40 g queso, 1/2 taza frijol (500 kcal) |
-| **Comida** | 4 tacos, 2 tortillas c/u, 50 g carne/taco (700 kcal) | 1 taza caldo de queso con 60 g queso (600 kcal) |
-| **Cena** | 120 g pollo, 1 taza ensalada (450 kcal) | 2 quesadillas, 40 g queso c/u (450 kcal) |
-| **Colación** | 1 pieza plátano, 30 g nueces (190 kcal) | 1 pieza yogur, 1/2 taza fruta (150 kcal) |
-| **Total** | 2,290 kcal | 2,040 kcal |
+IMPORTANTE: NO uses tabla horizontal con 7 columnas (provoca scroll horizontal). USA formato VERTICAL: cada día como bloque con ## DÍA y lista de comidas debajo. Ejemplo:
+## LUNES
+- **Desayuno:** 2 piezas de huevo con 90 g de jamón (500 kcal)
+- **Comida:** 4 tacos, 2 tortillas c/u, 50 g carne/taco (700 kcal)
+- **Cena:** 120 g pollo, 1 taza ensalada (450 kcal)
+- **Colación:** 1 pieza plátano, 30 g nueces (190 kcal)
+- **Total del día:** 2,000 kcal
 
-NO escribas sección aparte de porciones. TODO dentro de la tabla. Medidas: TAZA, CUCHARADA, PIEZA, GRAMO (SMAE).
+## MARTES
+... (repite para los 7 días)
+
+Todo en formato vertical para lectura fácil sin scroll horizontal.
 
 CONDICIONES DE SALUD: Si el paciente tiene alguna condición, adapta el plan de forma estricta:
 - Diabetes: control de carbohidratos y azúcares, índice glucémico bajo, porciones de carbohidratos consistentes, evitar azúcares añadidos.
@@ -122,7 +127,7 @@ Datos del paciente:
 
 ${condicionesList.length > 0 ? "IMPORTANTE: Adapta TODO el plan a las condiciones indicadas (restricciones de sodio, azúcares, grasas, purinas, etc. según corresponda). Incluye en el encabezado del plan las consideraciones por condición." : ""}
 
-Entrega el plan en formato Markdown: TABLA semanal con las PORCIONES DENTRO de cada celda (cantidades + kcal). Ej: "2 piezas de huevo con 90 g de jamón (500 kcal)". Usa medidas SMAE: TAZA, CUCHARADA, PIEZA, GRAMO. NO incluyas sección separada de porciones. Evita comidas exóticas. Listo para enviar al cliente.`;
+Entrega el plan en formato Markdown VERTICAL (día por día, sin tabla horizontal): ## LUNES, ## MARTES, etc. con lista de Desayuno, Comida, Cena, Colación y Total del día. Porciones en cada línea. Ej: "- **Desayuno:** 2 piezas de huevo con 90 g de jamón (500 kcal)". Usa medidas SMAE. Evita comidas exóticas. Listo para copiar y enviar.`;
 
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
