@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
@@ -9,9 +9,8 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
-import { Leaf, Loader2, FileText, Download, ArrowLeft, ImageDown } from "lucide-react";
+import { Leaf, Loader2, FileText, Download, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import html2canvas from "html2canvas";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -63,7 +62,6 @@ export default function DidiPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [planContent, setPlanContent] = useState("");
-  const planExportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -141,26 +139,6 @@ export default function DidiPage() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-  };
-
-  const handleDownloadPng = async () => {
-    if (!planContent || !planExportRef.current) return;
-    try {
-      const canvas = await html2canvas(planExportRef.current, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        logging: false,
-      });
-      const dataUrl = canvas.toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `Plan-Nutricional-${form.nombrePaciente || "Paciente"}-${new Date().toISOString().slice(0, 10)}.png`;
-      a.click();
-    } catch (err) {
-      console.error("Error al generar PNG:", err);
-      setError("No se pudo generar la imagen. Prueba descargar como TXT.");
-    }
   };
 
   const isDidi = user ? isDidiUser(user.email) : false;
@@ -430,28 +408,12 @@ export default function DidiPage() {
                     <Download className="w-4 h-4 mr-2" />
                     Descargar TXT
                   </Button>
-                  <Button
-                    type="button"
-                    onClick={handleDownloadPng}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
-                  >
-                    <ImageDown className="w-4 h-4 mr-2" />
-                    Descargar PNG
-                  </Button>
                 </div>
               </div>
               <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
                 <div className="didi-plan-content overflow-x-auto">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
                 </div>
-              </div>
-
-              {/* Div para exportar a PNG: mismo estilo minimalista */}
-              <div
-                ref={planExportRef}
-                className="absolute left-[-9999px] top-0 w-[900px] max-w-[95vw] bg-white text-[#1a1a1a] p-10 font-sans didi-plan-content"
-              >
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
               </div>
             </div>
           </motion.div>

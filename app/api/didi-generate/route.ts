@@ -38,11 +38,14 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
    - Los platillos deben ser concretos y regionales (ej. "Tacos de carne asada", "Chilaquiles verdes", "Caldo de queso")
    - Las calorías por comida deben sumar aproximadamente las calorías objetivo del día
 
-5. DETALLE DE PORCIONES (OBLIGATORIO - SÚPER DETALLADO): Después de la tabla, para CADA día (LUNES a DOMINGO), lista cada comida con cantidades exactas y específicas. Para platillos con varias piezas (tostadas, tacos, sopes, etc.) indica:
-   - Cantidad de piezas Y gramos por pieza. Ejemplo tostadas de tinga: "3 tostadas de maíz (20 g c/u), 45 g de tinga de pollo por tostada (135 g total), 15 g de crema por tostada, 20 g de lechuga, 10 g de queso fresco"
-   - Tacos: "4 tacos con 2 tortillas de maíz c/u (30 g cada tortilla), 50 g de carne por taco, 30 g de cebolla, 15 g de cilantro"
-   - Siempre: gramos totales y/o por unidad cuando aplique
-   Usa: gramos (g), piezas, rebanadas (con gramos), tazas, cucharadas/cucharaditas. NUNCA dejes un ingrediente sin cantidad. Basa en SMAE.
+5. DETALLE DE PORCIONES (OBLIGATORIO - SEGÚN SMAE): Usa ÚNICAMENTE las medidas del Sistema Mexicano de Alimentos Equivalentes (SMAE): TAZA, CUCHARADA, PIEZA y GRAMO. Para cada ingrediente usa la medida que corresponde en SMAE:
+   - TAZA: para arroz, frijol, avena, cereales, verduras cocidas, fruta picada, etc. Ej: "1/2 taza de frijol cocido", "1 taza de arroz"
+   - CUCHARADA: para aceite, crema, mantequilla, mermelada, etc. Ej: "1 cucharada de aceite", "2 cucharadas de crema"
+   - PIEZA: para huevos, tortillas, pan, frutas enteras, etc. Ej: "2 piezas de huevo", "3 piezas de tortilla de maíz", "1 pieza de plátano", "1 pieza de manzana"
+   - GRAMO (g): para carnes, quesos, jamón, pollo, etc. cuando SMAE lo indique en gramos. Ej: "120 g de pechuga de pollo", "40 g de queso panela", "60 g de jamón"
+   Ejemplo tostadas de tinga: "3 piezas de tostada de maíz, 45 g de tinga de pollo por tostada, 1 cucharada de crema por tostada, 1/4 taza de lechuga, 30 g de queso fresco"
+   Ejemplo tacos: "4 piezas de tortilla de maíz (2 por taco), 50 g de carne por taco, 2 cucharadas de cebolla, 1 cucharada de cilantro"
+   NUNCA uses "rebanadas" ni medidas fuera de SMAE; si aplica pieza pequeña usa "pieza" o los gramos según tabla SMAE.
    Evita platillos exóticos o de restaurante: melón con requesón, sandía con cottage, pescado al mojo de ajo, pescado a la plancha, mariscos, etc. Usa comidas típicas que la gente come diario: huevos con jamón, chilaquiles, tacos, caldo, tinga, enchiladas, quesadillas, tortas, sopes, tostadas, frijoles con arroz, etc.
 
 6. RECOMENDACIONES GENERALES (lista con guiones, 2-4 ítems):
@@ -124,7 +127,7 @@ Datos del paciente:
 
 ${condicionesList.length > 0 ? "IMPORTANTE: Adapta TODO el plan a las condiciones indicadas (restricciones de sodio, azúcares, grasas, purinas, etc. según corresponda). Incluye en el encabezado del plan las consideraciones por condición." : ""}
 
-Entrega el plan en formato Markdown: (1) TABLA semanal con platillo + kcal por celda, (2) DETALLE DE PORCIONES súper detallado: para tostadas indica nº de tostadas y g de tinga/cada una; para tacos indica nº de tacos, tortillas por taco y g de carne por taco; etc. Todo en gramos, piezas o medidas concretas. Evita comidas exóticas (no melón con requesón, pescado al mojo de ajo, pescado a la plancha, mariscos ni platillos de restaurante). Listo para enviar al cliente.`;
+Entrega el plan en formato Markdown: (1) TABLA semanal con platillo + kcal por celda, (2) DETALLE DE PORCIONES usando SOLO medidas SMAE: TAZA, CUCHARADA, PIEZA y GRAMO. Cada ingrediente con su medida correcta según SMAE. Evita comidas exóticas. Listo para enviar al cliente.`;
 
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
