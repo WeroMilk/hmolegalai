@@ -7,9 +7,8 @@
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
 
-/** Tamaño oficio México: 216 x 340 mm */
+/** Tamaño oficio México: 216 mm de ancho. Altura se ajusta automáticamente al contenido */
 const OFICIO_WIDTH = 216;
-const OFICIO_HEIGHT = 340;
 
 /** Colores morado pastel (RGB 0-255) — todo legible y organizado */
 const PASTEL = {
@@ -127,26 +126,25 @@ export function parsePlanContent(markdown: string): ParsedPlan {
   return { patientBlock, days, recommendations };
 }
 
+/** Altura muy grande para la pasada de medición */
+const MEASURE_PAGE_HEIGHT = 800;
+
 /**
- * Genera el PDF y dispara la descarga. Usa contenido ya editado por el usuario.
- * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
+ * Dibuja todo el contenido en el doc y devuelve la Y final (después del pie).
+ * pageHeight: altura de la página en mm (para comprobar espacio).
  */
-export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
-  const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
-  const { patientBlock, days, recommendations } = parsePlanContent(planContent);
-
-  const doc = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: [OFICIO_WIDTH, OFICIO_HEIGHT],
-    hotfixes: ["px_scaling"],
-  });
-
+function drawPlanContent(
+  doc: jsPDF,
+  pageHeight: number,
+  lnh: string,
+  patientBlock: string,
+  days: ParsedDay[],
+  recommendations: string
+): number {
   const margin = 10;
   const pageWidth = OFICIO_WIDTH - margin * 2;
   let y = margin;
 
-  // Título (estructura como referencia, compacto para una sola hoja)
   doc.setFillColor(...PASTEL.purpleLight);
   doc.rect(0, 0, OFICIO_WIDTH, 14, "F");
   doc.setTextColor(...PASTEL.textDark);
@@ -158,15 +156,13 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
   doc.text(lnh, OFICIO_WIDTH / 2, 12, { align: "center" });
   y = 18;
 
-  // Datos del paciente: etiquetas en negrita, sin markdown, compacto
   doc.setFontSize(6);
-  doc.setTextColor(...PASTEL.textDark);
   const patientPairs = parsePatientBlockToPairs(patientBlock);
   const lineH = 2.8;
   const maxPatientLines = 8;
   for (let i = 0; i < Math.min(patientPairs.length, maxPatientLines); i++) {
     const { label, value } = patientPairs[i];
-    if (y > OFICIO_HEIGHT - 220) break;
+    if (y > pageHeight - 220) break;
     doc.setFont("helvetica", "bold");
     const labelText = label + (value ? ": " : "");
     doc.text(labelText, margin, y);
@@ -187,7 +183,6 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
   }
   y += 4;
 
-  // Plan de Alimentación Semanal: tabla en UNA sola hoja, todo visible sin cortar ni encimar
   doc.setFillColor(...PASTEL.purpleLight);
   doc.rect(margin, y - 1, pageWidth, 5, "F");
   doc.setFont("helvetica", "bold");
@@ -251,8 +246,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
   y = (tbl?.finalY ?? y + 40) + 4;
 
-  // Recomendaciones (compactas)
-  if (recommendations && y < OFICIO_HEIGHT - 18) {
+  if (recommendations && y < pageHeight - 18) {
     doc.setFillColor(...PASTEL.purpleLight);
     doc.rect(margin, y - 1, pageWidth, 4, "F");
     doc.setFont("helvetica", "bold");
@@ -264,16 +258,45 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     const recLines = doc.splitTextToSize(recommendations, pageWidth);
     const maxRec = 5;
     recLines.slice(0, maxRec).forEach((line: string) => {
-      if (y > OFICIO_HEIGHT - 12) return;
+      if (y > pageHeight - 12) return;
       doc.text(line, margin, y);
       y += 2.5;
     });
   }
 
-  // Pie
+  y += 6;
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
-  doc.text(lnh, OFICIO_WIDTH / 2, OFICIO_HEIGHT - 6, { align: "center" });
+  doc.text(lnh, OFICIO_WIDTH / 2, y, { align: "center" });
+  return y + 4;
+}
+
+/**
+ * Genera el PDF y dispara la descarga. La altura de la hoja se ajusta automáticamente al contenido.
+ * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
+ */
+export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
+  const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
+  const { patientBlock, days, recommendations } = parsePlanContent(planContent);
+
+  // Pasada 1: medir altura del contenido en una página muy alta
+  const docMeasure = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: [OFICIO_WIDTH, MEASURE_PAGE_HEIGHT],
+    hotfixes: ["px_scaling"],
+  });
+  const contentEndY = drawPlanContent(docMeasure, MEASURE_PAGE_HEIGHT, lnh, patientBlock, days, recommendations);
+
+  // Pasada 2: generar PDF con altura justa (contenido + margen inferior)
+  const pageHeight = Math.min(340, Math.max(200, contentEndY + 15));
+  const doc = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: [OFICIO_WIDTH, pageHeight],
+    hotfixes: ["px_scaling"],
+  });
+  drawPlanContent(doc, pageHeight, lnh, patientBlock, days, recommendations);
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
