@@ -1,12 +1,13 @@
 import { getFieldsForForm, type LegalDocument } from "./documents";
 
-/** Formatea peso: si el usuario escribe 55500 (gramos), se muestra 55.500 kg. Solo cuando es entero sin puntos. */
+/** Formatea peso: 57 → 57.000, 55500 (gramos) → 55.500. Enteros sin punto. */
 export function formatPesoDisplay(raw: string): string {
   if (!raw || !raw.trim()) return "";
   const trimmed = raw.trim();
   if (/^\d+$/.test(trimmed)) {
     const num = parseInt(trimmed, 10);
     if (num >= 1000) return (num / 1000).toFixed(3);
+    return num.toFixed(3);
   }
   return trimmed;
 }

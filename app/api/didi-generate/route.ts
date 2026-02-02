@@ -49,7 +49,7 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
    - Distribuye tus comidas...
    - etc.
 
-6. PIE: "Elaborado por: Diana Gallardo, Lic. en Nutriología."
+6. PIE: "L.N.H. Diana Gallardo"
 
 IMPORTANTE: NO uses tabla. USA formato VERTICAL día por día: ## LUNES, luego lista con - **Desayuno:**, - **Comida:**, etc. Todo hacia abajo, bien organizado, sin scroll horizontal. Ejemplo: "- **Desayuno:** Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas cocidas) 2 piezas tortilla de maíz y ½ taza frijol."
 

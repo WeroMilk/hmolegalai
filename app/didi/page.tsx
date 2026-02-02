@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
@@ -10,11 +10,10 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
-import { Leaf, Loader2, FileText, Download, ArrowLeft, ImageDown, Copy } from "lucide-react";
+import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import html2canvas from "html2canvas";
 
 const SEXO_OPTIONS = ["Hombre", "Mujer", "Otro"];
 const ACTIVIDAD_OPTIONS = [
@@ -79,7 +78,6 @@ export default function DidiPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [planContent, setPlanContent] = useState("");
-  const planExportRef = useRef<HTMLDivElement>(null);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
 
   const handleCopyPrompt = () => {
@@ -168,26 +166,6 @@ export default function DidiPage() {
     URL.revokeObjectURL(url);
   };
 
-  const handleDownloadImage = async () => {
-    if (!planContent || !planExportRef.current) return;
-    try {
-      const canvas = await html2canvas(planExportRef.current, {
-        scale: 2,
-        backgroundColor: "#ffffff",
-        useCORS: true,
-        logging: false,
-      });
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.95);
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `Plan-Nutricional-${form.nombrePaciente || "Paciente"}-${new Date().toISOString().slice(0, 10)}.jpg`;
-      a.click();
-    } catch (err) {
-      console.error("Error al generar imagen:", err);
-      setError("No se pudo generar la imagen.");
-    }
-  };
-
   const isDidi = user ? isDidiUser(user.email) : false;
   const showSpinner = authLoading || !user || !isDidi;
   if (showSpinner && !planContent) {
@@ -257,7 +235,7 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Peso (kg) *
                 </label>
-                <p className="text-xs text-muted mb-1">Formato: 55.500 kg. 55500 → 55.500, 101500 → 101.500. Máx: 150 kg.</p>
+                <p className="text-xs text-muted mb-1">Formato: 57 → 57.000, 55500 → 55.500. Máx: 150 kg.</p>
                 <Input
                   type="text"
                   inputMode="decimal"
@@ -267,7 +245,7 @@ export default function DidiPage() {
                     const f = formatPesoDisplay(form.peso);
                     if (f && f !== form.peso) handleChange("peso", f);
                   }}
-                  placeholder="Ej. 55.500 o 55500 (se convierte a 55.500)"
+                  placeholder="Ej. 57 o 55500 (se convierte a 57.000 o 55.500)"
                   required
                   className="focus:border-purple-500/50 focus:ring-purple-500/20"
                 />
@@ -441,18 +419,10 @@ export default function DidiPage() {
                     <Download className="w-4 h-4 mr-2" />
                     Descargar TXT
                   </Button>
-                  <Button
-                    type="button"
-                    onClick={handleDownloadImage}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
-                  >
-                    <ImageDown className="w-4 h-4 mr-2" />
-                    Descargar JPG
-                  </Button>
                 </div>
               </div>
               <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
-                <div className="didi-plan-content overflow-x-auto">
+                <div className="didi-plan-content overflow-x-hidden break-words min-w-0">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
                 </div>
               </div>
@@ -477,13 +447,6 @@ export default function DidiPage() {
                 </Button>
               </div>
 
-              {/* Div para exportar a JPG - diseño profesional */}
-              <div
-                ref={planExportRef}
-                className="absolute left-[-9999px] top-0 w-[800px] bg-white p-10 font-sans text-[#1a1a1a] didi-plan-content"
-              >
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
-              </div>
             </div>
           </motion.div>
         )}
