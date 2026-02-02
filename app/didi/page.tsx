@@ -42,6 +42,8 @@ const CONDICIONES_OPTIONS = [
   "Triglicéridos altos",
   "Gastritis o reflujo",
   "Ácido úrico elevado (gota)",
+  "Hipertiroidismo",
+  "Hipotiroidismo",
 ];
 
 export default function DidiPage() {
@@ -438,14 +440,16 @@ export default function DidiPage() {
                   </Button>
                 </div>
               </div>
-              <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground prose prose-slate dark:prose-invert max-w-none prose-table:text-sm prose-th:bg-purple-600 prose-th:text-white prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2 prose-table:border-collapse">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
+              <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
+                <div className="didi-plan-content overflow-x-auto">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
+                </div>
               </div>
 
-              {/* Div para exportar a PNG: fuera de vista, mismo contenido formateado */}
+              {/* Div para exportar a PNG: mismo estilo minimalista */}
               <div
                 ref={planExportRef}
-                className="absolute left-[-9999px] top-0 w-[800px] bg-white text-[#1a1a1a] p-10 font-sans [&_table]:w-full [&_th]:bg-blue-600 [&_th]:text-white [&_th]:px-3 [&_th]:py-2 [&_td]:px-3 [&_td]:py-2 [&_table]:border-collapse [&_th]:border [&_td]:border [&_h1]:text-xl [&_h2]:text-base [&_ul]:list-disc [&_ul]:pl-5"
+                className="absolute left-[-9999px] top-0 w-[900px] max-w-[95vw] bg-white text-[#1a1a1a] p-10 font-sans didi-plan-content"
               >
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
               </div>
