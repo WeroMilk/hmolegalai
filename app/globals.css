@@ -478,6 +478,10 @@ body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg
 body.didi-theme .didi-plan-content ul li::before { color: #7c3aed; }
 body.didi-theme .didi-plan-content th { background: #5b21b6 !important; border-color: #5b21b6; }
 body.didi-theme .didi-plan-content th:first-child { background: #6d28d9 !important; }
+
+/* Footer "Avatar Legal AI" en morado solo en DIDI */
+body.didi-theme .footer-brand { color: #7c3aed !important; }
+body.didi-theme .footer-brand:hover { color: #8b5cf6 !important; }
 body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
 
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */

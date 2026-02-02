@@ -13,7 +13,7 @@ export function Footer() {
       <div className="flex justify-center mb-4">
         <Link href="/" className="inline-flex items-center gap-2 text-muted hover:text-foreground transition-colors">
           <Image src="/logo.png" alt="" width={32} height={32} className="w-8 h-8" />
-          <span className="font-semibold text-foreground mr-8">Avatar Legal AI</span>
+          <span className="footer-brand font-semibold text-foreground mr-8">Avatar Legal AI</span>
         </Link>
       </div>
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm mb-4">
@@ -40,7 +40,7 @@ export function Footer() {
         {t("footer_location")}
       </p>
       <p className="text-center text-muted text-sm mt-1">
-        <Link href="/" className="text-muted hover:text-blue-500 transition-colors">
+        <Link href="/" className="footer-brand text-muted hover:text-blue-500 transition-colors">
           © {year} Avatar Legal AI
         </Link>
         {t("footer_copyright_suffix")}

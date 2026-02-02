@@ -35,19 +35,60 @@ const OBJETIVO_OPTIONS = [
   "Bajar de peso",
   "Subir de peso",
 ];
-const PROMPT_FORMATEAR_TABLA = `Convierte este plan nutricional en una tabla profesional como la de un documento de Word o PDF. 
+const PROMPT_FORMATEAR_TABLA = `Convierte el siguiente plan nutricional en un formato profesional, limpio y súper legible, listo para compartir con pacientes en PDF o Word.
 
-Formato requerido:
-- Encabezado: "PLAN NUTRICIONAL" y "L.N.H. DIANA GALLARDO"
-- Sección "Datos del Paciente:" con Nombre, Peso, Estatura, Edad, Sexo, Calorías objetivo, Tipo de dieta
-- Tabla con columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías
-- Cada fila = un día (Lunes a Domingo)
-- En cada celda: la descripción detallada del platillo con cantidades (formato: [Platillo]. ([detalle]) [acompañamientos])
-- Sección final "Recomendaciones Generales" con viñetas
-- Diseño limpio, profesional, fácil de leer
-- Si puedes generar HTML o Markdown con tabla, hazlo. Si no, da instrucciones claras para formatearlo.
+REQUISITOS OBLIGATORIOS:
+- Formato vertical (carta).
+- Diseño claro, ordenado y fácil de leer (nada encimado).
+- Texto con saltos de línea dentro de cada celda.
+- Tipografía profesional estilo consultorio.
 
-Plan a convertir:
+ENCABEZADO:
+- Título centrado: "PLAN NUTRICIONAL"
+- Subtítulo: "L.N.H. DIANA GALLARDO"
+
+SECCIÓN: DATOS DEL PACIENTE
+Mostrar en formato ordenado:
+- Nombre
+- Peso
+- Estatura
+- Edad
+- Sexo
+- Calorías objetivo
+- Tipo de dieta
+- Consideraciones (si existen)
+- Fecha del plan (si se incluye)
+
+TABLA PRINCIPAL:
+Columnas obligatorias:
+Día | Desayuno | Comida | Cena | Colación | Aprox. de calorías
+
+INSTRUCCIONES PARA LA TABLA:
+- Una fila por día (Lunes a Domingo).
+- En cada celda usar este formato exacto:
+  [Platillo].
+  (cantidades y detalle)
+  Acompañamientos
+- Usar saltos de línea dentro de cada comida.
+- Mantener coherencia visual y suficiente espacio entre filas.
+- No resumir ni quitar información del plan original.
+
+SECCIÓN FINAL:
+Título: "Recomendaciones Generales"
+- Mostrar en viñetas claras y profesionales.
+
+FORMATO DE SALIDA:
+- Priorizar PDF vertical perfectamente acomodado.
+- Si no es posible, entregar en Markdown o HTML con tabla bien estructurada.
+- El resultado debe verse profesional incluso en celular.
+
+IMPORTANTE:
+- No cambiar alimentos, cantidades ni calorías.
+- Mantener el texto tal cual, solo reorganizarlo visualmente.
+- Pensar como documento clínico profesional.
+
+PLAN A CONVERTIR:
+
 `;
 
 const CONDICIONES_OPTIONS = [
@@ -257,6 +298,7 @@ export default function DidiPage() {
                 <p className="text-xs text-muted mb-1">En metros (1.45) o en cm (155 → se convierte a 1.55 m)</p>
                 <Input
                   type="number"
+                  inputMode="decimal"
                   step="0.01"
                   min="0.5"
                   max="250"
@@ -279,8 +321,10 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Edad (años) *
                 </label>
+                <p className="text-xs text-muted mb-1">1-120 años. El plan se adapta a bebés, niños, adolescentes, adultos y adultos mayores.</p>
                 <Input
                   type="number"
+                  inputMode="numeric"
                   min="1"
                   max="120"
                   value={form.edad}
@@ -318,7 +362,7 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Objetivo del plan *
                 </label>
-                <p className="text-xs text-muted mb-1">La IA calculará las calorías según peso, estatura, edad, sexo y actividad.</p>
+                <p className="text-xs text-muted mb-1">La IA calcula calorías según los datos. Se ajustan por etapa de vida (niños, adolescentes, adultos, mayores).</p>
                 <DidiSelect
                   value={form.objetivo}
                   onChange={(v) => handleChange("objetivo", v)}
