@@ -1,20 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getDocumentById } from "@/lib/documents";
 import { buildUserInputsForApi } from "@/lib/formatters";
 import { useAuth } from "@/lib/auth-context";
 import { useI18n } from "@/lib/i18n-context";
-import { DOC_NAME_DESC_KEYS } from "@/lib/translations";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { getEditsRemaining, PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
 import { motion } from "framer-motion";
-import { Edit3, RefreshCw, Download, Printer, Check, FileText } from "lucide-react";
+import { DOC_NAME_DESC_KEYS } from "@/lib/translations";
+import { Edit3, Download, Printer, Check, FileText } from "lucide-react";
 
-const MAX_EDITS = 5;
-const MAX_RECREATES = 2;
+const MAX_EDITS = 2;
 
 /** Detecta si una línea del documento es un título (para centrarla). */
 function isTitleLine(line: string): boolean {
@@ -40,9 +39,7 @@ export default function PreviewPage() {
 
   const [content, setContent] = useState("");
   const [originalContent, setOriginalContent] = useState("");
-  const [recreatesLeft, setRecreatesLeft] = useState(MAX_RECREATES);
   const [isEditing, setIsEditing] = useState(false);
-  const [recreating, setRecreating] = useState(false);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState("");
 
@@ -52,7 +49,6 @@ export default function PreviewPage() {
     if (typeof window === "undefined") return;
     const storedContent = sessionStorage.getItem(PREVIEW_STORAGE_KEYS.content);
     const storedOriginal = sessionStorage.getItem(PREVIEW_STORAGE_KEYS.original);
-    const storedRecreates = sessionStorage.getItem(PREVIEW_STORAGE_KEYS.recreatesLeft);
     const storedDocId = sessionStorage.getItem(PREVIEW_STORAGE_KEYS.documentId);
 
     if (!storedContent || storedDocId !== documentId) {
@@ -62,72 +58,8 @@ export default function PreviewPage() {
 
     setContent(storedContent);
     setOriginalContent(storedOriginal || storedContent);
-    setRecreatesLeft(storedRecreates ? parseInt(storedRecreates, 10) : MAX_RECREATES);
     setReady(true);
   }, [documentId, router]);
-
-  const persistPreviewState = useCallback(
-    (newContent: string, newOriginal: string, newRecreates: number) => {
-      sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, newContent);
-      sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, newOriginal);
-      sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, String(newRecreates));
-      sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, documentId);
-    },
-    [documentId]
-  );
-
-  const handleRecreate = async () => {
-    if (!doc || !user || recreatesLeft <= 0) return;
-    const savedFormData = sessionStorage.getItem(`formData_${doc.id}`);
-    if (!savedFormData) {
-      setError(t("preview_error_no_form"));
-      return;
-    }
-
-    setRecreating(true);
-    setError("");
-    try {
-      const formData = JSON.parse(savedFormData);
-      const userInputs = buildUserInputsForApi(formData, doc);
-      const token = await user.getIdToken();
-      const response = await fetch("/api/generate-document", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          documentId: doc.id,
-          documentType: doc.name,
-          userInputs,
-          sessionId: `recreate-${Date.now()}`,
-        }),
-      });
-
-      if (!response.ok) {
-        let msg = t("preview_error_recreate");
-        try {
-          const body = await response.json();
-          if (body?.error && typeof body.error === "string") msg = body.error;
-        } catch {
-          // ignorar si no es JSON
-        }
-        throw new Error(msg);
-      }
-      const data = await response.json();
-      const newContent = data.content as string;
-      setContent(newContent);
-      setOriginalContent(newContent);
-      const newRecreates = recreatesLeft - 1;
-      setRecreatesLeft(newRecreates);
-      persistPreviewState(newContent, newContent, newRecreates);
-      downloadContent(newContent);
-    } catch (err: any) {
-      setError(err.message || t("preview_error_recreate"));
-    } finally {
-      setRecreating(false);
-    }
-  };
 
   const handleSaveEdit = () => {
     setIsEditing(false);
@@ -149,11 +81,6 @@ export default function PreviewPage() {
   const handleDownload = () => downloadContent(content);
 
   const handlePrint = () => {
-    const printWindow = window.open("", "_blank");
-    if (!printWindow) {
-      window.print();
-      return;
-    }
     const escaped = (s: string) => s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
     const lines = content.split("\n").map((line) => {
       const trimmed = line.trim();
@@ -161,15 +88,21 @@ export default function PreviewPage() {
       if (isTitleLine(line)) return `<div style="text-align:center;margin:0.25em 0">${escaped(line)}</div>`;
       return `<div style="text-align:justify;margin:0.25em 0">${escaped(line)}</div>`;
     });
-    printWindow.document.write(`
-      <!DOCTYPE html><html><head><meta charset="utf-8"><title>${escaped(doc?.name || "Documento")}</title>
-      <style>body{font-family:Georgia,serif;max-width:700px;margin:2rem auto;padding:1rem;line-height:1.6;color:#111;}</style></head>
-      <body>${lines.join("")}</body></html>
-    `);
-    printWindow.document.close();
-    printWindow.focus();
-    printWindow.print();
-    printWindow.close();
+    const html = `<!DOCTYPE html><html><head><meta charset="utf-8"><title></title><style>body{font-family:Georgia,serif;max-width:700px;margin:2rem auto;padding:1rem;line-height:1.6;color:#111;}@page{margin:1cm;}</style></head><body>${lines.join("")}</body></html>`;
+    const blob = new Blob([html], { type: "text/html;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const printWindow = window.open(url, "_blank");
+    if (!printWindow) {
+      URL.revokeObjectURL(url);
+      window.print();
+      return;
+    }
+    printWindow.addEventListener("load", () => {
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+      URL.revokeObjectURL(url);
+    });
   };
 
   if (!ready || !doc) {
@@ -278,32 +211,7 @@ export default function PreviewPage() {
                     : "bg-card text-muted border-border"
                 }`}
               >
-                {editsRemaining} {t("preview_of_5")}
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                onClick={handleRecreate}
-                disabled={recreatesLeft <= 0 || recreating}
-                className="i18n-stable-btn flex items-center justify-center gap-2 min-w-[11rem] px-5 py-3 rounded-xl border border-border hover:border-amber-500/50 hover:bg-amber-500/10 transition-all"
-              >
-                {recreating ? (
-                  <RefreshCw className="w-4 h-4 animate-spin" />
-                ) : (
-                  <RefreshCw className="w-4 h-4" />
-                )}
-                {t("preview_recreate")}
-              </Button>
-              <span
-                className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold border-2 ${
-                  recreatesLeft > 0
-                    ? "bg-amber-500/90 text-black border-amber-400/50 shadow-lg shadow-amber-500/20"
-                    : "bg-card text-muted border-border"
-                }`}
-              >
-                {recreatesLeft}
+                {editsRemaining} {t("preview_of_2")}
               </span>
             </div>
           </div>

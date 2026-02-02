@@ -254,7 +254,7 @@ export default function DocumentPage() {
         const content = data.content as string;
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, content);
-        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "5");
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, document.id);
         router.push(`/documentos/${document.id}/preview`);
@@ -293,7 +293,7 @@ export default function DocumentPage() {
         const content = data.content as string;
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, content);
-        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "5");
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, document.id);
         router.push(`/documentos/${document.id}/preview`);

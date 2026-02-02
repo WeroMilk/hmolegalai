@@ -43,7 +43,7 @@ export default function SuccessPage() {
         const content = decodeURIComponent(contentParam);
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, content);
-        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "5");
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, params.id as string);
         router.replace(`/documentos/${params.id}/preview`);
@@ -123,7 +123,7 @@ export default function SuccessPage() {
 
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.original, content);
-        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "5");
+        sessionStorage.setItem(PREVIEW_STORAGE_KEYS.editsLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, document.id);
         router.replace(`/documentos/${document.id}/preview`);

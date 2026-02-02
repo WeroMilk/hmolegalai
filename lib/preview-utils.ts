@@ -41,11 +41,11 @@ function editDistanceTokens(a: string[], b: string[]): number {
   return dp[n][m];
 }
 
-const MAX_EDITS = 5;
+const MAX_EDITS = 2;
 
 /**
- * Calcula cuántos "cambios" quedan disponibles (0-5).
- * Si el contenido actual es igual al original, devuelve 5.
+ * Calcula cuántos "cambios" quedan disponibles (0-2).
+ * Si el contenido actual es igual al original, devuelve 2.
  */
 export function getEditsRemaining(originalContent: string, currentContent: string): number {
   const origTokens = tokenizeForEditCount(originalContent);
