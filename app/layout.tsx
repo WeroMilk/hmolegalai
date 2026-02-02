@@ -3,6 +3,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Footer } from "@/components/footer";
 
+const siteUrl = "https://www.avatarlegalai.com.mx";
+
 export const metadata: Metadata = {
   title: "Avatar Legal AI",
   description: "Avatar Legal AI — Genera documentos legales profesionales utilizando inteligencia artificial",
@@ -14,6 +16,17 @@ export const metadata: Metadata = {
       { url: "/logo.png", type: "image/png", sizes: "192x192" },
     ],
     apple: "/logo.png",
+  },
+  openGraph: {
+    type: "website",
+    locale: "es_MX",
+    url: siteUrl,
+    siteName: "Avatar Legal AI",
+    images: [{ url: `${siteUrl}/logo.png`, width: 512, height: 512, alt: "Avatar Legal AI" }],
+  },
+  twitter: {
+    card: "summary",
+    images: ["/logo.png"],
   },
   manifest: "/manifest.json",
   appleWebApp: {

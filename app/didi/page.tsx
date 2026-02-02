@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
-import { toTitleCase } from "@/lib/formatters";
-import { Leaf, Loader2, FileText, Download, ArrowLeft } from "lucide-react";
+import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
+import { Leaf, Loader2, FileText, Download, ArrowLeft, ImageDown } from "lucide-react";
 import Link from "next/link";
+import html2canvas from "html2canvas";
 
 const SEXO_OPTIONS = ["Hombre", "Mujer", "Otro"];
 const ACTIVIDAD_OPTIONS = [
@@ -32,6 +33,14 @@ const OBJETIVO_OPTIONS = [
   "Bajar de peso",
   "Subir de peso",
 ];
+const CONDICIONES_OPTIONS = [
+  "Diabetes",
+  "Colesterol alto",
+  "Hipertensión",
+  "Triglicéridos altos",
+  "Gastritis o reflujo",
+  "Ácido úrico elevado (gota)",
+];
 
 export default function DidiPage() {
   const router = useRouter();
@@ -46,9 +55,11 @@ export default function DidiPage() {
     objetivo: "",
     tipoDieta: "",
   });
+  const [condiciones, setCondiciones] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [planContent, setPlanContent] = useState("");
+  const planExportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -67,12 +78,20 @@ export default function DidiPage() {
     setError("");
   };
 
+  const handleCondicionToggle = (condicion: string) => {
+    setCondiciones((prev) =>
+      prev.includes(condicion) ? prev.filter((c) => c !== condicion) : [...prev, condicion]
+    );
+    setError("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     setLoading(true);
     setError("");
     setPlanContent("");
+    const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones };
     const doRequest = async (): Promise<void> => {
       const token = await user!.getIdToken(true);
       const res = await fetch("/api/didi-generate", {
@@ -81,7 +100,7 @@ export default function DidiPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(payload),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al generar el plan");
@@ -120,6 +139,26 @@ export default function DidiPage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleDownloadPng = async () => {
+    if (!planContent || !planExportRef.current) return;
+    try {
+      const canvas = await html2canvas(planExportRef.current, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+        useCORS: true,
+        logging: false,
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `Plan-Nutricional-${form.nombrePaciente || "Paciente"}-${new Date().toISOString().slice(0, 10)}.png`;
+      a.click();
+    } catch (err) {
+      console.error("Error al generar PNG:", err);
+      setError("No se pudo generar la imagen. Prueba descargar como TXT.");
+    }
+  };
+
   const isDidi = user ? isDidiUser(user.email) : false;
   const showSpinner = authLoading || !user || !isDidi;
   if (showSpinner && !planContent) {
@@ -136,7 +175,7 @@ export default function DidiPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16">
         <Link
           href="/documentos"
-          className="inline-flex items-center text-purple-500 hover:text-purple-400 mb-0 py-2 -my-2 min-h-[44px]"
+          className="inline-flex items-center text-purple-500 hover:text-purple-400 mb-1 sm:mb-0 py-2 -my-2 min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
           Volver
@@ -154,7 +193,7 @@ export default function DidiPage() {
             DIDI · Plan Nutricional
           </h1>
           <p className="text-muted text-base sm:text-lg max-w-xl mx-auto">
-            Lic. en Nutriología · Universidad Estatal de Sonora · Hermosillo, Sonora
+            LNH. Diana Gallardo
           </p>
         </motion.div>
 
@@ -189,15 +228,17 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Peso (kg) *
                 </label>
-                <p className="text-xs text-muted mb-1">Formato: 55.202 kg. Peso máximo: 150 kg.</p>
+                <p className="text-xs text-muted mb-1">Formato: 55.500 kg. 55500 → 55.500, 101500 → 101.500. Máx: 150 kg.</p>
                 <Input
-                  type="number"
-                  step="0.001"
-                  min="20"
-                  max="150"
+                  type="text"
+                  inputMode="decimal"
                   value={form.peso}
                   onChange={(e) => handleChange("peso", e.target.value)}
-                  placeholder="Ej. 55.202"
+                  onBlur={() => {
+                    const f = formatPesoDisplay(form.peso);
+                    if (f && f !== form.peso) handleChange("peso", f);
+                  }}
+                  placeholder="Ej. 55.500 o 55500 (se convierte a 55.500)"
                   required
                   className="focus:border-purple-500/50 focus:ring-purple-500/20"
                 />
@@ -206,15 +247,23 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Estatura (m) *
                 </label>
-                <p className="text-xs text-muted mb-1">En metros, ej. 1.45 M</p>
+                <p className="text-xs text-muted mb-1">En metros (1.45) o en cm (155 → se convierte a 1.55 m)</p>
                 <Input
                   type="number"
                   step="0.01"
                   min="0.5"
-                  max="2.5"
+                  max="250"
                   value={form.estatura}
                   onChange={(e) => handleChange("estatura", e.target.value)}
-                  placeholder="Ej. 1.45"
+                  onBlur={() => {
+                    const v = form.estatura.replace(",", ".").trim();
+                    const num = parseFloat(v);
+                    if (!Number.isNaN(num) && num >= 10 && num <= 250) {
+                      const metros = (num / 100).toFixed(2);
+                      if (metros !== form.estatura) handleChange("estatura", metros);
+                    }
+                  }}
+                  placeholder="Ej. 1.45 o 155"
                   required
                   className="focus:border-purple-500/50 focus:ring-purple-500/20"
                 />
@@ -301,6 +350,29 @@ export default function DidiPage() {
               </div>
             </div>
 
+            <div className="sm:col-span-2">
+              <label className="block text-sm font-medium text-foreground mb-2">
+                Enfermedades o condiciones (opcional)
+              </label>
+              <p className="text-xs text-muted mb-3">Marca las que apliquen para adaptar la dieta (puedes marcar varias).</p>
+              <div className="flex flex-wrap gap-3">
+                {CONDICIONES_OPTIONS.map((cond) => (
+                  <label
+                    key={cond}
+                    className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-border px-3 py-2 hover:border-purple-500/40 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={condiciones.includes(cond)}
+                      onChange={() => handleCondicionToggle(cond)}
+                      className="rounded border-border text-purple-500 focus:ring-purple-500/30"
+                    />
+                    <span className="text-sm text-foreground">{cond}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             {error && (
               <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
                 {error}
@@ -337,7 +409,7 @@ export default function DidiPage() {
                   <FileText className="w-5 h-5 text-purple-500" />
                   Plan listo para enviar al cliente
                 </h2>
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <Button
                     type="button"
                     variant="outline"
@@ -352,12 +424,40 @@ export default function DidiPage() {
                     className="bg-purple-600 hover:bg-purple-700 text-white"
                   >
                     <Download className="w-4 h-4 mr-2" />
-                    Descargar
+                    Descargar TXT
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleDownloadPng}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <ImageDown className="w-4 h-4 mr-2" />
+                    Descargar PNG
                   </Button>
                 </div>
               </div>
               <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground">
                 <pre className="whitespace-pre-wrap font-sans text-sm sm:text-base leading-relaxed text-foreground">
+                  {planContent}
+                </pre>
+              </div>
+
+              {/* Div para exportar a PNG: fuera de vista, estilo minimalista */}
+              <div
+                ref={planExportRef}
+                className="absolute left-[-9999px] top-0 w-[800px] bg-white text-[#1a1a1a] p-10 font-sans"
+                style={{ fontFamily: "system-ui, -apple-system, sans-serif" }}
+              >
+                <div className="text-center border-b border-gray-200 pb-4 mb-6">
+                  <h1 className="text-2xl font-bold tracking-tight text-[#1a1a1a] mb-2">
+                    PLAN NUTRICIONAL
+                  </h1>
+                  <div className="flex justify-center gap-8 text-sm text-gray-600">
+                    <span>LNH. Diana Gallardo</span>
+                    <span>PX. {form.nombrePaciente || "Paciente"}</span>
+                  </div>
+                </div>
+                <pre className="whitespace-pre-wrap text-[15px] leading-[1.65] text-[#333] font-normal">
                   {planContent}
                 </pre>
               </div>

@@ -5,10 +5,6 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [],
   },
-  // Para que Google y otros crawlers que piden /favicon.ico obtengan nuestro logo
-  async rewrites() {
-    return [{ source: "/favicon.ico", destination: "/logo.png" }];
-  },
   // CSP: permitir eval para que Next.js y dependencias no fallen en producción (avatarlegalai.com.mx)
   async headers() {
     return [

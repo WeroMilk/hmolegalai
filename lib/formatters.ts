@@ -1,5 +1,28 @@
 import { getFieldsForForm, type LegalDocument } from "./documents";
 
+/** Formatea peso: si el usuario escribe 55500 (gramos), se muestra 55.500 kg. Solo cuando es entero sin puntos. */
+export function formatPesoDisplay(raw: string): string {
+  if (!raw || !raw.trim()) return "";
+  const trimmed = raw.trim();
+  if (/^\d+$/.test(trimmed)) {
+    const num = parseInt(trimmed, 10);
+    if (num >= 1000) return (num / 1000).toFixed(3);
+  }
+  return trimmed;
+}
+
+/** Valor numérico del peso para la API: "55.500" → 55.5, "55500" (gramos) → 55.5 */
+export function parsePesoForApi(raw: string): string {
+  if (!raw || !raw.trim()) return "";
+  const trimmed = raw.trim();
+  if (/^\d+$/.test(trimmed)) {
+    const num = parseInt(trimmed, 10);
+    if (num >= 1000) return (num / 1000).toFixed(3);
+  }
+  const n = parseFloat(trimmed.replace(",", "."));
+  return Number.isNaN(n) ? trimmed : n.toString();
+}
+
 /** Primera letra de cada palabra en mayúscula (para nombres). El usuario puede editarlo después. */
 export function toTitleCase(s: string): string {
   if (!s || typeof s !== "string") return "";
