@@ -160,8 +160,8 @@ export default function DidiPage() {
     setError("");
     setPlanContent("");
     const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones };
-    const doRequest = async (): Promise<void> => {
-      const token = await user!.getIdToken(true);
+    const doRequest = async (forceRefreshToken: boolean): Promise<void> => {
+      const token = await user!.getIdToken(forceRefreshToken);
       const res = await fetch("/api/didi-generate", {
         method: "POST",
         headers: {
@@ -175,16 +175,19 @@ export default function DidiPage() {
       setPlanContent(data.content ?? "");
     };
     try {
-      await doRequest();
+      await doRequest(false);
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "";
-      if (msg.includes("Sesión inválida") || msg.includes("iniciar sesión")) {
+      const isSessionError = /Sesión inválida|iniciar sesión/i.test(msg);
+      if (isSessionError) {
         await new Promise((r) => setTimeout(r, 400));
         try {
-          await doRequest();
+          await doRequest(true);
           return;
-        } catch (retryErr) {
-          setError(retryErr instanceof Error ? retryErr.message : "Error al generar el plan");
+        } catch {
+          // No mostrar "Sesión inválida": redirigir a login para volver a entrar
+          setTimeout(() => router.replace("/auth?returnTo=/didi"), 1500);
+          return;
         }
       } else {
         setError(msg || "Error al generar el plan");

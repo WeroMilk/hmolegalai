@@ -16,6 +16,18 @@ import { Edit3, RefreshCw, Download, Printer, Check, FileText } from "lucide-rea
 const MAX_EDITS = 5;
 const MAX_RECREATES = 2;
 
+/** Detecta si una línea del documento es un título (para centrarla). */
+function isTitleLine(line: string): boolean {
+  const t = line.trim();
+  if (!t || t.length > 120) return false;
+  const letters = t.replace(/\s/g, "").replace(/[^a-zA-ZáéíóúñÁÉÍÓÚÑ]/g, "");
+  if (letters.length < 2) return false;
+  const upper = (t.match(/[A-ZÁÉÍÓÚÑ]/g) || []).length;
+  if (upper / letters.length >= 0.7) return true;
+  if (/^(PRIMERO|SEGUNDO|TERCERO|CUARTO|QUINTO|CLAUSULA|CLÁUSULA|ARTÍCULO|ARTICULO|NOTA DE VALIDEZ|DOCUMENTO PRIVADO|OBJETO|—+|=+)/i.test(t)) return true;
+  return false;
+}
+
 export default function PreviewPage() {
   const params = useParams();
   const router = useRouter();
@@ -109,6 +121,7 @@ export default function PreviewPage() {
       const newRecreates = recreatesLeft - 1;
       setRecreatesLeft(newRecreates);
       persistPreviewState(newContent, newContent, newRecreates);
+      downloadContent(newContent);
     } catch (err: any) {
       setError(err.message || t("preview_error_recreate"));
     } finally {
@@ -121,8 +134,8 @@ export default function PreviewPage() {
     sessionStorage.setItem(PREVIEW_STORAGE_KEYS.content, content);
   };
 
-  const handleDownload = () => {
-    const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const downloadContent = (text: string) => {
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -133,16 +146,25 @@ export default function PreviewPage() {
     URL.revokeObjectURL(url);
   };
 
+  const handleDownload = () => downloadContent(content);
+
   const handlePrint = () => {
     const printWindow = window.open("", "_blank");
     if (!printWindow) {
       window.print();
       return;
     }
+    const escaped = (s: string) => s.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const lines = content.split("\n").map((line) => {
+      const trimmed = line.trim();
+      if (trimmed === "") return "<div style=\"height:0.5em\"></div>";
+      if (isTitleLine(line)) return `<div style="text-align:center;margin:0.25em 0">${escaped(line)}</div>`;
+      return `<div style="text-align:justify;margin:0.25em 0">${escaped(line)}</div>`;
+    });
     printWindow.document.write(`
-      <!DOCTYPE html><html><head><meta charset="utf-8"><title>${doc?.name || "Documento"}</title>
-      <style>body{font-family:Georgia,serif;max-width:700px;margin:2rem auto;padding:1rem;line-height:1.6;color:#111;} pre{white-space:pre-wrap;}</style></head>
-      <body><pre>${content.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</pre></body></html>
+      <!DOCTYPE html><html><head><meta charset="utf-8"><title>${escaped(doc?.name || "Documento")}</title>
+      <style>body{font-family:Georgia,serif;max-width:700px;margin:2rem auto;padding:1rem;line-height:1.6;color:#111;}</style></head>
+      <body>${lines.join("")}</body></html>
     `);
     printWindow.document.close();
     printWindow.focus();
@@ -195,14 +217,29 @@ export default function PreviewPage() {
                     <textarea
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
-                      className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 dark:placeholder:text-gray-400 border border-border rounded-xl p-6 text-foreground font-serif text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 placeholder:text-muted"
+                      className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 dark:placeholder:text-gray-400 border border-border rounded-xl p-6 text-foreground font-serif text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 placeholder:text-muted text-justify"
                       placeholder={t("preview_placeholder")}
                       spellCheck
                     />
                   ) : (
-                    <pre className="whitespace-pre-wrap font-serif text-base sm:text-lg text-foreground/95 leading-relaxed">
-                      {content}
-                    </pre>
+                    <div className="legal-document-content font-serif text-base sm:text-lg text-foreground/95 leading-relaxed space-y-0.5">
+                      {content.split("\n").map((line, i) => {
+                        const trimmed = line.trim();
+                        if (trimmed === "") return <div key={i} className="h-2" aria-hidden />;
+                        if (isTitleLine(line)) {
+                          return (
+                            <div key={i} className="legal-doc-title py-0.5">
+                              {line}
+                            </div>
+                          );
+                        }
+                        return (
+                          <div key={i} className="text-justify py-0.5">
+                            {line}
+                          </div>
+                        );
+                      })}
+                    </div>
                   )}
                 </div>
               </div>
@@ -218,7 +255,7 @@ export default function PreviewPage() {
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                onClick={isEditing ? handleSaveEdit : () => setIsEditing(true)}
+                onClick={isEditing ? handleSaveEdit : () => { setIsEditing(true); handleDownload(); }}
                 disabled={editsRemaining <= 0 && !isEditing}
                 className="i18n-stable-btn flex items-center justify-center gap-2 min-w-[11rem] px-5 py-3 rounded-xl border border-border hover:border-blue-500/50 hover:bg-blue-500/10 transition-all"
               >
@@ -297,7 +334,7 @@ export default function PreviewPage() {
             <button
               type="button"
               onClick={() => router.push("/documentos")}
-              className="text-muted hover:text-foreground text-sm"
+              className="text-blue-500 hover:text-blue-400 text-sm mr-4"
             >
               ← {t("preview_back_catalog")}
             </button>

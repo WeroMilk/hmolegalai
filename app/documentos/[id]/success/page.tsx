@@ -12,11 +12,14 @@ import { getDocumentById } from "@/lib/documents";
 import { buildUserInputsForApi } from "@/lib/formatters";
 import { PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
 
+const isSessionError = (msg: string) =>
+  /Sesión inválida|iniciar sesión|session|unauthorized/i.test(msg);
+
 export default function SuccessPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { t } = useI18n();
   const [generating, setGenerating] = useState(true);
   const [documentContent, setDocumentContent] = useState("");
@@ -29,11 +32,12 @@ export default function SuccessPage() {
     const contentParam = searchParams.get("content");
     const validPaymentId = sessionId || paymentIntent;
 
-    // Evitar doble ejecución solo cuando ya vamos a generar (tenemos pago y usuario)
+    // Esperar a que la auth termine de cargar antes de decidir
+    if (authLoading) return;
     if (validPaymentId && user && generationStarted.current) return;
     if (validPaymentId && user) generationStarted.current = true;
 
-    const generateDocument = async () => {
+    const generateDocument = async (retryWithFreshToken = false) => {
       // Si viene contenido en la URL (superusuario legacy), ir a preview
       if (contentParam) {
         const content = decodeURIComponent(contentParam);
@@ -46,16 +50,25 @@ export default function SuccessPage() {
         return;
       }
 
-      if (!validPaymentId || !user) {
-        setError(t("success_invalid_session"));
+      if (!validPaymentId) {
         setGenerating(false);
+        router.replace("/documentos");
+        return;
+      }
+
+      // Sin usuario tras cargar auth: no mostrar "Sesión inválida", mantener spinner y redirigir
+      if (!user) {
+        const returnTo = typeof window !== "undefined" ? window.location.pathname + window.location.search : "";
+        setTimeout(() => {
+          router.replace(returnTo ? `/auth?returnTo=${encodeURIComponent(returnTo)}` : "/auth");
+        }, 2000);
         return;
       }
 
       const document = getDocumentById(params.id as string);
       if (!document) {
-        setError(t("success_doc_not_found"));
         setGenerating(false);
+        router.replace("/documentos");
         return;
       }
 
@@ -64,8 +77,9 @@ export default function SuccessPage() {
       const userInputs = buildUserInputsForApi(formData, document);
 
       const saveToAccount = searchParams.get("save") === "1";
+      let keepSpinner = false;
       try {
-        const token = await user.getIdToken();
+        const token = await user.getIdToken(retryWithFreshToken);
         const response = await fetch("/api/generate-document", {
           method: "POST",
           headers: {
@@ -89,6 +103,17 @@ export default function SuccessPage() {
           } catch {
             // ignorar si no es JSON
           }
+          const isSession = isSessionError(msg);
+          if (isSession && !retryWithFreshToken) {
+            keepSpinner = true;
+            await generateDocument(true);
+            return;
+          }
+          if (isSession) {
+            keepSpinner = true;
+            setTimeout(() => router.replace(`/auth?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`), 2000);
+            return;
+          }
           throw new Error(msg);
         }
 
@@ -102,15 +127,26 @@ export default function SuccessPage() {
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.recreatesLeft, "2");
         sessionStorage.setItem(PREVIEW_STORAGE_KEYS.documentId, document.id);
         router.replace(`/documentos/${document.id}/preview`);
-      } catch (err: any) {
-        setError(err.message || t("success_generate_error"));
+      } catch (err: unknown) {
+        const msg = err instanceof Error ? err.message : String(err);
+        if (isSessionError(msg) && !retryWithFreshToken) {
+          keepSpinner = true;
+          await generateDocument(true);
+          return;
+        }
+        if (isSessionError(msg)) {
+          keepSpinner = true;
+          setTimeout(() => router.replace(`/auth?returnTo=${encodeURIComponent(window.location.pathname + window.location.search)}`), 2000);
+          return;
+        }
+        setError(msg || t("success_generate_error"));
       } finally {
-        setGenerating(false);
+        if (!keepSpinner) setGenerating(false);
       }
     };
 
-    generateDocument();
-  }, [params.id, searchParams, user, router, t]);
+    generateDocument(false);
+  }, [params.id, searchParams, user, authLoading, router, t]);
 
   const handleDownload = () => {
     const blob = new Blob([documentContent], { type: "text/plain" });
@@ -133,20 +169,20 @@ export default function SuccessPage() {
           animate={{ opacity: 1, y: 0 }}
           className="glass-effect hover-box p-8 rounded-xl border border-blue-500/40 text-center"
         >
-          {generating ? (
+          {generating || error ? (
             <>
               <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto mb-4" />
-              <h1 className="hover-title text-3xl font-bold mb-4 text-foreground">{t("success_generating")}</h1>
-              <p className="text-muted">{t("success_ai_creating")}</p>
-            </>
-          ) : error ? (
-            <>
-              <div className="text-red-400 text-4xl mb-4">✕</div>
-              <h1 className="text-3xl font-bold mb-4 text-red-400">{t("success_error")}</h1>
-              <p className="text-muted mb-6">{error}</p>
-              <Button onClick={() => router.push("/documentos")}>
-                {t("success_back_catalog")}
-              </Button>
+              <h1 className="hover-title text-3xl font-bold mb-4 text-foreground">
+                {generating ? t("success_generating") : t("success_ai_creating")}
+              </h1>
+              <p className="text-muted mb-6">
+                {generating ? t("success_ai_creating") : t("success_back_catalog")}
+              </p>
+              {!generating && (
+                <Button onClick={() => router.push("/documentos")} className="mt-2">
+                  {t("success_back_catalog")}
+                </Button>
+              )}
             </>
           ) : (
             <>

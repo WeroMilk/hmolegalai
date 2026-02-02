@@ -176,6 +176,14 @@ input[type="number"] {
     border-radius: 8px;
   }
 
+  /* Documentos legales: texto justificado y títulos centrados */
+  .legal-document-content {
+    text-align: justify;
+  }
+  .legal-document-content .legal-doc-title {
+    text-align: center;
+  }
+
   /* Títulos: efecto azul en hover (todo el sitio excepto DIDI) */
   .hover-title {
     @apply transition-all duration-300 ease-out inline-block;
