@@ -30,41 +30,36 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
    - Calorías objetivo: X,XXX kcal/día
    - Tipo de dieta: X
 
-4. TABLA SEMANAL (en Markdown): Una tabla con:
+4. TABLA SEMANAL (en Markdown): Una tabla con las porciones DENTRO de cada celda. Usa medidas SMAE: TAZA, CUCHARADA, PIEZA y GRAMO.
    - Columnas: | | LUNES | MARTES | MIÉRCOLES | JUEVES | VIERNES | SÁBADO | DOMINGO |
    - Filas: Desayuno | Comida | Cena | Colación | Total
-   - En cada celda: nombre corto del platillo + (XXX kcal). Ejemplo: "Burritos de machaca con huevo (600 kcal)"
+   - En CADA celda escribe las cantidades + (kcal). Formato: "2 piezas de huevo con 90 g de jamón (500 kcal)" o "4 tacos con 2 tortillas c/u, 50 g carne/taco (700 kcal)"
+   - Las porciones van ADENTRO del cuadro, no en sección aparte. Cada celda con su desglose completo.
    - Fila Total: suma del día, ej. "2,290 kcal"
-   - Los platillos deben ser concretos y regionales (ej. "Tacos de carne asada", "Chilaquiles verdes", "Caldo de queso")
-   - Las calorías por comida deben sumar aproximadamente las calorías objetivo del día
+   Ejemplos de celdas:
+   - Desayuno: "2 piezas de huevo con 90 g de jamón, 1 cucharada de aceite (500 kcal)"
+   - Comida: "4 tacos, 2 tortillas c/u, 50 g carne por taco (700 kcal)"
+   - Cena: "3 tostadas, 40 g tinga por tostada, 1 cucharada crema c/u (450 kcal)"
+   - Colación: "1 pieza de plátano y 30 g de nueces (190 kcal)"
+   NO hay sección separada de porciones: TODO va dentro de la tabla. Usa TAZA, CUCHARADA, PIEZA, GRAMO según SMAE.
 
-5. DETALLE DE PORCIONES (OBLIGATORIO - SEGÚN SMAE): Usa ÚNICAMENTE las medidas del Sistema Mexicano de Alimentos Equivalentes (SMAE): TAZA, CUCHARADA, PIEZA y GRAMO. Para cada ingrediente usa la medida que corresponde en SMAE:
-   - TAZA: para arroz, frijol, avena, cereales, verduras cocidas, fruta picada, etc. Ej: "1/2 taza de frijol cocido", "1 taza de arroz"
-   - CUCHARADA: para aceite, crema, mantequilla, mermelada, etc. Ej: "1 cucharada de aceite", "2 cucharadas de crema"
-   - PIEZA: para huevos, tortillas, pan, frutas enteras, etc. Ej: "2 piezas de huevo", "3 piezas de tortilla de maíz", "1 pieza de plátano", "1 pieza de manzana"
-   - GRAMO (g): para carnes, quesos, jamón, pollo, etc. cuando SMAE lo indique en gramos. Ej: "120 g de pechuga de pollo", "40 g de queso panela", "60 g de jamón"
-   Ejemplo tostadas de tinga: "3 piezas de tostada de maíz, 45 g de tinga de pollo por tostada, 1 cucharada de crema por tostada, 1/4 taza de lechuga, 30 g de queso fresco"
-   Ejemplo tacos: "4 piezas de tortilla de maíz (2 por taco), 50 g de carne por taco, 2 cucharadas de cebolla, 1 cucharada de cilantro"
-   NUNCA uses "rebanadas" ni medidas fuera de SMAE; si aplica pieza pequeña usa "pieza" o los gramos según tabla SMAE.
-   Evita platillos exóticos o de restaurante: melón con requesón, sandía con cottage, pescado al mojo de ajo, pescado a la plancha, mariscos, etc. Usa comidas típicas que la gente come diario: huevos con jamón, chilaquiles, tacos, caldo, tinga, enchiladas, quesadillas, tortas, sopes, tostadas, frijoles con arroz, etc.
-
-6. RECOMENDACIONES GENERALES (lista con guiones, 2-4 ítems):
+5. RECOMENDACIONES GENERALES (lista con guiones, 2-4 ítems):
    - Mantén una buena hidratación...
    - Distribuye tus comidas...
    - etc.
 
-7. PIE: "Elaborado por: Diana Gallardo, Lic. en Nutriología."
+6. PIE: "Elaborado por: Diana Gallardo, Lic. en Nutriología."
 
-IMPORTANTE SOBRE LA TABLA: La tabla DEBE incluir las 7 columnas (LUNES a DOMINGO). Cada celda: nombre corto del platillo (máx 4-5 palabras) + (XXX kcal). Ejemplo de formato Markdown:
+IMPORTANTE: La tabla DEBE incluir las 7 columnas (LUNES a DOMINGO). Las porciones van DENTRO de cada celda. Ejemplo:
 | | LUNES | MARTES |
 |--|-------|--------|
-| **Desayuno** | Huevos rancheros (500 kcal) | Molletes (500 kcal) |
-| **Comida** | Tacos de carne asada (700 kcal) | Caldo de queso (600 kcal) |
-| **Cena** | Ensalada de pollo (450 kcal) | Quesadillas (400 kcal) |
-| **Colación** | Plátano y nueces (190 kcal) | Yogur (150 kcal) |
+| **Desayuno** | 2 piezas de huevo con 90 g de jamón (500 kcal) | 2 piezas de pan con 40 g queso, 1/2 taza frijol (500 kcal) |
+| **Comida** | 4 tacos, 2 tortillas c/u, 50 g carne/taco (700 kcal) | 1 taza caldo de queso con 60 g queso (600 kcal) |
+| **Cena** | 120 g pollo, 1 taza ensalada (450 kcal) | 2 quesadillas, 40 g queso c/u (450 kcal) |
+| **Colación** | 1 pieza plátano, 30 g nueces (190 kcal) | 1 pieza yogur, 1/2 taza fruta (150 kcal) |
 | **Total** | 2,290 kcal | 2,040 kcal |
 
-NO escribas el plan día por día en párrafos. USA SIEMPRE el formato de tabla como arriba. El documento debe verse limpio, profesional y fácil de leer en una sola vista.
+NO escribas sección aparte de porciones. TODO dentro de la tabla. Medidas: TAZA, CUCHARADA, PIEZA, GRAMO (SMAE).
 
 CONDICIONES DE SALUD: Si el paciente tiene alguna condición, adapta el plan de forma estricta:
 - Diabetes: control de carbohidratos y azúcares, índice glucémico bajo, porciones de carbohidratos consistentes, evitar azúcares añadidos.
@@ -127,7 +122,7 @@ Datos del paciente:
 
 ${condicionesList.length > 0 ? "IMPORTANTE: Adapta TODO el plan a las condiciones indicadas (restricciones de sodio, azúcares, grasas, purinas, etc. según corresponda). Incluye en el encabezado del plan las consideraciones por condición." : ""}
 
-Entrega el plan en formato Markdown: (1) TABLA semanal con platillo + kcal por celda, (2) DETALLE DE PORCIONES usando SOLO medidas SMAE: TAZA, CUCHARADA, PIEZA y GRAMO. Cada ingrediente con su medida correcta según SMAE. Evita comidas exóticas. Listo para enviar al cliente.`;
+Entrega el plan en formato Markdown: TABLA semanal con las PORCIONES DENTRO de cada celda (cantidades + kcal). Ej: "2 piezas de huevo con 90 g de jamón (500 kcal)". Usa medidas SMAE: TAZA, CUCHARADA, PIEZA, GRAMO. NO incluyas sección separada de porciones. Evita comidas exóticas. Listo para enviar al cliente.`;
 
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
