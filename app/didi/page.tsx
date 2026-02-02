@@ -422,7 +422,7 @@ export default function DidiPage() {
                 </div>
               </div>
               <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
-                <div className="didi-plan-content overflow-x-hidden break-words min-w-0">
+                <div className="didi-plan-content w-full min-w-0">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
                 </div>
               </div>
