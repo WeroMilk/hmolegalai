@@ -15,36 +15,22 @@ IMPORTANTE: Usa ÚNICAMENTE comidas regionales de Hermosillo, Sonora y México: 
 
 FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EXACTA:
 
-1. TÍTULO: # PLAN NUTRICIONAL SEMANAL (primera línea)
+1. TÍTULO: # PLAN NUTRICIONAL (primera línea) y debajo ## L.N.H. DIANA GALLARDO
 
-2. INFORMACIÓN DEL PACIENTE (en una línea o dos):
-   - Nombre del paciente: [nombre]
-   - Fecha del plan: [fecha actual en formato "día de mes de año"]
-   - Si hay condiciones de salud, añadir: "Consideraciones: [lista breve]"
+2. DATOS DEL PACIENTE (una línea, formato): Datos del Paciente: Nombre: [nombre] Peso: [X] kg Estatura: [X] m Edad: [X] años Sexo: [X] Calorías objetivo: [X] kcal/día Tipo de dieta: [X]. Fecha del plan: [día de mes de año].
 
-3. DATOS BÁSICOS (como lista con guiones):
-   - Peso: X kg
-   - Estatura: X m
-   - Edad: X años
-   - Sexo: X
-   - Calorías objetivo: X,XXX kcal/día
-   - Tipo de dieta: X
+3. Si hay condiciones de salud, añadir línea: Consideraciones: [lista breve].
 
-4. PLAN SEMANAL (formato vertical, día por día): NO uses tabla horizontal. Escribe cada día como bloque vertical para que se vea bien en móvil y sin scroll horizontal. Formato:
+4. PLAN SEMANAL (formato de cada comida): Cada comida debe seguir este formato exacto:
+   [Nombre del platillo]. ([plato principal con cantidades]) [acompañamientos con cantidades]
+   Ejemplos:
+   - "Huevos con espinaca. (3 huevos revueltos con ½ taza de espinacas cocidas) 2 piezas de tortilla de maíz y ½ taza de frijol."
+   - "Pollo a la plancha. (120 gr de pechuga de pollo a la plancha) 2 tazas de ensalada mixta, 1 cdita de vinagreta."
+   - "Sándwich de pollo. (120 gr de pollo cocido) 1 taza de verduras mixtas, 1 cdita de mayonesa."
+   Usa: "cdita" para cucharadita, "cda" para cucharada, "gr" para gramos, "½" para medio, "rebanadas" para jamón/pan cuando aplique. Medidas SMAE: taza, pieza, cdita, cda, gr.
 
-   ## LUNES
-   - **Desayuno:** 2 piezas de huevo con 90 g de jamón, 1 cucharada de aceite (500 kcal)
-   - **Comida:** 4 tacos, 2 tortillas c/u, 50 g carne por taco (700 kcal)
-   - **Cena:** 3 tostadas, 40 g tinga por tostada, 1 cucharada crema c/u (450 kcal)
-   - **Colación:** 1 pieza de plátano, 30 g de nueces (190 kcal)
-   - **Total del día:** 2,000 kcal
-
-   ## MARTES
-   - **Desayuno:** ...
-   - **Comida:** ...
-   (y así para MIÉRCOLES, JUEVES, VIERNES, SÁBADO, DOMINGO)
-
-   Usa medidas SMAE: TAZA, CUCHARADA, PIEZA, GRAMO. Porciones dentro de cada línea. Formato vertical = sin scroll horizontal.
+   ESTRUCTURA: Tabla con días como filas. Columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías
+   Cada celda con el formato de comida indicado arriba. Sin scroll horizontal: texto que envuelva en cada celda.
 
 5. RECOMENDACIONES GENERALES (lista con guiones, 2-4 ítems):
    - Mantén una buena hidratación...
@@ -53,18 +39,7 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
 
 6. PIE: "Elaborado por: Diana Gallardo, Lic. en Nutriología."
 
-IMPORTANTE: NO uses tabla horizontal con 7 columnas (provoca scroll horizontal). USA formato VERTICAL: cada día como bloque con ## DÍA y lista de comidas debajo. Ejemplo:
-## LUNES
-- **Desayuno:** 2 piezas de huevo con 90 g de jamón (500 kcal)
-- **Comida:** 4 tacos, 2 tortillas c/u, 50 g carne/taco (700 kcal)
-- **Cena:** 120 g pollo, 1 taza ensalada (450 kcal)
-- **Colación:** 1 pieza plátano, 30 g nueces (190 kcal)
-- **Total del día:** 2,000 kcal
-
-## MARTES
-... (repite para los 7 días)
-
-Todo en formato vertical para lectura fácil sin scroll horizontal.
+IMPORTANTE: Formato de tabla con columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías. Cada fila = un día (Lunes a Domingo). Cada celda con formato: "[Platillo]. ([detalle]) [acompañamientos]". Ejemplo celda Desayuno: "Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas cocidas) 2 piezas tortilla de maíz y ½ taza frijol."
 
 CONDICIONES DE SALUD: Si el paciente tiene alguna condición, adapta el plan de forma estricta:
 - Diabetes: control de carbohidratos y azúcares, índice glucémico bajo, porciones de carbohidratos consistentes, evitar azúcares añadidos.
@@ -127,7 +102,7 @@ Datos del paciente:
 
 ${condicionesList.length > 0 ? "IMPORTANTE: Adapta TODO el plan a las condiciones indicadas (restricciones de sodio, azúcares, grasas, purinas, etc. según corresponda). Incluye en el encabezado del plan las consideraciones por condición." : ""}
 
-Entrega el plan en formato Markdown VERTICAL (día por día, sin tabla horizontal): ## LUNES, ## MARTES, etc. con lista de Desayuno, Comida, Cena, Colación y Total del día. Porciones en cada línea. Ej: "- **Desayuno:** 2 piezas de huevo con 90 g de jamón (500 kcal)". Usa medidas SMAE. Evita comidas exóticas. Listo para copiar y enviar.`;
+Entrega el plan en Markdown. Tabla con columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías. Cada comida: "[Platillo]. ([detalle con cantidades]) [acompañamientos]". Ej: "Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas) 2 piezas tortilla y ½ taza frijol." Usa cdita, cda, gr, ½. Evita comidas exóticas. Listo para copiar y enviar.`;
 
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({
