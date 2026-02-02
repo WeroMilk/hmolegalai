@@ -176,31 +176,25 @@ input[type="number"] {
     border-radius: 8px;
   }
 
-  /* Títulos: light mode → efecto blanco; dark mode → efecto azul */
+  /* Títulos: efecto azul en hover (todo el sitio excepto DIDI) */
   .hover-title {
     @apply transition-all duration-300 ease-out inline-block;
   }
-  /* Light mode: efecto blanco */
+  /* Light y dark: efecto azul en hover */
   .hover-title:hover {
-    text-shadow:
-      0 0 10px rgba(255, 255, 255, 0.55),
-      0 0 18px rgba(255, 255, 255, 0.4),
-      0 0 26px rgba(255, 255, 255, 0.25);
-  }
-  /* Dark mode: efecto azul (se mantiene) */
-  .dark .hover-title:hover {
     text-shadow:
       0 0 12px rgba(59, 130, 246, 0.6),
       0 0 22px rgba(59, 130, 246, 0.45),
       0 0 32px rgba(59, 130, 246, 0.3);
   }
-  /* Títulos y subtítulos en azul (gradient-text, glow-white, text-blue-500) → efecto blanco */
+  /* Títulos gradient/azul: también efecto azul */
   .gradient-text.hover-title:hover,
   .hover-title.glow-white:hover,
   .hover-title.text-blue-500:hover {
-    text-shadow: none;
-    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35))
-            drop-shadow(0 0 12px rgba(255, 255, 255, 0.2));
+    text-shadow:
+      0 0 12px rgba(59, 130, 246, 0.6),
+      0 0 22px rgba(59, 130, 246, 0.45),
+      0 0 32px rgba(59, 130, 246, 0.3);
   }
 
   /* Botones: todos los resplandores en azul */
@@ -310,6 +304,9 @@ body.didi-theme .hover-button:hover,
 body.didi-theme .hover-button.btn-primary:hover {
   box-shadow: 0 0 28px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.35);
 }
+/* DIDI: mantener efecto morado en títulos (no azul) */
+body.didi-theme .hover-title:hover,
+body.didi-theme .gradient-text.hover-title:hover,
 body.didi-theme .dark .hover-title:hover {
   text-shadow: 0 0 12px rgba(168, 85, 247, 0.6), 0 0 22px rgba(168, 85, 247, 0.45), 0 0 32px rgba(168, 85, 247, 0.3);
 }

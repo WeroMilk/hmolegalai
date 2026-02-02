@@ -29,8 +29,20 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
    - "Sándwich de pollo. (120 gr de pollo cocido) 1 taza de verduras mixtas, 1 cdita de mayonesa."
    Usa: "cdita" para cucharadita, "cda" para cucharada, "gr" para gramos, "½" para medio, "rebanadas" para jamón/pan cuando aplique. Medidas SMAE: taza, pieza, cdita, cda, gr.
 
-   ESTRUCTURA: Tabla con días como filas. Columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías
-   Cada celda con el formato de comida indicado arriba. Sin scroll horizontal: texto que envuelva en cada celda.
+   ESTRUCTURA VERTICAL (obligatorio, sin tabla): Cada día como bloque que baja hacia abajo. NO uses tabla horizontal. Formato:
+
+   ## LUNES
+   - **Desayuno:** [platillo]. ([detalle]) [acompañamientos]
+   - **Comida:** [platillo]. ([detalle]) [acompañamientos]
+   - **Cena:** [platillo]. ([detalle]) [acompañamientos]
+   - **Colación:** [platillo]. ([detalle]) [acompañamientos]
+   - **Total del día:** X kcal
+
+   ## MARTES
+   - **Desayuno:** ...
+   (repetir para MIÉRCOLES, JUEVES, VIERNES, SÁBADO, DOMINGO)
+
+   Todo acomodado hacia abajo, sin scroll horizontal. Cada línea envuelve el texto naturalmente.
 
 5. RECOMENDACIONES GENERALES (lista con guiones, 2-4 ítems):
    - Mantén una buena hidratación...
@@ -39,7 +51,7 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
 
 6. PIE: "Elaborado por: Diana Gallardo, Lic. en Nutriología."
 
-IMPORTANTE: Formato de tabla con columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías. Cada fila = un día (Lunes a Domingo). Cada celda con formato: "[Platillo]. ([detalle]) [acompañamientos]". Ejemplo celda Desayuno: "Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas cocidas) 2 piezas tortilla de maíz y ½ taza frijol."
+IMPORTANTE: NO uses tabla. USA formato VERTICAL día por día: ## LUNES, luego lista con - **Desayuno:**, - **Comida:**, etc. Todo hacia abajo, bien organizado, sin scroll horizontal. Ejemplo: "- **Desayuno:** Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas cocidas) 2 piezas tortilla de maíz y ½ taza frijol."
 
 CONDICIONES DE SALUD: Si el paciente tiene alguna condición, adapta el plan de forma estricta:
 - Diabetes: control de carbohidratos y azúcares, índice glucémico bajo, porciones de carbohidratos consistentes, evitar azúcares añadidos.
@@ -102,7 +114,7 @@ Datos del paciente:
 
 ${condicionesList.length > 0 ? "IMPORTANTE: Adapta TODO el plan a las condiciones indicadas (restricciones de sodio, azúcares, grasas, purinas, etc. según corresponda). Incluye en el encabezado del plan las consideraciones por condición." : ""}
 
-Entrega el plan en Markdown. Tabla con columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías. Cada comida: "[Platillo]. ([detalle con cantidades]) [acompañamientos]". Ej: "Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas) 2 piezas tortilla y ½ taza frijol." Usa cdita, cda, gr, ½. Evita comidas exóticas. Listo para copiar y enviar.`;
+Entrega el plan en Markdown VERTICAL (día por día, sin tabla). ## LUNES, ## MARTES, etc. con lista - **Desayuno:**, - **Comida:**, - **Cena:**, - **Colación:**, - **Total del día.** Cada comida: "[Platillo]. ([detalle]) [acompañamientos]". Todo hacia abajo, sin scroll horizontal. Usa cdita, cda, gr, ½. Evita comidas exóticas.`;
 
     const openai = getOpenAI();
     const completion = await openai.chat.completions.create({

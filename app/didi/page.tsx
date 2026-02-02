@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
+import { DidiSelect } from "@/components/ui/didi-select";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
-import { Leaf, Loader2, FileText, Download, ArrowLeft, ImageDown } from "lucide-react";
+import { Leaf, Loader2, FileText, Download, ArrowLeft, ImageDown, Copy } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -35,6 +36,21 @@ const OBJETIVO_OPTIONS = [
   "Bajar de peso",
   "Subir de peso",
 ];
+const PROMPT_FORMATEAR_TABLA = `Convierte este plan nutricional en una tabla profesional como la de un documento de Word o PDF. 
+
+Formato requerido:
+- Encabezado: "PLAN NUTRICIONAL" y "L.N.H. DIANA GALLARDO"
+- Sección "Datos del Paciente:" con Nombre, Peso, Estatura, Edad, Sexo, Calorías objetivo, Tipo de dieta
+- Tabla con columnas: Día | Desayuno | Comida | Cena | Colación | Aprox de calorías
+- Cada fila = un día (Lunes a Domingo)
+- En cada celda: la descripción detallada del platillo con cantidades (formato: [Platillo]. ([detalle]) [acompañamientos])
+- Sección final "Recomendaciones Generales" con viñetas
+- Diseño limpio, profesional, fácil de leer
+- Si puedes generar HTML o Markdown con tabla, hazlo. Si no, da instrucciones claras para formatearlo.
+
+Plan a convertir:
+`;
+
 const CONDICIONES_OPTIONS = [
   "Diabetes",
   "Colesterol alto",
@@ -64,6 +80,15 @@ export default function DidiPage() {
   const [error, setError] = useState("");
   const [planContent, setPlanContent] = useState("");
   const planExportRef = useRef<HTMLDivElement>(null);
+  const [copiedPrompt, setCopiedPrompt] = useState(false);
+
+  const handleCopyPrompt = () => {
+    const fullPrompt = PROMPT_FORMATEAR_TABLA + planContent;
+    navigator.clipboard.writeText(fullPrompt).then(() => {
+      setCopiedPrompt(true);
+      setTimeout(() => setCopiedPrompt(false), 2000);
+    });
+  };
 
   useEffect(() => {
     if (authLoading) return;
@@ -291,66 +316,50 @@ export default function DidiPage() {
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Sexo *
                 </label>
-                <select
+                <DidiSelect
                   value={form.sexo}
-                  onChange={(e) => handleChange("sexo", e.target.value)}
+                  onChange={(v) => handleChange("sexo", v)}
+                  options={SEXO_OPTIONS.map((o) => ({ value: o, label: o }))}
+                  placeholder="Selecciona"
                   required
-                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
-                >
-                  <option value="">Selecciona</option>
-                  {SEXO_OPTIONS.map((o) => (
-                    <option key={o} value={o}>{o}</option>
-                  ))}
-                </select>
+                />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Actividad física *
                 </label>
-                <select
+                <DidiSelect
                   value={form.actividadFisica}
-                  onChange={(e) => handleChange("actividadFisica", e.target.value)}
+                  onChange={(v) => handleChange("actividadFisica", v)}
+                  options={ACTIVIDAD_OPTIONS.map((o) => ({ value: o, label: o }))}
+                  placeholder="Selecciona"
                   required
-                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
-                >
-                  <option value="">Selecciona</option>
-                  {ACTIVIDAD_OPTIONS.map((o) => (
-                    <option key={o} value={o}>{o}</option>
-                  ))}
-                </select>
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Objetivo del plan *
                 </label>
                 <p className="text-xs text-muted mb-1">La IA calculará las calorías según peso, estatura, edad, sexo y actividad.</p>
-                <select
+                <DidiSelect
                   value={form.objetivo}
-                  onChange={(e) => handleChange("objetivo", e.target.value)}
+                  onChange={(v) => handleChange("objetivo", v)}
+                  options={OBJETIVO_OPTIONS.map((o) => ({ value: o, label: o }))}
+                  placeholder="Selecciona"
                   required
-                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
-                >
-                  <option value="">Selecciona</option>
-                  {OBJETIVO_OPTIONS.map((o) => (
-                    <option key={o} value={o}>{o}</option>
-                  ))}
-                </select>
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Tipo de dieta *
                 </label>
-                <select
+                <DidiSelect
                   value={form.tipoDieta}
-                  onChange={(e) => handleChange("tipoDieta", e.target.value)}
+                  onChange={(v) => handleChange("tipoDieta", v)}
+                  options={TIPO_DIETA_OPTIONS.map((o) => ({ value: o, label: o }))}
+                  placeholder="Selecciona"
                   required
-                  className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 didi-select"
-                >
-                  <option value="">Selecciona</option>
-                  {TIPO_DIETA_OPTIONS.map((o) => (
-                    <option key={o} value={o}>{o}</option>
-                  ))}
-                </select>
+                />
               </div>
             </div>
 
@@ -369,7 +378,7 @@ export default function DidiPage() {
                       type="checkbox"
                       checked={condiciones.includes(cond)}
                       onChange={() => handleCondicionToggle(cond)}
-                      className="rounded border-border text-purple-500 focus:ring-purple-500/30"
+                      className="rounded border-border text-purple-500 accent-purple-500 focus:ring-purple-500/30"
                     />
                     <span className="text-sm text-foreground">{cond}</span>
                   </label>
@@ -383,11 +392,12 @@ export default function DidiPage() {
               </div>
             )}
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full sm:w-auto min-w-[200px] py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl hover-button"
-            >
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto min-w-[200px] py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl hover-button"
+              >
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin mr-2 inline" />
@@ -400,6 +410,7 @@ export default function DidiPage() {
                 </>
               )}
             </Button>
+            </div>
           </motion.form>
         ) : (
           <motion.div
@@ -444,6 +455,26 @@ export default function DidiPage() {
                 <div className="didi-plan-content overflow-x-auto">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
                 </div>
+              </div>
+
+              {/* Prompt para formatear en tabla con IA */}
+              <div className="mt-6 p-4 rounded-xl border border-purple-500/30 bg-purple-500/5">
+                <h3 className="text-sm font-semibold text-foreground mb-2">Formatear como tabla profesional (ChatGPT, Claude, etc.)</h3>
+                <p className="text-xs text-muted mb-3">Copia el prompt con tu plan y pégalo en una IA para que genere una tabla como el PDF de referencia.</p>
+                <pre className="text-xs bg-card/50 rounded-lg p-4 overflow-x-auto max-h-32 overflow-y-auto whitespace-pre-wrap font-sans border border-border mb-3">
+                  {PROMPT_FORMATEAR_TABLA}
+                  <span className="text-muted">[tu plan se incluye al copiar]</span>
+                </pre>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyPrompt}
+                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
+                >
+                  <Copy className="w-4 h-4 mr-1" />
+                  {copiedPrompt ? "¡Copiado!" : "Copiar prompt + plan"}
+                </Button>
               </div>
 
               {/* Div para exportar a JPG - diseño profesional */}
