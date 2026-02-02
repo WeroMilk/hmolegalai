@@ -11,14 +11,14 @@ import { autoTable } from "jspdf-autotable";
 const OFICIO_WIDTH = 216;
 const OFICIO_HEIGHT = 340;
 
-/** Colores rosa y morado pastel (RGB 0-255) */
+/** Colores morado pastel (RGB 0-255) — todo legible y organizado */
 const PASTEL = {
-  purpleHead: [216, 191, 216] as [number, number, number], // #D8BFD8 lavender
-  purpleLight: [230, 230, 250] as [number, number, number], // #E6E6FA lavender blush
-  pinkLight: [255, 228, 225] as [number, number, number],  // #FFE4E1 misty rose
-  pinkLighter: [255, 240, 245] as [number, number, number], // #FFF0F5 lavender blush
-  textDark: [55, 48, 60] as [number, number, number],
-  lineLight: [220, 200, 210] as [number, number, number],
+  purpleHead: [200, 180, 220] as [number, number, number],   // encabezado tabla
+  purpleLight: [230, 220, 245] as [number, number, number], // título / bloques
+  purpleRow: [240, 232, 248] as [number, number, number],    // filas tabla
+  purpleRowAlt: [225, 215, 240] as [number, number, number], // filas alternas
+  textDark: [45, 40, 55] as [number, number, number],
+  lineLight: [200, 185, 215] as [number, number, number],
 };
 
 export interface ParsedDay {
@@ -113,14 +113,23 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
   doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, 18, { align: "center" });
   y = 26;
 
-  // Bloque de datos del paciente (resumido, sin encimar)
+  // Bloque de datos del paciente (legible, sin encimar)
   doc.setFontSize(8);
   doc.setFont("helvetica", "normal");
   const patientLines = doc.splitTextToSize(patientBlock, pageWidth);
-  const maxPatientLines = 12;
-  const usePatient = patientLines.slice(0, maxPatientLines).join(" ");
-  doc.text(usePatient, margin, y);
-  y += Math.min(patientLines.length, maxPatientLines) * 4 + 6;
+  const maxPatientLines = 14;
+  patientLines.slice(0, maxPatientLines).forEach((line: string, i: number) => {
+    doc.text(line, margin, y + i * 4);
+  });
+  y += Math.min(patientLines.length, maxPatientLines) * 4 + 8;
+
+  // Subtítulo tipo referencia ChatGPT
+  doc.setFillColor(...PASTEL.purpleLight);
+  doc.rect(margin, y - 1, pageWidth, 7, "F");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text("Plan de Alimentación Semanal", margin + 2, y + 4);
+  y += 10;
 
   // Tabla: Día | Desayuno | Comida | Cena | Colación | Aprox. calorías
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. calorías"]];
@@ -153,11 +162,11 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
       fontSize: 7,
     },
     bodyStyles: {
-      fillColor: PASTEL.pinkLighter,
+      fillColor: PASTEL.purpleRow,
       textColor: PASTEL.textDark,
     },
     alternateRowStyles: {
-      fillColor: PASTEL.pinkLight,
+      fillColor: PASTEL.purpleRowAlt,
     },
     columnStyles: {
       0: { cellWidth: 18 },
@@ -196,7 +205,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string): vo
   // Pie
   y = OFICIO_HEIGHT - 10;
   doc.setFontSize(8);
-  doc.setTextColor(120, 100, 120);
+  doc.setTextColor(100, 80, 130);
   doc.text("L.N.H. Diana Gallardo", OFICIO_WIDTH / 2, y, { align: "center" });
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
