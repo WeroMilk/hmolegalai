@@ -145,15 +145,21 @@ function ensureSpace(
   return y;
 }
 
-/** Márgenes y espaciado al mínimo para caber todo en UNA sola hoja (216 mm alto) */
-const MARGIN = 4;
-const PAD_H = 4;
-const SECTION_GAP = 1;
-const CELL_PAD = 0.5;
-const LINE_HEIGHT = 1.2;
+/** Mínimo espacio en blanco: márgenes y espaciado al límite para aprovechar toda la hoja */
+const MARGIN = 2;
+const PAD_H = 2;
+const SECTION_GAP = 0.2;
+const CELL_PAD = 0.2;
+const LINE_HEIGHT = 1;
+
+/** Mínimos para que el texto siga legible al escalar */
+const MIN_FONT = 2.5;
+const MIN_CELL_HEIGHT = 1;
 
 /**
- * Dibuja todo el contenido en el doc. Hoja horizontal (oficio apaisado): pageWidth x pageHeight en mm.
+ * Dibuja todo el contenido en el doc.
+ * scale: 1 = tamaño normal; <1 comprime para caber en 1 hoja.
+ * extraGap: espacio extra (mm) a repartir entre secciones cuando sobra espacio, para que quede bien distribuido.
  */
 function drawPlanContent(
   doc: jsPDF,
@@ -164,25 +170,40 @@ function drawPlanContent(
   days: ParsedDay[],
   recommendations: string,
   nombrePacienteForm: string,
-  singlePage: boolean
+  singlePage: boolean,
+  scale: number = 1,
+  extraGap: number = 0
 ): number {
+  const s = scale;
+  const m = MARGIN * s;
+  const padH = PAD_H * s;
+  const gap = SECTION_GAP * s + extraGap;
+  const cellPad = CELL_PAD * s;
+  const lineH = LINE_HEIGHT * s;
   const tableWidth = pageWidth - 2 * (MARGIN + PAD_H);
   const tableMargin = (pageWidth - tableWidth) / 2;
-  let y = MARGIN;
+  let y = m;
 
-  // Encabezado muy compacto (1 hoja)
+  const fTitle = Math.max(MIN_FONT, 9 * s);
+  const fSub = Math.max(MIN_FONT, 5 * s);
+  const fTable = Math.max(MIN_FONT, 3.5 * s);
+  const fRec = Math.max(MIN_FONT, 3.5 * s);
+  const fSmall = Math.max(MIN_FONT, 4 * s);
+  const minH = Math.max(MIN_CELL_HEIGHT, 1.5 * s);
+  const headerH = 5 * s;
+  const sectionH = 1.6 * s;
+
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(0, 0, pageWidth, 7, "F");
+  doc.rect(0, 0, pageWidth, headerH, "F");
   doc.setTextColor(...PASTEL.textDark);
-  doc.setFontSize(10);
+  doc.setFontSize(fTitle);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", pageWidth / 2, 4.2, { align: "center" });
-  doc.setFontSize(6);
+  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerH * 0.6, { align: "center" });
+  doc.setFontSize(fSub);
   doc.setFont("helvetica", "normal");
-  doc.text(lnh, pageWidth / 2, 6.2, { align: "center" });
-  y = 8;
+  doc.text(lnh, pageWidth / 2, headerH * 0.9, { align: "center" });
+  y = headerH + 0.5 * s;
 
-  // Cuadro de información del paciente
   const patientPairs = parsePatientBlockToPairs(patientBlock);
   const nombreParaTitulo = (nombrePacienteForm || "").trim() || patientPairs.find((p) => p.label.toLowerCase() === "nombre")?.value?.trim() || "";
   const pairsParaTabla = patientPairs.filter(
@@ -196,14 +217,14 @@ function drawPlanContent(
 
   const tituloPaciente = nombreParaTitulo ? `Información del paciente: ${nombreParaTitulo}` : "Información del paciente";
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(tableMargin, y - 0.3, tableWidth, 2.2, "F");
+  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "F");
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(6);
-  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + 1.4, { align: "center" });
-  y += 2.2 + SECTION_GAP;
+  doc.setFontSize(fSub);
+  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + sectionH * 0.55, { align: "center" });
+  y += sectionH + gap;
 
   if (patientBody.length > 0) {
-    y = ensureSpace(doc, y, pageHeight, 25, undefined, singlePage);
+    y = ensureSpace(doc, y, pageHeight, 20 * s, undefined, singlePage);
     autoTable(doc, {
       head: patientHead,
       body: patientBody,
@@ -213,50 +234,47 @@ function drawPlanContent(
       theme: "plain",
       pageBreak: singlePage ? "avoid" : "auto",
       styles: {
-        fontSize: 4,
-        cellPadding: CELL_PAD,
+        fontSize: fTable,
+        cellPadding: cellPad,
         overflow: "linebreak",
         textColor: PASTEL.textDark,
-        minCellHeight: 2,
+        minCellHeight: minH,
       },
       headStyles: {
         fillColor: PASTEL.purpleHead,
         textColor: PASTEL.textDark,
         fontStyle: "bold",
-        fontSize: 4,
-        cellPadding: CELL_PAD,
+        fontSize: fTable,
+        cellPadding: cellPad,
       },
       bodyStyles: {
         fillColor: PASTEL.purpleRow,
         textColor: PASTEL.textDark,
-        fontSize: 4,
-        cellPadding: CELL_PAD,
+        fontSize: fTable,
+        cellPadding: cellPad,
         overflow: "linebreak",
-        minCellHeight: 2,
+        minCellHeight: minH,
       },
-      alternateRowStyles: {
-        fillColor: PASTEL.purpleRowAlt,
-      },
+      alternateRowStyles: { fillColor: PASTEL.purpleRowAlt },
       columnStyles: {
-        0: { cellWidth: tableWidth * 0.35, fontStyle: "bold" },
-        1: { cellWidth: tableWidth * 0.65, fontStyle: "normal" },
+        0: { cellWidth: tableWidth * 0.32, fontStyle: "bold" },
+        1: { cellWidth: tableWidth * 0.68, fontStyle: "normal" },
       },
       tableLineColor: PASTEL.lineLight,
       tableLineWidth: 0.06,
     });
     const patientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-    y = (patientTbl?.finalY ?? y + 15) + SECTION_GAP;
+    y = (patientTbl?.finalY ?? y + 10 * s) + gap;
   }
 
-  // Plan de Alimentación Semanal
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(tableMargin, y - 0.3, tableWidth, 2.2, "F");
+  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "F");
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(6);
-  doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + 1.4, { align: "center" });
-  y += 2.2 + SECTION_GAP;
+  doc.setFontSize(fSub);
+  doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + sectionH * 0.55, { align: "center" });
+  y += sectionH + gap;
 
-  y = ensureSpace(doc, y, pageHeight, 50, undefined, singlePage);
+  y = ensureSpace(doc, y, pageHeight, 50 * s, undefined, singlePage);
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
   const body = days.map((d) => [
     d.day,
@@ -267,9 +285,8 @@ function drawPlanContent(
     d.totalKcal,
   ]);
 
-  // Anchos: Día 12mm, Aprox. kcal 14mm, resto para comidas (todo en 1 hoja)
-  const diaWidth = 12;
-  const kcalWidth = 14;
+  const diaWidth = 11;
+  const kcalWidth = 12;
   const mealColWidth = (tableWidth - diaWidth - kcalWidth) / 4;
   autoTable(doc, {
     head,
@@ -280,30 +297,28 @@ function drawPlanContent(
     theme: "plain",
     pageBreak: singlePage ? "avoid" : "auto",
     styles: {
-      fontSize: 4,
-      cellPadding: CELL_PAD,
+      fontSize: fTable,
+      cellPadding: cellPad,
       overflow: "linebreak",
       textColor: PASTEL.textDark,
-      minCellHeight: 2,
+      minCellHeight: minH,
     },
     headStyles: {
       fillColor: PASTEL.purpleHead,
       textColor: PASTEL.textDark,
       fontStyle: "bold",
-      fontSize: 4,
-      cellPadding: CELL_PAD,
+      fontSize: fTable,
+      cellPadding: cellPad,
     },
     bodyStyles: {
       fillColor: PASTEL.purpleRow,
       textColor: PASTEL.textDark,
-      fontSize: 4,
-      cellPadding: CELL_PAD,
+      fontSize: fTable,
+      cellPadding: cellPad,
       overflow: "linebreak",
-      minCellHeight: 2,
+      minCellHeight: minH,
     },
-    alternateRowStyles: {
-      fillColor: PASTEL.purpleRowAlt,
-    },
+    alternateRowStyles: { fillColor: PASTEL.purpleRowAlt },
     columnStyles: {
       0: { cellWidth: diaWidth },
       1: { cellWidth: mealColWidth },
@@ -317,66 +332,66 @@ function drawPlanContent(
   });
 
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-  y = (tbl?.finalY ?? y + 40) + SECTION_GAP;
+  y = (tbl?.finalY ?? y + 30 * s) + gap;
 
   if (recommendations) {
-    y = ensureSpace(doc, y, pageHeight, 10, undefined, singlePage);
-    if (y < pageHeight - 8) {
+    y = ensureSpace(doc, y, pageHeight, 6 * s, undefined, singlePage);
+    if (y < pageHeight - 5 * s) {
+      const recTitleH = 1.4 * s;
       doc.setFillColor(...PASTEL.purpleLight);
-      doc.rect(tableMargin, y - 0.3, tableWidth, 2, "F");
+      doc.rect(tableMargin, y - 0.15 * s, tableWidth, recTitleH, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(5);
-      doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + 1.3, { align: "center" });
-      y += 2 + SECTION_GAP;
+      doc.setFontSize(Math.max(MIN_FONT, 4 * s));
+      doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + recTitleH * 0.55, { align: "center" });
+      y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(4);
+      doc.setFontSize(fRec);
       const recLines = doc.splitTextToSize(recommendations, tableWidth);
-      const maxRecLines = singlePage ? 999 : 999;
-      for (let i = 0; i < recLines.length && i < maxRecLines; i++) {
-        if (y > pageHeight - 6) break;
+      for (let i = 0; i < recLines.length; i++) {
+        if (y > pageHeight - 4 * s) break;
         doc.text(recLines[i], tableMargin, y);
-        y += LINE_HEIGHT;
+        y += lineH;
       }
     }
   }
 
-  // Firma al final (1 hoja)
   if (singlePage) {
-    if (y > pageHeight - 5) y = pageHeight - 5;
-    y += 1;
+    if (y > pageHeight - 3 * s) y = pageHeight - 3 * s;
+    y += 0.3 * s;
   } else {
-    const footerPageHeight = 24;
-    doc.addPage([pageWidth, footerPageHeight], "p");
+    doc.addPage([pageWidth, 24], "p");
     y = 8;
     y += 2;
   }
-  doc.setFontSize(5);
+  doc.setFontSize(fSmall);
   doc.setTextColor(100, 80, 130);
   doc.text(lnh, pageWidth / 2, y, { align: "center" });
-  y += 4;
+  y += 2 * s;
   return y;
 }
 
-/** Altura muy grande solo para medir dónde termina el contenido (hoja horizontal) */
-const MEASURE_PAGE_HEIGHT = 400;
+/** Altura muy grande solo para medir dónde termina el contenido */
+const MEASURE_PAGE_HEIGHT = 500;
+
+/** Margen inferior mínimo en la hoja final (mm) */
+const BOTTOM_MARGIN = 2;
 
 /**
- * Genera el PDF en hoja tamaño oficio horizontal (apaisada): 340 mm ancho x 216 mm alto.
- * Una sola hoja con altura ajustada al contenido para evitar espacio en blanco.
- * nombreLnh: nombre del nutriólogo (LNH); por defecto "L.N.H. Diana Gallardo".
+ * Genera el PDF en UNA sola hoja oficio horizontal (340 x 216 mm).
+ * Si el contenido medido no cabe, se escala automáticamente para que SIEMPRE quepa en una hoja.
  */
 export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
   const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
   const { patientBlock, days, recommendations } = parsePlanContent(planContent);
 
-  // Pasada 1: medir altura del contenido en una hoja horizontal muy alta (340 mm ancho x 400 mm alto)
+  // Pasada 1: medir altura del contenido con escala 1
   const docMeasure = new jsPDF({
     orientation: "landscape",
     unit: "mm",
     format: [OFICIO_LANDSCAPE_WIDTH, MEASURE_PAGE_HEIGHT],
     hotfixes: ["px_scaling"],
   });
-  drawPlanContent(
+  const contentEndY = drawPlanContent(
     docMeasure,
     OFICIO_LANDSCAPE_WIDTH,
     MEASURE_PAGE_HEIGHT,
@@ -385,11 +400,17 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     days,
     recommendations,
     nombrePaciente,
-    true
+    true,
+    1
   );
 
-  // Siempre UNA sola hoja oficio horizontal (340 x 216 mm). Contenido comprimido para caber.
+  // Calcular escala y distribución: que todo quepa en 216 mm y, si sobra espacio, repartirlo entre secciones
   const pageHeight = OFICIO_LANDSCAPE_HEIGHT;
+  const availableHeight = pageHeight - BOTTOM_MARGIN;
+  const scale = contentEndY <= availableHeight ? 1 : Math.min(1, availableHeight / contentEndY);
+  const extraSpace = availableHeight - contentEndY * scale;
+  const numGaps = 6;
+  const extraGap = extraSpace > 0 && scale === 1 ? extraSpace / numGaps : 0;
 
   const doc = new jsPDF({
     orientation: "landscape",
@@ -406,7 +427,9 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     days,
     recommendations,
     nombrePaciente,
-    true
+    true,
+    scale,
+    extraGap
   );
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;

@@ -49,16 +49,6 @@ export function DidiSelect({
 
   const listContent = (
     <>
-      {placeholder && (
-        <li
-          role="option"
-          aria-selected={!value}
-          onClick={() => handleSelect("")}
-          className="px-4 py-3 cursor-pointer text-muted hover:!bg-white hover:!text-purple-600 dark:hover:!bg-white dark:hover:!text-purple-600 active:bg-purple-50 dark:active:bg-purple-500/20"
-        >
-          Seleccionar
-        </li>
-      )}
       {options.map((opt) => (
         <li
           key={opt.value}
