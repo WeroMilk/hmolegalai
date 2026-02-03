@@ -201,6 +201,7 @@ function drawPlanContent(
   const headerMarginBottom = 2 * s;
   const headerContentH = 6 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
+  const sectionH = 1.6 * s;
 
   // Encabezado más grande con margen superior e inferior: barra pastel + título y nutrióloga
   doc.setFillColor(...PASTEL.headerBar);
