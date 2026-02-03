@@ -139,7 +139,7 @@ function ensureSpace(
   if (singlePage) return y;
   if (y + needMm > pageHeight - 10) {
     const h = _shortPageHeight ?? pageHeight;
-    doc.addPage([OFICIO_WIDTH, h], "p");
+    doc.addPage([OFICIO_LANDSCAPE_WIDTH, h], "p");
     return 10;
   }
   return y;
