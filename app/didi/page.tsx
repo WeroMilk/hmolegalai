@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { Navbar } from "@/components/navbar";
@@ -665,69 +666,73 @@ export default function DidiPage() {
               </div>
             </div>
 
-            {/* Modal Edita con PROMPT */}
-            {showPromptEdit && (
-              <div
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
-                onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="prompt-edit-title"
-              >
+            {/* Modal Edita con PROMPT: portal en body para que el blur cubra toda la pantalla (incl. header) */}
+            {showPromptEdit &&
+              typeof document !== "undefined" &&
+              createPortal(
                 <div
-                  className="bg-card border border-purple-500/40 rounded-2xl shadow-xl max-w-lg w-full p-6"
-                  onClick={(e) => e.stopPropagation()}
+                  className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-xl"
+                  style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+                  onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="prompt-edit-title"
                 >
-                  <h3 id="prompt-edit-title" className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-purple-500" />
-                    Edita con PROMPT
-                  </h3>
-                  <p className="text-sm text-muted mb-3">
-                    Escribe una instrucción para modificar el plan. Por ejemplo: &quot;A mi paciente no le gusta el huevo&quot;, &quot;Cambia el pollo por pescado&quot;, &quot;Corrige la edad a 35 años&quot;.
-                  </p>
-                  <textarea
-                    value={promptEditText}
-                    onChange={(e) => {
-                      setPromptEditText(e.target.value);
-                      setPromptEditError("");
-                    }}
-                    placeholder="Ej: A mi paciente no le gusta el huevo, sustituye por otra proteína..."
-                    className="w-full min-h-[100px] px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-y"
-                    disabled={loadingPromptEdit}
-                    aria-label="Instrucción para editar el plan"
-                  />
-                  {promptEditError && (
-                    <p className="mt-2 text-sm text-red-400">{promptEditError}</p>
-                  )}
-                  <div className="flex flex-wrap gap-3 mt-4">
-                    <Button
-                      type="button"
-                      onClick={handleApplyPromptEdit}
-                      disabled={loadingPromptEdit || !promptEditText.trim()}
-                      className="bg-purple-600 hover:bg-purple-700 text-white"
-                    >
-                      {loadingPromptEdit ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          Aplicando...
-                        </>
-                      ) : (
-                        "Aplicar"
-                      )}
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
+                  <div
+                    className="bg-card border border-purple-500/40 rounded-2xl shadow-xl max-w-lg w-full p-6"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <h3 id="prompt-edit-title" className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <MessageSquare className="w-5 h-5 text-purple-500" />
+                      Edita con PROMPT
+                    </h3>
+                    <p className="text-sm text-muted mb-3">
+                      Escribe una instrucción para modificar el plan. Por ejemplo: &quot;A mi paciente no le gusta el huevo&quot;, &quot;Cambia el pollo por pescado&quot;, &quot;Corrige la edad a 35 años&quot;.
+                    </p>
+                    <textarea
+                      value={promptEditText}
+                      onChange={(e) => {
+                        setPromptEditText(e.target.value);
+                        setPromptEditError("");
+                      }}
+                      placeholder="Ej: A mi paciente no le gusta el huevo, sustituye por otra proteína..."
+                      className="w-full min-h-[100px] px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-y"
                       disabled={loadingPromptEdit}
-                      className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
-                    >
-                      Cancelar
-                    </Button>
+                      aria-label="Instrucción para editar el plan"
+                    />
+                    {promptEditError && (
+                      <p className="mt-2 text-sm text-red-400">{promptEditError}</p>
+                    )}
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      <Button
+                        type="button"
+                        onClick={handleApplyPromptEdit}
+                        disabled={loadingPromptEdit || !promptEditText.trim()}
+                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                      >
+                        {loadingPromptEdit ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                            Aplicando...
+                          </>
+                        ) : (
+                          "Aplicar"
+                        )}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
+                        disabled={loadingPromptEdit}
+                        className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            )}
+                </div>,
+                document.body
+              )}
           </motion.div>
         )}
       </main>
