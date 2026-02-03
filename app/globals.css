@@ -453,8 +453,9 @@ html.dark select:focus {
   font-size: 0.85rem;
   box-shadow: 0 1px 3px rgba(0,0,0,0.06);
   border-radius: 8px;
-  overflow: hidden;
-  table-layout: fixed;
+  overflow: visible;
+  table-layout: auto;
+  min-width: 100%;
 }
 .didi-plan-content th {
   background: #1e3a5f !important;
@@ -559,6 +560,11 @@ body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
   background: #ffffff !important;
   color: #1a1a1a !important;
 }
+/* Forzar texto oscuro en todos los descendientes (anula .dark y prose) */
+.didi-preview-pdf-style .didi-plan-content *,
+.didi-preview-pdf-style .prose * {
+  color: #334155 !important;
+}
 .didi-preview-pdf-style .didi-plan-content h1 { color: #1e3a5f !important; }
 .didi-preview-pdf-style .didi-plan-content h1::before,
 .didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)) !important; }
@@ -574,15 +580,28 @@ body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
 .didi-preview-pdf-style .didi-plan-content td:first-child { color: #1e3a5f !important; background: #f1f5f9 !important; }
 .didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #64748b !important; border-top-color: #e2e8f0 !important; }
 .didi-preview-pdf-style .didi-plan-content a { color: #1e3a5f !important; }
-/* Anular cualquier estilo oscuro que herede el contenedor o prose en dark mode */
+/* Anular fondo oscuro del contenedor en dark mode (no tocar td/th para mantener colores de tabla) */
 .dark .didi-preview-pdf-style,
 .dark .didi-preview-pdf-style .prose,
 .dark .didi-preview-pdf-style .didi-plan-content,
 html.dark .didi-preview-pdf-style,
 html.dark .didi-preview-pdf-style .prose,
-html.dark .didi-preview-pdf-style .didi-plan-content {
+html.dark .didi-preview-pdf-style .didi-plan-content,
+body.dark .didi-preview-pdf-style,
+body.dark .didi-preview-pdf-style .prose,
+body.dark .didi-preview-pdf-style .didi-plan-content {
+  background-color: #ffffff !important;
   background: #ffffff !important;
-  color: #1a1a1a !important;
+}
+.dark .didi-preview-pdf-style .didi-plan-content *:not(th),
+html.dark .didi-preview-pdf-style .didi-plan-content *:not(th),
+body.dark .didi-preview-pdf-style .didi-plan-content *:not(th) {
+  color: #334155 !important;
+}
+.dark .didi-preview-pdf-style .didi-plan-content th,
+html.dark .didi-preview-pdf-style .didi-plan-content th,
+body.dark .didi-preview-pdf-style .didi-plan-content th {
+  color: white !important;
 }
 
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
