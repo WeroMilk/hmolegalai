@@ -145,12 +145,12 @@ function ensureSpace(
   return y;
 }
 
-/** Márgenes y espaciado compactos para minimizar espacio en blanco */
-const MARGIN = 6;
-const PAD_H = 6;
-const SECTION_GAP = 2;
-const CELL_PAD = 1;
-const LINE_HEIGHT = 1.5;
+/** Márgenes y espaciado al mínimo para caber todo en UNA sola hoja (216 mm alto) */
+const MARGIN = 4;
+const PAD_H = 4;
+const SECTION_GAP = 1;
+const CELL_PAD = 0.5;
+const LINE_HEIGHT = 1.2;
 
 /**
  * Dibuja todo el contenido en el doc. Hoja horizontal (oficio apaisado): pageWidth x pageHeight en mm.
@@ -170,19 +170,19 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = MARGIN;
 
-  // Encabezado compacto
+  // Encabezado muy compacto (1 hoja)
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(0, 0, pageWidth, 10, "F");
+  doc.rect(0, 0, pageWidth, 7, "F");
   doc.setTextColor(...PASTEL.textDark);
-  doc.setFontSize(12);
+  doc.setFontSize(10);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", pageWidth / 2, 5.5, { align: "center" });
-  doc.setFontSize(7);
+  doc.text("PLAN NUTRICIONAL", pageWidth / 2, 4.2, { align: "center" });
+  doc.setFontSize(6);
   doc.setFont("helvetica", "normal");
-  doc.text(lnh, pageWidth / 2, 9, { align: "center" });
-  y = 12;
+  doc.text(lnh, pageWidth / 2, 6.2, { align: "center" });
+  y = 8;
 
-  // Cuadro de información del paciente: nombre en el título (del formulario), tabla sin Nombre ni "Datos del Paciente"
+  // Cuadro de información del paciente
   const patientPairs = parsePatientBlockToPairs(patientBlock);
   const nombreParaTitulo = (nombrePacienteForm || "").trim() || patientPairs.find((p) => p.label.toLowerCase() === "nombre")?.value?.trim() || "";
   const pairsParaTabla = patientPairs.filter(
@@ -196,14 +196,14 @@ function drawPlanContent(
 
   const tituloPaciente = nombreParaTitulo ? `Información del paciente: ${nombreParaTitulo}` : "Información del paciente";
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(tableMargin, y - 0.5, tableWidth, 2.8, "F");
+  doc.rect(tableMargin, y - 0.3, tableWidth, 2.2, "F");
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7);
-  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + 1.8, { align: "center" });
-  y += 2.8 + SECTION_GAP;
+  doc.setFontSize(6);
+  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + 1.4, { align: "center" });
+  y += 2.2 + SECTION_GAP;
 
   if (patientBody.length > 0) {
-    y = ensureSpace(doc, y, pageHeight, 30, undefined, singlePage);
+    y = ensureSpace(doc, y, pageHeight, 25, undefined, singlePage);
     autoTable(doc, {
       head: patientHead,
       body: patientBody,
@@ -213,26 +213,26 @@ function drawPlanContent(
       theme: "plain",
       pageBreak: singlePage ? "avoid" : "auto",
       styles: {
-        fontSize: 5,
+        fontSize: 4,
         cellPadding: CELL_PAD,
         overflow: "linebreak",
         textColor: PASTEL.textDark,
-        minCellHeight: 3,
+        minCellHeight: 2,
       },
       headStyles: {
         fillColor: PASTEL.purpleHead,
         textColor: PASTEL.textDark,
         fontStyle: "bold",
-        fontSize: 5,
+        fontSize: 4,
         cellPadding: CELL_PAD,
       },
       bodyStyles: {
         fillColor: PASTEL.purpleRow,
         textColor: PASTEL.textDark,
-        fontSize: 5,
+        fontSize: 4,
         cellPadding: CELL_PAD,
         overflow: "linebreak",
-        minCellHeight: 3,
+        minCellHeight: 2,
       },
       alternateRowStyles: {
         fillColor: PASTEL.purpleRowAlt,
@@ -245,16 +245,16 @@ function drawPlanContent(
       tableLineWidth: 0.06,
     });
     const patientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-    y = (patientTbl?.finalY ?? y + 20) + SECTION_GAP;
+    y = (patientTbl?.finalY ?? y + 15) + SECTION_GAP;
   }
 
   // Plan de Alimentación Semanal
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(tableMargin, y - 0.5, tableWidth, 2.8, "F");
+  doc.rect(tableMargin, y - 0.3, tableWidth, 2.2, "F");
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(7);
-  doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + 1.8, { align: "center" });
-  y += 2.8 + SECTION_GAP;
+  doc.setFontSize(6);
+  doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + 1.4, { align: "center" });
+  y += 2.2 + SECTION_GAP;
 
   y = ensureSpace(doc, y, pageHeight, 50, undefined, singlePage);
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
@@ -267,9 +267,9 @@ function drawPlanContent(
     d.totalKcal,
   ]);
 
-  // Anchos: Día 14mm, Aprox. kcal 16mm, resto repartido entre Desayuno/Comida/Cena/Colación
-  const diaWidth = 14;
-  const kcalWidth = 16;
+  // Anchos: Día 12mm, Aprox. kcal 14mm, resto para comidas (todo en 1 hoja)
+  const diaWidth = 12;
+  const kcalWidth = 14;
   const mealColWidth = (tableWidth - diaWidth - kcalWidth) / 4;
   autoTable(doc, {
     head,
@@ -280,26 +280,26 @@ function drawPlanContent(
     theme: "plain",
     pageBreak: singlePage ? "avoid" : "auto",
     styles: {
-      fontSize: 5,
+      fontSize: 4,
       cellPadding: CELL_PAD,
       overflow: "linebreak",
       textColor: PASTEL.textDark,
-      minCellHeight: 3,
+      minCellHeight: 2,
     },
     headStyles: {
       fillColor: PASTEL.purpleHead,
       textColor: PASTEL.textDark,
       fontStyle: "bold",
-      fontSize: 5,
+      fontSize: 4,
       cellPadding: CELL_PAD,
     },
     bodyStyles: {
       fillColor: PASTEL.purpleRow,
       textColor: PASTEL.textDark,
-      fontSize: 5,
+      fontSize: 4,
       cellPadding: CELL_PAD,
       overflow: "linebreak",
-      minCellHeight: 3,
+      minCellHeight: 2,
     },
     alternateRowStyles: {
       fillColor: PASTEL.purpleRowAlt,
@@ -320,40 +320,40 @@ function drawPlanContent(
   y = (tbl?.finalY ?? y + 40) + SECTION_GAP;
 
   if (recommendations) {
-    y = ensureSpace(doc, y, pageHeight, 15, undefined, singlePage);
-    if (y < pageHeight - 12) {
+    y = ensureSpace(doc, y, pageHeight, 10, undefined, singlePage);
+    if (y < pageHeight - 8) {
       doc.setFillColor(...PASTEL.purpleLight);
-      doc.rect(tableMargin, y - 0.5, tableWidth, 2.5, "F");
+      doc.rect(tableMargin, y - 0.3, tableWidth, 2, "F");
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(6);
-      doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + 1.7, { align: "center" });
-      y += 2.5 + SECTION_GAP;
-      doc.setFont("helvetica", "normal");
       doc.setFontSize(5);
+      doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + 1.3, { align: "center" });
+      y += 2 + SECTION_GAP;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(4);
       const recLines = doc.splitTextToSize(recommendations, tableWidth);
       const maxRecLines = singlePage ? 999 : 999;
       for (let i = 0; i < recLines.length && i < maxRecLines; i++) {
-        if (y > pageHeight - 10) break;
+        if (y > pageHeight - 6) break;
         doc.text(recLines[i], tableMargin, y);
         y += LINE_HEIGHT;
       }
     }
   }
 
-  // Firma al final, margen inferior mínimo
+  // Firma al final (1 hoja)
   if (singlePage) {
-    if (y > pageHeight - 8) y = pageHeight - 8;
-    y += 2;
+    if (y > pageHeight - 5) y = pageHeight - 5;
+    y += 1;
   } else {
     const footerPageHeight = 24;
     doc.addPage([pageWidth, footerPageHeight], "p");
     y = 8;
     y += 2;
   }
-  doc.setFontSize(6);
+  doc.setFontSize(5);
   doc.setTextColor(100, 80, 130);
   doc.text(lnh, pageWidth / 2, y, { align: "center" });
-  y += 5;
+  y += 4;
   return y;
 }
 
@@ -376,7 +376,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     format: [OFICIO_LANDSCAPE_WIDTH, MEASURE_PAGE_HEIGHT],
     hotfixes: ["px_scaling"],
   });
-  const contentEndY = drawPlanContent(
+  drawPlanContent(
     docMeasure,
     OFICIO_LANDSCAPE_WIDTH,
     MEASURE_PAGE_HEIGHT,
@@ -388,10 +388,9 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     true
   );
 
-  // Altura final = contenido + margen inferior; máximo 216 mm (oficio horizontal)
-  const pageHeight = Math.min(OFICIO_LANDSCAPE_HEIGHT, contentEndY + 5);
+  // Siempre UNA sola hoja oficio horizontal (340 x 216 mm). Contenido comprimido para caber.
+  const pageHeight = OFICIO_LANDSCAPE_HEIGHT;
 
-  // Pasada 2: documento horizontal con altura justa (340 mm ancho x pageHeight alto)
   const doc = new jsPDF({
     orientation: "landscape",
     unit: "mm",

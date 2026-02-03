@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
-import { getEditsRemaining } from "@/lib/preview-utils";
 import { generateDidiPdf } from "@/lib/didi-pdf";
 import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy, Edit3, Check, MessageSquare } from "lucide-react";
 import Link from "next/link";
@@ -155,8 +154,6 @@ export default function DidiPage() {
   const [promptEditText, setPromptEditText] = useState("");
   const [loadingPromptEdit, setLoadingPromptEdit] = useState(false);
   const [promptEditError, setPromptEditError] = useState("");
-
-  const editsRemaining = getEditsRemaining(originalPlanContent, planContent);
 
   const handleCopyPrompt = () => {
     const fullPrompt = PROMPT_FORMATEAR_TABLA + planContent;
@@ -597,12 +594,10 @@ export default function DidiPage() {
                 </div>
               </div>
 
-              {/* 2 ediciones como en documentos legales */}
               <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
                 <Button
                   variant="outline"
                   onClick={isEditing ? handleSaveEdit : () => setIsEditing(true)}
-                  disabled={editsRemaining <= 0 && !isEditing}
                   className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10 flex items-center gap-2 min-w-[11rem]"
                 >
                   {isEditing ? (
@@ -617,18 +612,9 @@ export default function DidiPage() {
                     </>
                   )}
                 </Button>
-                <span
-                  className={`inline-flex items-center justify-center rounded-full px-2.5 py-1 text-xs font-bold border-2 ${
-                    editsRemaining > 0
-                      ? "bg-purple-500/90 text-white border-purple-400/50"
-                      : "bg-card text-muted border-border"
-                  }`}
-                >
-                  {editsRemaining} de 2
-                </span>
               </div>
               <p className="text-center text-muted text-xs sm:text-sm max-w-xl mx-auto mb-4">
-                Puedes editar el plan hasta 2 veces antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada y colores rosa y morado pastel.
+                Puedes editar el plan las veces que necesites antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada y colores rosa y morado pastel.
               </p>
 
               <div
@@ -666,15 +652,14 @@ export default function DidiPage() {
               <div className="flex justify-center mt-4">
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={() => {
                     setShowPromptEdit(true);
                     setPromptEditError("");
                     setPromptEditText("");
                   }}
-                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10 flex items-center gap-2"
+                  className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
                 >
-                  <MessageSquare className="w-4 h-4" />
+                  <MessageSquare className="w-4 h-4 mr-2" />
                   Edita con PROMPT
                 </Button>
               </div>
