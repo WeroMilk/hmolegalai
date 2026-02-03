@@ -128,10 +128,11 @@ export function parsePlanContent(markdown: string): ParsedPlan {
 }
 
 /** Altura muy grande para la pasada de medición */
-/** Añade nueva página si no hay espacio; devuelve la y actualizada */
-function ensureSpace(doc: jsPDF, y: number, pageHeight: number, needMm: number): number {
+/** Añade nueva página si no hay espacio. Si shortPageHeight se pasa, la nueva página usa esa altura (para evitar espacio en blanco en la última hoja). */
+function ensureSpace(doc: jsPDF, y: number, pageHeight: number, needMm: number, shortPageHeight?: number): number {
   if (y + needMm > pageHeight - 10) {
-    doc.addPage([OFICIO_WIDTH, pageHeight], "p");
+    const h = shortPageHeight ?? pageHeight;
+    doc.addPage([OFICIO_WIDTH, h], "p");
     return 10;
   }
   return y;
@@ -170,31 +171,31 @@ function drawPlanContent(
   // Padding en celdas para que el contenido se vea completo (sin recortes)
   const cellPad = 1;
 
-  // Cuadro de información del cliente: nombre en el título (del formulario), tabla sin Nombre ni "Datos del Paciente"
+  // Cuadro de información del paciente: nombre en el título (del formulario), tabla sin Nombre ni "Datos del Paciente"
   const patientPairs = parsePatientBlockToPairs(patientBlock);
   const nombreParaTitulo = (nombrePacienteForm || "").trim() || patientPairs.find((p) => p.label.toLowerCase() === "nombre")?.value?.trim() || "";
   const pairsParaTabla = patientPairs.filter(
     (p) => p.label.toLowerCase() !== "nombre" && p.label.toLowerCase() !== "datos del paciente"
   );
   const maxPatientRows = 12;
-  const clientHead = [["Dato", "Valor"]];
-  const clientBody = pairsParaTabla
+  const patientHead = [["Dato", "Valor"]];
+  const patientBody = pairsParaTabla
     .slice(0, maxPatientRows)
     .map(({ label, value }) => [label, value || "—"]);
 
-  const tituloCliente = nombreParaTitulo ? `Información del cliente: ${nombreParaTitulo}` : "Información del cliente";
+  const tituloPaciente = nombreParaTitulo ? `Información del paciente: ${nombreParaTitulo}` : "Información del paciente";
   doc.setFillColor(...PASTEL.purpleLight);
   doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
-  doc.text(tituloCliente, tableMargin + tableWidth / 2, y + 2.2, { align: "center" });
+  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + 2.2, { align: "center" });
   y += 4;
 
-  if (clientBody.length > 0) {
+  if (patientBody.length > 0) {
     y = ensureSpace(doc, y, pageHeight, 30);
     autoTable(doc, {
-      head: clientHead,
-      body: clientBody,
+      head: patientHead,
+      body: patientBody,
       startY: y,
       margin: { left: tableMargin, right: tableMargin },
       tableWidth,
@@ -231,11 +232,11 @@ function drawPlanContent(
       tableLineColor: PASTEL.lineLight,
       tableLineWidth: 0.06,
     });
-    const clientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-    y = (clientTbl?.finalY ?? y + 20) + 6; // espacio en blanco para separar bien la tabla del usuario del plan semanal
+    const patientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
+    y = (patientTbl?.finalY ?? y + 20) + 6; // espacio en blanco para separar bien la tabla del paciente del plan semanal
   }
 
-  // Plan de Alimentación Semanal (mismo ancho que información del cliente)
+  // Plan de Alimentación Semanal (mismo ancho que información del paciente)
   doc.setFillColor(...PASTEL.purpleLight);
   doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
   doc.setFont("helvetica", "bold");
@@ -319,19 +320,21 @@ function drawPlanContent(
     }
   }
 
-  y = ensureSpace(doc, y, pageHeight, 15);
+  // Firma siempre en una página nueva con altura justa: sin espacio en blanco debajo
+  const footerPageHeight = 28; // margen + texto + margen inferior
+  doc.addPage([OFICIO_WIDTH, footerPageHeight], "p");
+  y = 10;
   y += 3;
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
   doc.text(lnh, OFICIO_WIDTH / 2, y, { align: "center" });
-  /** Espacio adicional abajo de la firma de la nutrióloga */
-  y += 10;
+  y += 6;
   return y;
 }
 
 /**
  * Genera el PDF y dispara la descarga. Usa páginas oficio (216×340 mm); si el contenido
- * no cabe en una página se añaden más. Toda la información (datos del cliente, plan semanal
+ * no cabe en una página se añaden más. Toda la información (datos del paciente, plan semanal
  * y recomendaciones completas) se incluye en el PDF.
  * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
  */

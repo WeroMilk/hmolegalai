@@ -519,7 +519,7 @@ export default function DidiPage() {
               <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 mb-4">
                 <h2 className="text-xl font-semibold text-foreground flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
                   <FileText className="w-5 h-5 text-purple-500 shrink-0" />
-                  Plan listo para enviar al cliente
+                  Plan listo para enviar al paciente
                 </h2>
                 <div className="flex flex-wrap gap-3 justify-center w-full sm:w-auto">
                   <Button
