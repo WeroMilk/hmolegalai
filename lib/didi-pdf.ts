@@ -142,7 +142,9 @@ function drawPlanContent(
   recommendations: string
 ): number {
   const margin = 10;
-  const pageWidth = OFICIO_WIDTH - margin * 2;
+  const paddingHorizontal = 10; // padding en márgenes para que ambos recuadros se vean iguales
+  const tableMargin = margin + paddingHorizontal; // 20 mm desde el borde
+  const tableWidth = OFICIO_WIDTH - tableMargin * 2; // 176 mm, mismo ancho para ambos recuadros
   let y = margin;
 
   doc.setFillColor(...PASTEL.purpleLight);
@@ -156,13 +158,16 @@ function drawPlanContent(
   doc.text(lnh, OFICIO_WIDTH / 2, 12, { align: "center" });
   y = 18;
 
-  // Cuadro de información del cliente (mismo diseño que plan semanal), categorías en negrita
+  // Padding mínimo para reducir espacio en blanco
+  const cellPad = 0.5;
+
+  // Cuadro de información del cliente (mismo ancho que plan semanal)
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(margin, y - 1, pageWidth, 4, "F");
+  doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
-  doc.text("Información del cliente", margin + 2, y + 2.5);
-  y += 5;
+  doc.text("Información del cliente", tableMargin + 3, y + 2.2);
+  y += 4;
 
   const patientPairs = parsePatientBlockToPairs(patientBlock);
   const maxPatientRows = 12;
@@ -171,16 +176,13 @@ function drawPlanContent(
     .slice(0, maxPatientRows)
     .map(({ label, value }) => [label, value || "—"]);
 
-  // Padding mínimo pero suficiente para que el texto no se vea encimado y se lea completo
-  const cellPad = 1;
-
   if (clientBody.length > 0) {
     autoTable(doc, {
       head: clientHead,
       body: clientBody,
       startY: y,
-      margin: { left: margin, right: margin },
-      tableWidth: pageWidth,
+      margin: { left: tableMargin, right: tableMargin },
+      tableWidth,
       theme: "plain",
       pageBreak: "avoid",
       styles: {
@@ -207,23 +209,23 @@ function drawPlanContent(
         fillColor: PASTEL.purpleRowAlt,
       },
       columnStyles: {
-        0: { cellWidth: pageWidth * 0.35, fontStyle: "bold" },
-        1: { cellWidth: pageWidth * 0.65, fontStyle: "normal" },
+        0: { cellWidth: tableWidth * 0.35, fontStyle: "bold" },
+        1: { cellWidth: tableWidth * 0.65, fontStyle: "normal" },
       },
       tableLineColor: PASTEL.lineLight,
       tableLineWidth: 0.06,
     });
     const clientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-    y = (clientTbl?.finalY ?? y + 20) + 2;
+    y = (clientTbl?.finalY ?? y + 20) + 1;
   }
 
-  // Plan de Alimentación Semanal
+  // Plan de Alimentación Semanal (mismo ancho que información del cliente)
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(margin, y - 1, pageWidth, 4, "F");
+  doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
   doc.setFont("helvetica", "bold");
   doc.setFontSize(8);
-  doc.text("Plan de Alimentación Semanal", margin + 2, y + 2.5);
-  y += 5;
+  doc.text("Plan de Alimentación Semanal", tableMargin + 3, y + 2.2);
+  y += 4;
 
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
   const body = days.map((d) => [
@@ -239,8 +241,8 @@ function drawPlanContent(
     head,
     body,
     startY: y,
-    margin: { left: margin, right: margin },
-    tableWidth: pageWidth,
+    margin: { left: tableMargin, right: tableMargin },
+    tableWidth,
     theme: "plain",
     pageBreak: "avoid",
     styles: {
@@ -268,10 +270,10 @@ function drawPlanContent(
     },
     columnStyles: {
       0: { cellWidth: 12 },
-      1: { cellWidth: 38 },
-      2: { cellWidth: 38 },
-      3: { cellWidth: 38 },
-      4: { cellWidth: 38 },
+      1: { cellWidth: Math.floor((tableWidth - 12 - 18) / 4) },
+      2: { cellWidth: Math.floor((tableWidth - 12 - 18) / 4) },
+      3: { cellWidth: Math.floor((tableWidth - 12 - 18) / 4) },
+      4: { cellWidth: tableWidth - 12 - 18 - 3 * Math.floor((tableWidth - 12 - 18) / 4) },
       5: { cellWidth: 18 },
     },
     tableLineColor: PASTEL.lineLight,
@@ -279,22 +281,22 @@ function drawPlanContent(
   });
 
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-  y = (tbl?.finalY ?? y + 40) + 2;
+  y = (tbl?.finalY ?? y + 40) + 1;
 
   if (recommendations && y < pageHeight - 18) {
     doc.setFillColor(...PASTEL.purpleLight);
-    doc.rect(margin, y - 1, pageWidth, 3.5, "F");
+    doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
     doc.setFont("helvetica", "bold");
     doc.setFontSize(6);
-    doc.text("Recomendaciones generales", margin + 2, y + 2.2);
+    doc.text("Recomendaciones generales", tableMargin + 3, y + 2.2);
     y += 4;
     doc.setFont("helvetica", "normal");
     doc.setFontSize(5);
-    const recLines = doc.splitTextToSize(recommendations, pageWidth);
+    const recLines = doc.splitTextToSize(recommendations, tableWidth);
     const maxRec = 5;
     recLines.slice(0, maxRec).forEach((line: string) => {
       if (y > pageHeight - 12) return;
-      doc.text(line, margin, y);
+      doc.text(line, tableMargin, y);
       y += 2;
     });
   }
@@ -324,7 +326,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
   const contentEndY = drawPlanContent(docMeasure, MEASURE_PAGE_HEIGHT, lnh, patientBlock, days, recommendations);
 
   // Pasada 2: generar PDF con altura justa (contenido + margen inferior)
-  const pageHeight = Math.min(340, Math.max(200, contentEndY + 10));
+  const pageHeight = Math.min(340, Math.max(200, contentEndY + 8));
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
