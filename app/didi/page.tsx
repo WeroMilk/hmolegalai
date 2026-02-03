@@ -17,23 +17,30 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-/** Normaliza el markdown del plan para que la vista previa muestre títulos y listas bien separados */
+/** Normaliza el markdown del plan para que la vista previa sea legible y fácil de editar (saltos de línea) */
 function normalizePlanMarkdownForPreview(raw: string): string {
   if (!raw?.trim()) return raw;
   let s = raw.trim();
-  // Separa bloques: ## L.N.H., ## LUNES, ## MARTES, etc. y ## RECOMENDACIONES
+  // Separa # PLAN NUTRICIONAL de lo que sigue
+  s = s.replace(/#\s*PLAN NUTRICIONAL\s+/gi, "# PLAN NUTRICIONAL\n\n");
+  // Separa ## (títulos) cuando van pegados al texto anterior
+  s = s.replace(/(\S)\s+(##\s+)/g, "$1\n\n$2");
   s = s.replace(/\s+(##\s+)/g, "\n\n$1");
+  // "Datos del Paciente" como subencabezado
+  s = s.replace(/(\S)\s*Datos del Paciente\s*/gi, "$1\n\n## Datos del Paciente\n\n");
+  s = s.replace(/^Datos del Paciente\s*/im, "## Datos del Paciente\n\n");
   // Separa cada ítem de comida: - **Desayuno:**, - **Comida:**, etc.
   s = s.replace(/\s+(-\s+\*\*)/g, "\n\n$1");
-  // "Datos del Paciente" como subencabezado y separado del bloque anterior
-  s = s.replace(/(\S)\s*Datos del Paciente:\s*/gi, "$1\n\n## Datos del Paciente\n\n");
-  s = s.replace(/^Datos del Paciente:\s*/im, "## Datos del Paciente\n\n");
-  // Separa "RECOMENDACIONES GENERALES" si viene pegado
+  // Después de **Desayuno:**, **Comida:**, etc. salto de línea para que la descripción vaya abajo
+  s = s.replace(/\*\*(Desayuno|Comida|Cena|Colación|Total del d[ií]a):\*\*\s+/gi, "**$1:**\n\n");
+  // Separa RECOMENDACIONES GENERALES
   s = s.replace(/(\S)\s+(##\s*RECOMENDACIONES GENERALES)/i, "$1\n\n$2");
   s = s.replace(/(\S)\s+(RECOMENDACIONES GENERALES)/i, "$1\n\n## $2");
+  // Cada "Label: valor" en Datos del Paciente en su propia línea (Nombre:, Peso:, Estatura:, etc.)
+  s = s.replace(/\s+(Nombre|Peso|Estatura|Edad|Sexo|Calorías objetivo|Tipo de dieta|Fecha del plan|Consideraciones):\s+/gi, "\n\n$1: ");
   // Límite de líneas en blanco consecutivas
   s = s.replace(/\n{4,}/g, "\n\n\n");
-  return s;
+  return s.trim();
 }
 
 const SEXO_OPTIONS = ["Hombre", "Mujer", "Otro"];
@@ -291,7 +298,7 @@ export default function DidiPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             onSubmit={handleSubmit}
-            className="glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40 space-y-6"
+            className="didi-form-section glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40 space-y-6"
           >
             <h2 className="text-xl font-semibold text-foreground mb-6">
               Datos del paciente
@@ -515,7 +522,7 @@ export default function DidiPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <div className="glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40">
+            <div className="didi-preview-section glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40">
               <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 mb-4">
                 <h2 className="text-xl font-semibold text-foreground flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
                   <FileText className="w-5 h-5 text-purple-500 shrink-0" />
@@ -548,7 +555,7 @@ export default function DidiPage() {
               <div className="flex flex-wrap items-center justify-center gap-4 mb-4">
                 <Button
                   variant="outline"
-                  onClick={isEditing ? handleSaveEdit : () => { setIsEditing(true); handleDownloadTxt(); }}
+                  onClick={isEditing ? handleSaveEdit : () => setIsEditing(true)}
                   disabled={editsRemaining <= 0 && !isEditing}
                   className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10 flex items-center gap-2 min-w-[11rem]"
                 >
@@ -578,7 +585,7 @@ export default function DidiPage() {
                 Puedes editar el plan hasta 2 veces antes de descargar el PDF. El PDF se genera en tamaño oficio, con tabla organizada y colores rosa y morado pastel.
               </p>
 
-              <div className="didi-preview-pdf-style bg-white dark:bg-gray-900 rounded-xl border border-border p-6 sm:p-8 overflow-hidden shadow-sm">
+              <div className="didi-preview-pdf-style bg-white dark:bg-white rounded-xl border border-purple-500/30 p-6 sm:p-8 overflow-hidden shadow-sm transition-colors hover:border-purple-500/50">
                 {isEditing ? (
                   <textarea
                     id="didi-plan-edit"
@@ -597,29 +604,6 @@ export default function DidiPage() {
                     </ReactMarkdown>
                   </div>
                 )}
-              </div>
-
-              <div className="mt-6 flex flex-wrap gap-3 justify-center">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleDownloadTxt}
-                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
-                >
-                  <Download className="w-4 h-4 mr-1" />
-                  Descargar TXT
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopyPrompt}
-                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
-                >
-                  <Copy className="w-4 h-4 mr-1" />
-                  {copiedPrompt ? "¡Copiado!" : "Copiar prompt para ChatGPT"}
-                </Button>
               </div>
             </div>
           </motion.div>

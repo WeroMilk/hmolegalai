@@ -525,45 +525,50 @@ body.didi-theme .footer-brand { color: #7c3aed !important; }
 body.didi-theme .footer-brand:hover { color: #8b5cf6 !important; }
 body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
 
-/* Vista previa del plan: modo claro = fondo blanco y letras negras; modo oscuro = fondo negro y letras blancas */
+/* DIDI: forzar borde morado en el box del formulario de prellenado (nunca azul) */
+.didi-form-section.glass-effect.hover-box {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+}
+.didi-form-section.glass-effect.hover-box:hover {
+  border-color: rgba(168, 85, 247, 0.55) !important;
+}
+
+/* DIDI: forzar borde morado en el box de la vista previa (nunca azul) */
+.didi-preview-section.glass-effect.hover-box,
+.didi-preview-section .glass-effect.hover-box {
+  border-color: rgba(168, 85, 247, 0.4) !important;
+}
+.didi-preview-section.glass-effect.hover-box:hover,
+.didi-preview-section .glass-effect.hover-box:hover {
+  border-color: rgba(168, 85, 247, 0.55) !important;
+}
+.didi-preview-section .didi-preview-pdf-style {
+  border-color: rgba(168, 85, 247, 0.3) !important;
+}
+.didi-preview-section .didi-preview-pdf-style:hover {
+  border-color: rgba(168, 85, 247, 0.5) !important;
+}
+
+/* Vista previa del plan: siempre fondo blanco y letras negras (light y dark) */
 .didi-preview-pdf-style {
   color: #1a1a1a;
 }
 .didi-preview-pdf-style .didi-plan-content { color: #1a1a1a; }
 .didi-preview-pdf-style .didi-plan-content h1 { color: #1e3a5f; }
 .didi-preview-pdf-style .didi-plan-content h1::before,
-.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.5)); }
-.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(37, 99, 235, 0.5), transparent); }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)); }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(124, 58, 237, 0.4), transparent); }
 .didi-preview-pdf-style .didi-plan-content h2 { color: #334155; border-bottom-color: rgba(0, 0, 0, 0.08); }
 .didi-preview-pdf-style .didi-plan-content p,
 .didi-preview-pdf-style .didi-plan-content ul li { color: #475569; }
 .didi-preview-pdf-style .didi-plan-content strong { color: #1e3a5f; }
-.didi-preview-pdf-style .didi-plan-content ul li::before { color: #2563eb; }
+.didi-preview-pdf-style .didi-plan-content ul li::before { color: #7c3aed; }
 .didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f; }
 .didi-preview-pdf-style .didi-plan-content td { border-color: #e2e8f0; color: #334155; }
 .didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #f8fafc; }
 .didi-preview-pdf-style .didi-plan-content td:first-child { color: #1e3a5f; background: #f1f5f9 !important; }
 .didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #64748b; border-top-color: #e2e8f0; }
 .didi-preview-pdf-style .didi-plan-content a { color: #1e3a5f; }
-
-/* Vista previa en dark mode: fondo negro y letras blancas */
-.dark .didi-preview-pdf-style { color: #f1f5f9; }
-.dark .didi-preview-pdf-style .didi-plan-content { color: #e2e8f0; }
-.dark .didi-preview-pdf-style .didi-plan-content h1 { color: #93c5fd; }
-.dark .didi-preview-pdf-style .didi-plan-content h1::before,
-.dark .didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.5)); }
-.dark .didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(96, 165, 250, 0.5), transparent); }
-.dark .didi-preview-pdf-style .didi-plan-content h2 { color: #cbd5e1; border-bottom-color: rgba(255, 255, 255, 0.15); }
-.dark .didi-preview-pdf-style .didi-plan-content p,
-.dark .didi-preview-pdf-style .didi-plan-content ul li { color: #94a3b8; }
-.dark .didi-preview-pdf-style .didi-plan-content strong { color: #93c5fd; }
-.dark .didi-preview-pdf-style .didi-plan-content ul li::before { color: #60a5fa; }
-.dark .didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f; }
-.dark .didi-preview-pdf-style .didi-plan-content td { border-color: #334155; color: #cbd5e1; }
-.dark .didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #1e293b; }
-.dark .didi-preview-pdf-style .didi-plan-content td:first-child { color: #93c5fd; background: #0f172a !important; }
-.dark .didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #94a3b8; border-top-color: #334155; }
-.dark .didi-preview-pdf-style .didi-plan-content a { color: #93c5fd; }
 
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
 @media (max-width: 430px) {

@@ -127,11 +127,18 @@ export function parsePlanContent(markdown: string): ParsedPlan {
   return { patientBlock, days, recommendations };
 }
 
-/** Altura muy grande para la pasada de medición */
-/** Añade nueva página si no hay espacio. Si shortPageHeight se pasa, la nueva página usa esa altura (para evitar espacio en blanco en la última hoja). */
-function ensureSpace(doc: jsPDF, y: number, pageHeight: number, needMm: number, shortPageHeight?: number): number {
+/** En modo una sola hoja no se añaden páginas; el contenido se dibuja en la única página. */
+function ensureSpace(
+  doc: jsPDF,
+  y: number,
+  pageHeight: number,
+  needMm: number,
+  _shortPageHeight?: number,
+  singlePage?: boolean
+): number {
+  if (singlePage) return y;
   if (y + needMm > pageHeight - 10) {
-    const h = shortPageHeight ?? pageHeight;
+    const h = _shortPageHeight ?? pageHeight;
     doc.addPage([OFICIO_WIDTH, h], "p");
     return 10;
   }
@@ -139,7 +146,7 @@ function ensureSpace(doc: jsPDF, y: number, pageHeight: number, needMm: number, 
 }
 
 /**
- * Dibuja todo el contenido en el doc (varias páginas si hace falta) y devuelve la Y final.
+ * Dibuja todo el contenido en el doc. Si singlePage es true, todo va en una sola hoja (sin añadir páginas).
  * pageHeight: altura de la página en mm (340 oficio).
  */
 function drawPlanContent(
@@ -149,7 +156,8 @@ function drawPlanContent(
   patientBlock: string,
   days: ParsedDay[],
   recommendations: string,
-  nombrePacienteForm: string
+  nombrePacienteForm: string,
+  singlePage: boolean
 ): number {
   const margin = 10;
   const paddingHorizontal = 10;
@@ -192,7 +200,7 @@ function drawPlanContent(
   y += 4;
 
   if (patientBody.length > 0) {
-    y = ensureSpace(doc, y, pageHeight, 30);
+    y = ensureSpace(doc, y, pageHeight, 30, undefined, singlePage);
     autoTable(doc, {
       head: patientHead,
       body: patientBody,
@@ -200,7 +208,7 @@ function drawPlanContent(
       margin: { left: tableMargin, right: tableMargin },
       tableWidth,
       theme: "plain",
-      pageBreak: "auto",
+      pageBreak: singlePage ? "avoid" : "auto",
       styles: {
         fontSize: 5,
         cellPadding: cellPad,
@@ -244,7 +252,7 @@ function drawPlanContent(
   doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + 2.2, { align: "center" });
   y += 4;
 
-  y = ensureSpace(doc, y, pageHeight, 50);
+  y = ensureSpace(doc, y, pageHeight, 50, undefined, singlePage);
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
   const body = days.map((d) => [
     d.day,
@@ -262,7 +270,7 @@ function drawPlanContent(
     margin: { left: tableMargin, right: tableMargin },
     tableWidth,
     theme: "plain",
-    pageBreak: "auto",
+    pageBreak: singlePage ? "avoid" : "auto",
     styles: {
       fontSize: 4,
       cellPadding: cellPad,
@@ -303,27 +311,36 @@ function drawPlanContent(
   y = (tbl?.finalY ?? y + 40) + 1;
 
   if (recommendations) {
-    y = ensureSpace(doc, y, pageHeight, 20);
-    doc.setFillColor(...PASTEL.purpleLight);
-    doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(6);
-    doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + 2.2, { align: "center" });
-    y += 4;
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(5);
-    const recLines = doc.splitTextToSize(recommendations, tableWidth);
-    for (const line of recLines) {
-      y = ensureSpace(doc, y, pageHeight, 4);
-      doc.text(line, tableMargin, y);
-      y += 2;
+    y = ensureSpace(doc, y, pageHeight, 20, undefined, singlePage);
+    if (y < pageHeight - 18) {
+      doc.setFillColor(...PASTEL.purpleLight);
+      doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(6);
+      doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + 2.2, { align: "center" });
+      y += 4;
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(5);
+      const recLines = doc.splitTextToSize(recommendations, tableWidth);
+      const maxRecLines = singlePage ? 6 : 999;
+      for (let i = 0; i < recLines.length && i < maxRecLines; i++) {
+        if (y > pageHeight - 14) break;
+        doc.text(recLines[i], tableMargin, y);
+        y += 2;
+      }
     }
   }
 
-  // Firma: si cabe en la página actual, se dibuja ahí; si no, página nueva corta (sin espacio en blanco)
-  const footerBlockMm = 18;
-  y = ensureSpace(doc, y, pageHeight, footerBlockMm, 28);
-  y += 3;
+  // Firma al final de la misma hoja (en una sola hoja) o en página nueva (varias hojas)
+  if (singlePage) {
+    if (y > pageHeight - 12) y = pageHeight - 12;
+    y += 3;
+  } else {
+    const footerPageHeight = 28;
+    doc.addPage([OFICIO_WIDTH, footerPageHeight], "p");
+    y = 10;
+    y += 3;
+  }
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
   doc.text(lnh, OFICIO_WIDTH / 2, y, { align: "center" });
@@ -332,9 +349,8 @@ function drawPlanContent(
 }
 
 /**
- * Genera el PDF y dispara la descarga. Usa páginas oficio (216×340 mm); si el contenido
- * no cabe en una página se añaden más. Toda la información (datos del paciente, plan semanal
- * y recomendaciones completas) se incluye en el PDF.
+ * Genera el PDF y dispara la descarga. Todo el plan (datos del paciente, tabla semanal,
+ * recomendaciones y firma) se exporta en una sola hoja oficio (216×340 mm).
  * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
  */
 export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
@@ -347,7 +363,7 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     format: [OFICIO_WIDTH, OFICIO_HEIGHT],
     hotfixes: ["px_scaling"],
   });
-  drawPlanContent(doc, OFICIO_HEIGHT, lnh, patientBlock, days, recommendations, nombrePaciente);
+  drawPlanContent(doc, OFICIO_HEIGHT, lnh, patientBlock, days, recommendations, nombrePaciente, true);
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
