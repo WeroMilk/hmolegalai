@@ -348,22 +348,48 @@ function drawPlanContent(
   return y;
 }
 
+/** Altura de página muy grande solo para medir dónde termina el contenido */
+const MEASURE_PAGE_HEIGHT = 600;
+
 /**
- * Genera el PDF y dispara la descarga. Todo el plan (datos del paciente, tabla semanal,
- * recomendaciones y firma) se exporta en una sola hoja oficio (216×340 mm).
- * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
+ * Genera el PDF y dispara la descarga. Una sola hoja con altura ajustada al contenido:
+ * se mide el contenido, se crea la página con esa altura + margen inferior y se dibuja,
+ * así se elimina el espacio en blanco arriba y abajo.
+ * nombreLnh: nombre del nutriólogo (LNH); por defecto "L.N.H. Diana Gallardo".
  */
 export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
   const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
   const { patientBlock, days, recommendations } = parsePlanContent(planContent);
 
+  // Pasada 1: medir altura del contenido en una página muy alta
+  const docMeasure = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: [OFICIO_WIDTH, MEASURE_PAGE_HEIGHT],
+    hotfixes: ["px_scaling"],
+  });
+  const contentEndY = drawPlanContent(
+    docMeasure,
+    MEASURE_PAGE_HEIGHT,
+    lnh,
+    patientBlock,
+    days,
+    recommendations,
+    nombrePaciente,
+    true
+  );
+
+  // Altura final = contenido + margen inferior; máximo oficio por si el plan es muy largo
+  const pageHeight = Math.min(OFICIO_HEIGHT, contentEndY + 10);
+
+  // Pasada 2: documento con altura justa (sin espacio en blanco)
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
-    format: [OFICIO_WIDTH, OFICIO_HEIGHT],
+    format: [OFICIO_WIDTH, pageHeight],
     hotfixes: ["px_scaling"],
   });
-  drawPlanContent(doc, OFICIO_HEIGHT, lnh, patientBlock, days, recommendations, nombrePaciente, true);
+  drawPlanContent(doc, pageHeight, lnh, patientBlock, days, recommendations, nombrePaciente, true);
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);

@@ -549,26 +549,41 @@ body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
   border-color: rgba(168, 85, 247, 0.5) !important;
 }
 
-/* Vista previa del plan: siempre fondo blanco y letras negras (light y dark) */
+/* Vista previa del plan: SIEMPRE fondo blanco y letras negras (anula dark mode y prose) */
 .didi-preview-pdf-style {
-  color: #1a1a1a;
+  background: #ffffff !important;
+  color: #1a1a1a !important;
 }
-.didi-preview-pdf-style .didi-plan-content { color: #1a1a1a; }
-.didi-preview-pdf-style .didi-plan-content h1 { color: #1e3a5f; }
+.didi-preview-pdf-style .prose,
+.didi-preview-pdf-style .didi-plan-content {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+}
+.didi-preview-pdf-style .didi-plan-content h1 { color: #1e3a5f !important; }
 .didi-preview-pdf-style .didi-plan-content h1::before,
-.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)); }
-.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(124, 58, 237, 0.4), transparent); }
-.didi-preview-pdf-style .didi-plan-content h2 { color: #334155; border-bottom-color: rgba(0, 0, 0, 0.08); }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)) !important; }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(124, 58, 237, 0.4), transparent) !important; }
+.didi-preview-pdf-style .didi-plan-content h2 { color: #334155 !important; border-bottom-color: rgba(0, 0, 0, 0.08) !important; }
 .didi-preview-pdf-style .didi-plan-content p,
-.didi-preview-pdf-style .didi-plan-content ul li { color: #475569; }
-.didi-preview-pdf-style .didi-plan-content strong { color: #1e3a5f; }
-.didi-preview-pdf-style .didi-plan-content ul li::before { color: #7c3aed; }
-.didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f; }
-.didi-preview-pdf-style .didi-plan-content td { border-color: #e2e8f0; color: #334155; }
-.didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #f8fafc; }
-.didi-preview-pdf-style .didi-plan-content td:first-child { color: #1e3a5f; background: #f1f5f9 !important; }
-.didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #64748b; border-top-color: #e2e8f0; }
-.didi-preview-pdf-style .didi-plan-content a { color: #1e3a5f; }
+.didi-preview-pdf-style .didi-plan-content ul li { color: #475569 !important; }
+.didi-preview-pdf-style .didi-plan-content strong { color: #1e3a5f !important; }
+.didi-preview-pdf-style .didi-plan-content ul li::before { color: #7c3aed !important; }
+.didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f !important; }
+.didi-preview-pdf-style .didi-plan-content td { border-color: #e2e8f0 !important; color: #334155 !important; }
+.didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #f8fafc !important; }
+.didi-preview-pdf-style .didi-plan-content td:first-child { color: #1e3a5f !important; background: #f1f5f9 !important; }
+.didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #64748b !important; border-top-color: #e2e8f0 !important; }
+.didi-preview-pdf-style .didi-plan-content a { color: #1e3a5f !important; }
+/* Anular cualquier estilo oscuro que herede el contenedor o prose en dark mode */
+.dark .didi-preview-pdf-style,
+.dark .didi-preview-pdf-style .prose,
+.dark .didi-preview-pdf-style .didi-plan-content,
+html.dark .didi-preview-pdf-style,
+html.dark .didi-preview-pdf-style .prose,
+html.dark .didi-preview-pdf-style .didi-plan-content {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+}
 
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
 @media (max-width: 430px) {
