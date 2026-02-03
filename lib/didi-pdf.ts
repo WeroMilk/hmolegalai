@@ -320,10 +320,9 @@ function drawPlanContent(
     }
   }
 
-  // Firma siempre en una página nueva con altura justa: sin espacio en blanco debajo
-  const footerPageHeight = 28; // margen + texto + margen inferior
-  doc.addPage([OFICIO_WIDTH, footerPageHeight], "p");
-  y = 10;
+  // Firma: si cabe en la página actual, se dibuja ahí; si no, página nueva corta (sin espacio en blanco)
+  const footerBlockMm = 18;
+  y = ensureSpace(doc, y, pageHeight, footerBlockMm, 28);
   y += 3;
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);

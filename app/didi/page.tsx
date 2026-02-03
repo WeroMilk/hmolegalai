@@ -578,7 +578,7 @@ export default function DidiPage() {
                 Puedes editar el plan hasta 2 veces antes de descargar el PDF. El PDF se genera en tamaño oficio, con tabla organizada y colores rosa y morado pastel.
               </p>
 
-              <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
+              <div className="didi-preview-pdf-style bg-white dark:bg-gray-900 rounded-xl border border-border p-6 sm:p-8 overflow-hidden shadow-sm">
                 {isEditing ? (
                   <textarea
                     id="didi-plan-edit"

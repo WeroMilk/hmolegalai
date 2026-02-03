@@ -390,11 +390,11 @@ html.dark select:focus {
   content: "";
   flex: 1;
   max-width: 80px;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #2563eb);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.4));
 }
 .didi-plan-content h1::after {
-  background: linear-gradient(90deg, #2563eb, transparent);
+  background: linear-gradient(90deg, rgba(37, 99, 235, 0.4), transparent);
 }
 .didi-plan-content h2 {
   font-size: 1rem;
@@ -402,7 +402,11 @@ html.dark select:focus {
   color: #334155;
   margin: 1.5rem 0 0.5rem;
   padding-bottom: 0.25rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.didi-plan-content a {
+  text-decoration: none;
+  color: inherit;
 }
 .didi-plan-content h2:first-of-type {
   margin-top: 0.5rem;
@@ -493,9 +497,9 @@ html.dark select:focus {
 .dark .didi-plan-content { color: #e2e8f0; }
 .dark .didi-plan-content h1 { color: #93c5fd; }
 .dark .didi-plan-content h1::before,
-.dark .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, #60a5fa); }
-.dark .didi-plan-content h1::after { background: linear-gradient(90deg, #60a5fa, transparent); }
-.dark .didi-plan-content h2 { color: #cbd5e1; border-color: rgba(255,255,255,0.1); }
+.dark .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.35)); height: 1px; }
+.dark .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(96, 165, 250, 0.35), transparent); }
+.dark .didi-plan-content h2 { color: #cbd5e1; border-bottom-color: rgba(255,255,255,0.12); }
 .dark .didi-plan-content p,
 .dark .didi-plan-content ul li { color: #94a3b8; }
 .dark .didi-plan-content strong { color: #93c5fd; }
@@ -510,8 +514,8 @@ body.didi-theme .didi-plan-content h2 { border-color: rgba(124, 58, 237, 0.25); 
 body.didi-theme .didi-plan-content strong { color: #5b21b6; }
 body.didi-theme .didi-plan-content h1 { color: #5b21b6; }
 body.didi-theme .didi-plan-content h1::before,
-body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, #7c3aed); }
-body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, #7c3aed, transparent); }
+body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)); height: 1px; }
+body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(124, 58, 237, 0.4), transparent); }
 body.didi-theme .didi-plan-content ul li::before { color: #7c3aed; }
 body.didi-theme .didi-plan-content th { background: #5b21b6 !important; border-color: #5b21b6; }
 body.didi-theme .didi-plan-content th:first-child { background: #6d28d9 !important; }
@@ -520,6 +524,46 @@ body.didi-theme .didi-plan-content th:first-child { background: #6d28d9 !importa
 body.didi-theme .footer-brand { color: #7c3aed !important; }
 body.didi-theme .footer-brand:hover { color: #8b5cf6 !important; }
 body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
+
+/* Vista previa del plan: modo claro = fondo blanco y letras negras; modo oscuro = fondo negro y letras blancas */
+.didi-preview-pdf-style {
+  color: #1a1a1a;
+}
+.didi-preview-pdf-style .didi-plan-content { color: #1a1a1a; }
+.didi-preview-pdf-style .didi-plan-content h1 { color: #1e3a5f; }
+.didi-preview-pdf-style .didi-plan-content h1::before,
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.5)); }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(37, 99, 235, 0.5), transparent); }
+.didi-preview-pdf-style .didi-plan-content h2 { color: #334155; border-bottom-color: rgba(0, 0, 0, 0.08); }
+.didi-preview-pdf-style .didi-plan-content p,
+.didi-preview-pdf-style .didi-plan-content ul li { color: #475569; }
+.didi-preview-pdf-style .didi-plan-content strong { color: #1e3a5f; }
+.didi-preview-pdf-style .didi-plan-content ul li::before { color: #2563eb; }
+.didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f; }
+.didi-preview-pdf-style .didi-plan-content td { border-color: #e2e8f0; color: #334155; }
+.didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #f8fafc; }
+.didi-preview-pdf-style .didi-plan-content td:first-child { color: #1e3a5f; background: #f1f5f9 !important; }
+.didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #64748b; border-top-color: #e2e8f0; }
+.didi-preview-pdf-style .didi-plan-content a { color: #1e3a5f; }
+
+/* Vista previa en dark mode: fondo negro y letras blancas */
+.dark .didi-preview-pdf-style { color: #f1f5f9; }
+.dark .didi-preview-pdf-style .didi-plan-content { color: #e2e8f0; }
+.dark .didi-preview-pdf-style .didi-plan-content h1 { color: #93c5fd; }
+.dark .didi-preview-pdf-style .didi-plan-content h1::before,
+.dark .didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.5)); }
+.dark .didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(96, 165, 250, 0.5), transparent); }
+.dark .didi-preview-pdf-style .didi-plan-content h2 { color: #cbd5e1; border-bottom-color: rgba(255, 255, 255, 0.15); }
+.dark .didi-preview-pdf-style .didi-plan-content p,
+.dark .didi-preview-pdf-style .didi-plan-content ul li { color: #94a3b8; }
+.dark .didi-preview-pdf-style .didi-plan-content strong { color: #93c5fd; }
+.dark .didi-preview-pdf-style .didi-plan-content ul li::before { color: #60a5fa; }
+.dark .didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f; }
+.dark .didi-preview-pdf-style .didi-plan-content td { border-color: #334155; color: #cbd5e1; }
+.dark .didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #1e293b; }
+.dark .didi-preview-pdf-style .didi-plan-content td:first-child { color: #93c5fd; background: #0f172a !important; }
+.dark .didi-preview-pdf-style .didi-plan-content p:last-of-type { color: #94a3b8; border-top-color: #334155; }
+.dark .didi-preview-pdf-style .didi-plan-content a { color: #93c5fd; }
 
 /* Móviles pequeños (Motorola G51, Galaxy A, etc.): reducir escala para que no haga falta pellizcar */
 @media (max-width: 430px) {
