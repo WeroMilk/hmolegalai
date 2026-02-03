@@ -11,14 +11,18 @@ import { autoTable } from "jspdf-autotable";
 const OFICIO_LANDSCAPE_WIDTH = 340;
 const OFICIO_LANDSCAPE_HEIGHT = 216;
 
-/** Colores morado pastel (RGB 0-255) — todo legible y organizado */
-const PASTEL = {
-  purpleHead: [200, 180, 220] as [number, number, number],   // encabezado tabla
-  purpleLight: [230, 220, 245] as [number, number, number], // título / bloques
-  purpleRow: [240, 232, 248] as [number, number, number],    // filas tabla
-  purpleRowAlt: [225, 215, 240] as [number, number, number], // filas alternas
-  textDark: [45, 40, 55] as [number, number, number],
-  lineLight: [200, 185, 215] as [number, number, number],
+/** Paleta consultorio: profesional, ordenado, identidad de nutrióloga */
+const CLINIC = {
+  headerBar: [88, 28, 135] as [number, number, number],       // morado oscuro (encabezado principal)
+  sectionBar: [124, 58, 237] as [number, number, number],     // morado medio (títulos de sección)
+  tableHead: [109, 40, 217] as [number, number, number],      // encabezados de tabla
+  tableRow: [250, 245, 255] as [number, number, number],      // fila clara
+  tableRowAlt: [243, 232, 255] as [number, number, number],   // fila alterna
+  sectionBg: [245, 243, 255] as [number, number, number],     // fondo títulos sección
+  textDark: [30, 27, 75] as [number, number, number],          // texto principal
+  textMuted: [71, 62, 110] as [number, number, number],       // texto secundario
+  border: [216, 211, 235] as [number, number, number],        // bordes tablas
+  signature: [88, 28, 135] as [number, number, number],        // firma
 };
 
 export interface ParsedDay {
@@ -195,15 +199,19 @@ function drawPlanContent(
   const headerH = 5 * s;
   const sectionH = 1.6 * s;
 
-  doc.setFillColor(...PASTEL.purpleLight);
+  // Encabezado tipo consultorio: barra morada + título y nutrióloga
+  doc.setFillColor(...CLINIC.headerBar);
   doc.rect(0, 0, pageWidth, headerH, "F");
-  doc.setTextColor(...PASTEL.textDark);
+  doc.setTextColor(255, 255, 255);
   doc.setFontSize(fTitle);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerH * 0.6, { align: "center" });
+  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerH * 0.5, { align: "center" });
   doc.setFontSize(fSub);
   doc.setFont("helvetica", "normal");
-  doc.text(lnh, pageWidth / 2, headerH * 0.9, { align: "center" });
+  doc.text(lnh, pageWidth / 2, headerH * 0.88, { align: "center" });
+  doc.setDrawColor(...CLINIC.border);
+  doc.setLineWidth(0.08);
+  doc.line(0, headerH, pageWidth, headerH);
   y = headerH + 0.5 * s;
 
   const patientPairs = parsePatientBlockToPairs(patientBlock);
@@ -218,11 +226,17 @@ function drawPlanContent(
     .map(({ label, value }) => [label, value || "—"]);
 
   const tituloPaciente = nombreParaTitulo ? `Información del paciente: ${nombreParaTitulo}` : "Información del paciente";
-  doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "F");
+  doc.setFillColor(...CLINIC.sectionBg);
+  doc.setDrawColor(...CLINIC.border);
+  doc.setLineWidth(0.06);
+  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "FD");
+  doc.setDrawColor(...CLINIC.sectionBar);
+  doc.setLineWidth(0.4);
+  doc.line(tableMargin, y - 0.15 * s, tableMargin, y - 0.15 * s + sectionH);
+  doc.setTextColor(...CLINIC.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSub);
-  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + sectionH * 0.55, { align: "center" });
+  doc.text(tituloPaciente, tableMargin + 2, y + sectionH * 0.55, { align: "left" });
   y += sectionH + gap;
 
   if (patientBody.length > 0) {
@@ -239,41 +253,46 @@ function drawPlanContent(
         fontSize: fTable,
         cellPadding: cellPad,
         overflow: "linebreak",
-        textColor: PASTEL.textDark,
+        textColor: CLINIC.textDark,
         minCellHeight: minH,
       },
       headStyles: {
-        fillColor: PASTEL.purpleHead,
-        textColor: PASTEL.textDark,
+        fillColor: CLINIC.tableHead,
+        textColor: [255, 255, 255],
         fontStyle: "bold",
         fontSize: fTable,
         cellPadding: cellPad,
       },
       bodyStyles: {
-        fillColor: PASTEL.purpleRow,
-        textColor: PASTEL.textDark,
+        fillColor: CLINIC.tableRow,
+        textColor: CLINIC.textDark,
         fontSize: fTable,
         cellPadding: cellPad,
         overflow: "linebreak",
         minCellHeight: minH,
       },
-      alternateRowStyles: { fillColor: PASTEL.purpleRowAlt },
+      alternateRowStyles: { fillColor: CLINIC.tableRowAlt },
       columnStyles: {
         0: { cellWidth: tableWidth * 0.32, fontStyle: "bold" },
         1: { cellWidth: tableWidth * 0.68, fontStyle: "normal" },
       },
-      tableLineColor: PASTEL.lineLight,
-      tableLineWidth: 0.06,
+      tableLineColor: CLINIC.border,
+      tableLineWidth: 0.1,
     });
     const patientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
     y = (patientTbl?.finalY ?? y + 10 * s) + gap;
   }
 
-  doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "F");
+  doc.setFillColor(...CLINIC.sectionBg);
+  doc.setDrawColor(...CLINIC.border);
+  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "FD");
+  doc.setDrawColor(...CLINIC.sectionBar);
+  doc.setLineWidth(0.4);
+  doc.line(tableMargin, y - 0.15 * s, tableMargin, y - 0.15 * s + sectionH);
+  doc.setTextColor(...CLINIC.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSub);
-  doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + sectionH * 0.55, { align: "center" });
+  doc.text("Plan de Alimentación Semanal", tableMargin + 2, y + sectionH * 0.55, { align: "left" });
   y += sectionH + gap;
 
   y = ensureSpace(doc, y, pageHeight, 50 * s, undefined, singlePage);
@@ -302,25 +321,25 @@ function drawPlanContent(
       fontSize: fTable,
       cellPadding: cellPad,
       overflow: "linebreak",
-      textColor: PASTEL.textDark,
+      textColor: CLINIC.textDark,
       minCellHeight: minH,
     },
     headStyles: {
-      fillColor: PASTEL.purpleHead,
-      textColor: PASTEL.textDark,
+      fillColor: CLINIC.tableHead,
+      textColor: [255, 255, 255],
       fontStyle: "bold",
       fontSize: fTable,
       cellPadding: cellPad,
     },
     bodyStyles: {
-      fillColor: PASTEL.purpleRow,
-      textColor: PASTEL.textDark,
+      fillColor: CLINIC.tableRow,
+      textColor: CLINIC.textDark,
       fontSize: fTable,
       cellPadding: cellPad,
       overflow: "linebreak",
       minCellHeight: minH,
     },
-    alternateRowStyles: { fillColor: PASTEL.purpleRowAlt },
+    alternateRowStyles: { fillColor: CLINIC.tableRowAlt },
     columnStyles: {
       0: { cellWidth: diaWidth },
       1: { cellWidth: mealColWidth },
@@ -329,8 +348,8 @@ function drawPlanContent(
       4: { cellWidth: mealColWidth },
       5: { cellWidth: kcalWidth },
     },
-    tableLineColor: PASTEL.lineLight,
-    tableLineWidth: 0.06,
+    tableLineColor: CLINIC.border,
+    tableLineWidth: 0.1,
   });
 
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
@@ -340,14 +359,20 @@ function drawPlanContent(
     y = ensureSpace(doc, y, pageHeight, 6 * s, undefined, singlePage);
     if (y < pageHeight - 5 * s) {
       const recTitleH = 1.4 * s;
-      doc.setFillColor(...PASTEL.purpleLight);
-      doc.rect(tableMargin, y - 0.15 * s, tableWidth, recTitleH, "F");
+      doc.setFillColor(...CLINIC.sectionBg);
+      doc.setDrawColor(...CLINIC.border);
+      doc.rect(tableMargin, y - 0.15 * s, tableWidth, recTitleH, "FD");
+      doc.setDrawColor(...CLINIC.sectionBar);
+      doc.setLineWidth(0.4);
+      doc.line(tableMargin, y - 0.15 * s, tableMargin, y - 0.15 * s + recTitleH);
+      doc.setTextColor(...CLINIC.textDark);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(Math.max(MIN_FONT, 4 * s));
-      doc.text("Recomendaciones generales", tableMargin + tableWidth / 2, y + recTitleH * 0.55, { align: "center" });
+      doc.text("Recomendaciones generales", tableMargin + 2, y + recTitleH * 0.55, { align: "left" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(fRec);
+      doc.setTextColor(...CLINIC.textMuted);
       const recLines = doc.splitTextToSize(recommendations, tableWidth);
       for (let i = 0; i < recLines.length; i++) {
         if (y > pageHeight - 4 * s) break;
@@ -359,16 +384,25 @@ function drawPlanContent(
 
   if (singlePage) {
     if (y > pageHeight - 3 * s) y = pageHeight - 3 * s;
-    y += 0.3 * s;
+    y += 0.5 * s;
   } else {
     doc.addPage([pageWidth, 24], "p");
     y = 8;
     y += 2;
   }
-  doc.setFontSize(fSmall);
-  doc.setTextColor(100, 80, 130);
-  doc.text(lnh, pageWidth / 2, y, { align: "center" });
+  doc.setDrawColor(...CLINIC.border);
+  doc.setLineWidth(0.15);
+  doc.line(tableMargin, y, pageWidth - tableMargin, y);
   y += 2 * s;
+  doc.setFontSize(fSmall);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(...CLINIC.signature);
+  doc.text(lnh, pageWidth / 2, y, { align: "center" });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(Math.max(MIN_FONT, 3 * s));
+  doc.setTextColor(...CLINIC.textMuted);
+  doc.text("Nutrióloga", pageWidth / 2, y + 1.5 * s, { align: "center" });
+  y += 4 * s;
   return y;
 }
 
