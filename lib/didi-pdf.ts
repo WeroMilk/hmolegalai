@@ -149,10 +149,10 @@ function ensureSpace(
   return y;
 }
 
-/** Mínimo espacio en blanco: márgenes y espaciado al límite para aprovechar toda la hoja */
+/** Márgenes y espaciado: simétricos para que todo quede centrado y organizado */
 const MARGIN = 2;
 const PAD_H = 2;
-const SECTION_GAP = 0.2;
+const SECTION_GAP = 0.8;
 const CELL_PAD = 0.2;
 const LINE_HEIGHT = 1;
 
@@ -194,19 +194,23 @@ function drawPlanContent(
   const fSub = Math.max(MIN_FONT, 5 * s);
   const fSectionTitle = Math.max(MIN_FONT, 6.5 * s);
   const fTable = Math.max(MIN_FONT, 4.2 * s);
+  const fPatientTable = Math.max(MIN_FONT, 5 * s);
   const fRec = Math.max(MIN_FONT, 3.5 * s);
-  const fSmall = Math.max(MIN_FONT, 4 * s);
+  const fSmall = Math.max(MIN_FONT, 5.5 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 4 * s);
   const minH = Math.max(MIN_CELL_HEIGHT, 1.5 * s) + extraCellHeight;
-  const headerMarginTop = 2 * s;
-  const headerMarginBottom = 2 * s;
+  const headerMarginTop = 3 * s;
+  const headerMarginBottom = 3 * s;
   const headerContentH = 6 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
   const sectionH = 1.6 * s;
+  const sectionMarginTop = 1.5 * s;
+  const sectionMarginBottom = 1.5 * s;
 
-  // Encabezado más grande con margen superior e inferior: barra pastel + título y nutrióloga
+  // Encabezado: barra pastel, texto NEGRO, márgenes superior e inferior
   doc.setFillColor(...PASTEL.headerBar);
   doc.rect(0, 0, pageWidth, headerH, "F");
-  doc.setTextColor(255, 255, 255);
+  doc.setTextColor(0, 0, 0);
   doc.setFontSize(fTitle);
   doc.setFont("helvetica", "bold");
   doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerMarginTop + headerContentH * 0.45, { align: "center" });
@@ -230,18 +234,16 @@ function drawPlanContent(
     .map(({ label, value }) => [label, value || "—"]);
 
   const tituloPaciente = nombreParaTitulo ? `Información del paciente: ${nombreParaTitulo}` : "Información del paciente";
+  y += sectionMarginTop;
   doc.setFillColor(...PASTEL.sectionBg);
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.06);
-  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "FD");
-  doc.setDrawColor(...PASTEL.sectionBar);
-  doc.setLineWidth(0.4);
-  doc.line(tableMargin, y - 0.15 * s, tableMargin, y - 0.15 * s + sectionH);
+  doc.rect(0, y, pageWidth, sectionH, "FD");
   doc.setTextColor(...PASTEL.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
-  doc.text(tituloPaciente, tableMargin + tableWidth / 2, y + sectionH * 0.55, { align: "center" });
-  y += sectionH + gap;
+  doc.text(tituloPaciente, pageWidth / 2, y + sectionH * 0.55, { align: "center" });
+  y += sectionH + sectionMarginBottom + gap;
 
   if (patientBody.length > 0) {
     y = ensureSpace(doc, y, pageHeight, 20 * s, undefined, singlePage);
@@ -254,7 +256,7 @@ function drawPlanContent(
       theme: "plain",
       pageBreak: singlePage ? "avoid" : "auto",
       styles: {
-        fontSize: fTable,
+        fontSize: fPatientTable,
         cellPadding: cellPad,
         overflow: "linebreak",
         textColor: PASTEL.textDark,
@@ -262,23 +264,24 @@ function drawPlanContent(
       },
       headStyles: {
         fillColor: PASTEL.tableHead,
-        textColor: [255, 255, 255],
+        textColor: [0, 0, 0],
         fontStyle: "bold",
-        fontSize: fTable,
+        fontSize: fPatientTable,
         cellPadding: cellPad,
+        halign: "center",
       },
       bodyStyles: {
         fillColor: PASTEL.tableRow,
         textColor: PASTEL.textDark,
-        fontSize: fTable,
+        fontSize: fPatientTable,
         cellPadding: cellPad,
         overflow: "linebreak",
         minCellHeight: minH,
       },
       alternateRowStyles: { fillColor: PASTEL.tableRowAlt },
       columnStyles: {
-        0: { cellWidth: tableWidth * 0.32, fontStyle: "bold" },
-        1: { cellWidth: tableWidth * 0.68, fontStyle: "normal" },
+        0: { cellWidth: tableWidth * 0.32, fontStyle: "bold", halign: "center" },
+        1: { cellWidth: tableWidth * 0.68, fontStyle: "normal", halign: "left" },
       },
       tableLineColor: PASTEL.border,
       tableLineWidth: 0.1,
@@ -287,17 +290,16 @@ function drawPlanContent(
     y = (patientTbl?.finalY ?? y + 10 * s) + gap;
   }
 
+  y += sectionMarginTop;
   doc.setFillColor(...PASTEL.sectionBg);
   doc.setDrawColor(...PASTEL.border);
-  doc.rect(tableMargin, y - 0.15 * s, tableWidth, sectionH, "FD");
-  doc.setDrawColor(...PASTEL.sectionBar);
-  doc.setLineWidth(0.4);
-  doc.line(tableMargin, y - 0.15 * s, tableMargin, y - 0.15 * s + sectionH);
+  doc.setLineWidth(0.06);
+  doc.rect(0, y, pageWidth, sectionH, "FD");
   doc.setTextColor(...PASTEL.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
-  doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + sectionH * 0.55, { align: "center" });
-  y += sectionH + gap;
+  doc.text("Plan de Alimentación Semanal", pageWidth / 2, y + sectionH * 0.55, { align: "center" });
+  y += sectionH + sectionMarginBottom + gap;
 
   y = ensureSpace(doc, y, pageHeight, 50 * s, undefined, singlePage);
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
@@ -330,10 +332,11 @@ function drawPlanContent(
     },
     headStyles: {
       fillColor: PASTEL.tableHead,
-      textColor: [255, 255, 255],
+      textColor: [0, 0, 0],
       fontStyle: "bold",
       fontSize: fTable,
       cellPadding: cellPad,
+      halign: "center",
     },
     bodyStyles: {
       fillColor: PASTEL.tableRow,
@@ -345,15 +348,15 @@ function drawPlanContent(
     },
     alternateRowStyles: { fillColor: PASTEL.tableRowAlt },
     columnStyles: {
-      0: { cellWidth: diaWidth },
-      1: { cellWidth: mealColWidth },
-      2: { cellWidth: mealColWidth },
-      3: { cellWidth: mealColWidth },
-      4: { cellWidth: mealColWidth },
-      5: { cellWidth: kcalWidth },
+      0: { cellWidth: diaWidth, halign: "center" },
+      1: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
+      2: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
+      3: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
+      4: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
+      5: { cellWidth: kcalWidth, halign: "center" },
     },
     tableLineColor: [255, 255, 255],
-    tableLineWidth: 0.15,
+    tableLineWidth: 0.2,
   });
 
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
@@ -365,14 +368,12 @@ function drawPlanContent(
       const recTitleH = 1.4 * s;
       doc.setFillColor(...PASTEL.sectionBg);
       doc.setDrawColor(...PASTEL.border);
-      doc.rect(tableMargin, y - 0.15 * s, tableWidth, recTitleH, "FD");
-      doc.setDrawColor(...PASTEL.sectionBar);
-      doc.setLineWidth(0.4);
-      doc.line(tableMargin, y - 0.15 * s, tableMargin, y - 0.15 * s + recTitleH);
+      doc.setLineWidth(0.06);
+      doc.rect(0, y, pageWidth, recTitleH, "FD");
       doc.setTextColor(...PASTEL.textDark);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(Math.max(MIN_FONT, 4 * s));
-      doc.text("Recomendaciones generales", tableMargin + 2, y + recTitleH * 0.55, { align: "left" });
+      doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.55, { align: "center" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(fRec);
@@ -403,7 +404,7 @@ function drawPlanContent(
   doc.setTextColor(...PASTEL.signature);
   doc.text(lnh, pageWidth / 2, y, { align: "center" });
   doc.setFont("helvetica", "normal");
-  doc.setFontSize(Math.max(MIN_FONT, 3 * s));
+  doc.setFontSize(fSignatureSub);
   doc.setTextColor(...PASTEL.textMuted);
   doc.text("Nutrióloga", pageWidth / 2, y + 1.5 * s, { align: "center" });
   y += 4 * s;

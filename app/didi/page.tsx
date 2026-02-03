@@ -668,7 +668,7 @@ export default function DidiPage() {
             {/* Modal Edita con PROMPT */}
             {showPromptEdit && (
               <div
-                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md"
                 onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
                 role="dialog"
                 aria-modal="true"
