@@ -551,9 +551,20 @@ body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
 }
 
 /* Vista previa del plan: SIEMPRE fondo blanco y letras negras (anula dark mode y prose) */
+.didi-preview-pdf-style,
+.didi-preview-pdf-style * {
+  background-color: transparent !important;
+  color: #1e293b !important;
+}
 .didi-preview-pdf-style {
   background: #ffffff !important;
+  background-color: #ffffff !important;
   color: #1a1a1a !important;
+}
+.didi-preview-pdf-style .didi-plan-content,
+.didi-preview-pdf-style .prose {
+  background: transparent !important;
+  background-color: transparent !important;
 }
 .didi-preview-pdf-style .prose,
 .didi-preview-pdf-style .didi-plan-content {

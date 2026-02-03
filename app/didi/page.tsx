@@ -12,7 +12,7 @@ import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
 import { getEditsRemaining } from "@/lib/preview-utils";
 import { generateDidiPdf } from "@/lib/didi-pdf";
-import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy, Edit3, Check } from "lucide-react";
+import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy, Edit3, Check, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -151,6 +151,10 @@ export default function DidiPage() {
   const [originalPlanContent, setOriginalPlanContent] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [showPromptEdit, setShowPromptEdit] = useState(false);
+  const [promptEditText, setPromptEditText] = useState("");
+  const [loadingPromptEdit, setLoadingPromptEdit] = useState(false);
+  const [promptEditError, setPromptEditError] = useState("");
 
   const editsRemaining = getEditsRemaining(originalPlanContent, planContent);
 
@@ -253,6 +257,48 @@ export default function DidiPage() {
 
   const handleSaveEdit = () => {
     setIsEditing(false);
+  };
+
+  const handleApplyPromptEdit = async () => {
+    const prompt = promptEditText.trim();
+    if (!prompt || !planContent || !user) return;
+    setLoadingPromptEdit(true);
+    setPromptEditError("");
+    const doRequest = async (forceRefreshToken: boolean): Promise<void> => {
+      const token = await user.getIdToken(forceRefreshToken);
+      const res = await fetch("/api/didi-edit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ content: planContent, prompt }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Error al editar con el prompt");
+      setPlanContent(data.content);
+      setShowPromptEdit(false);
+      setPromptEditText("");
+    };
+    try {
+      await doRequest(false);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      const isSessionError = /Sesión inválida|iniciar sesión/i.test(msg);
+      if (isSessionError) {
+        await new Promise((r) => setTimeout(r, 400));
+        try {
+          await doRequest(true);
+          return;
+        } catch {
+          setTimeout(() => router.replace("/auth?returnTo=/didi"), 1500);
+          return;
+        }
+      }
+      setPromptEditError(msg || "Error al editar el plan");
+    } finally {
+      setLoadingPromptEdit(false);
+    }
   };
 
   const isDidi = user ? isDidiUser(user.email) : false;
@@ -582,30 +628,121 @@ export default function DidiPage() {
                 </span>
               </div>
               <p className="text-center text-muted text-xs sm:text-sm max-w-xl mx-auto mb-4">
-                Puedes editar el plan hasta 2 veces antes de descargar el PDF. El PDF se genera en tamaño oficio, con tabla organizada y colores rosa y morado pastel.
+                Puedes editar el plan hasta 2 veces antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada y colores rosa y morado pastel.
               </p>
 
-              <div className="didi-preview-pdf-style bg-white dark:bg-white rounded-xl border border-purple-500/30 p-6 sm:p-8 overflow-auto max-h-[70vh] shadow-sm transition-colors hover:border-purple-500/50">
+              <div
+                className="didi-preview-pdf-style rounded-xl border border-gray-300 p-6 sm:p-8 shadow-lg"
+                style={{
+                  backgroundColor: "#ffffff",
+                  color: "#1a1a1a",
+                  boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.05)",
+                }}
+              >
                 {isEditing ? (
                   <textarea
                     id="didi-plan-edit"
                     name="planContent"
                     value={planContent}
                     onChange={(e) => setPlanContent(e.target.value)}
-                    className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 border border-border rounded-xl p-6 text-foreground font-mono text-sm leading-loose whitespace-pre-wrap resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    className="w-full min-h-[360px] font-mono text-sm leading-loose whitespace-pre-wrap resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-lg p-4 border border-gray-300"
+                    style={{ backgroundColor: "#fafafa", color: "#1a1a1a" }}
                     placeholder="Plan nutricional... (puedes editar títulos ##, listas - **Desayuno:**, etc.)"
                     spellCheck
                     aria-label="Contenido del plan nutricional para editar"
                   />
                 ) : (
-                  <div className="didi-plan-content w-full min-w-0 prose prose-sm max-w-none">
+                  <div
+                    className="didi-plan-content w-full min-w-0 prose prose-sm max-w-none"
+                    style={{ backgroundColor: "transparent", color: "#1a1a1a" }}
+                  >
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
                       {normalizePlanMarkdownForPreview(planContent)}
                     </ReactMarkdown>
                   </div>
                 )}
               </div>
+
+              <div className="flex justify-center mt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowPromptEdit(true);
+                    setPromptEditError("");
+                    setPromptEditText("");
+                  }}
+                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10 flex items-center gap-2"
+                >
+                  <MessageSquare className="w-4 h-4" />
+                  Edita con PROMPT
+                </Button>
+              </div>
             </div>
+
+            {/* Modal Edita con PROMPT */}
+            {showPromptEdit && (
+              <div
+                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60"
+                onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="prompt-edit-title"
+              >
+                <div
+                  className="bg-card border border-purple-500/40 rounded-2xl shadow-xl max-w-lg w-full p-6"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <h3 id="prompt-edit-title" className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-purple-500" />
+                    Edita con PROMPT
+                  </h3>
+                  <p className="text-sm text-muted mb-3">
+                    Escribe una instrucción para modificar el plan. Por ejemplo: &quot;A mi paciente no le gusta el huevo&quot;, &quot;Cambia el pollo por pescado&quot;, &quot;Corrige la edad a 35 años&quot;.
+                  </p>
+                  <textarea
+                    value={promptEditText}
+                    onChange={(e) => {
+                      setPromptEditText(e.target.value);
+                      setPromptEditError("");
+                    }}
+                    placeholder="Ej: A mi paciente no le gusta el huevo, sustituye por otra proteína..."
+                    className="w-full min-h-[100px] px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-y"
+                    disabled={loadingPromptEdit}
+                    aria-label="Instrucción para editar el plan"
+                  />
+                  {promptEditError && (
+                    <p className="mt-2 text-sm text-red-400">{promptEditError}</p>
+                  )}
+                  <div className="flex flex-wrap gap-3 mt-4">
+                    <Button
+                      type="button"
+                      onClick={handleApplyPromptEdit}
+                      disabled={loadingPromptEdit || !promptEditText.trim()}
+                      className="bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      {loadingPromptEdit ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Aplicando...
+                        </>
+                      ) : (
+                        "Aplicar"
+                      )}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
+                      disabled={loadingPromptEdit}
+                      className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
+                    >
+                      Cancelar
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </main>

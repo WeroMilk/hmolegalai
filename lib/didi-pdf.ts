@@ -7,9 +7,9 @@
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
 
-/** Tamaño oficio México: 216 mm de ancho, 340 mm de alto por página */
-const OFICIO_WIDTH = 216;
-const OFICIO_HEIGHT = 340;
+/** Tamaño oficio México: 216 x 340 mm. Horizontal (apaisado): 340 ancho x 216 alto para ver todo el contenido */
+const OFICIO_LANDSCAPE_WIDTH = 340;
+const OFICIO_LANDSCAPE_HEIGHT = 216;
 
 /** Colores morado pastel (RGB 0-255) — todo legible y organizado */
 const PASTEL = {
@@ -145,10 +145,6 @@ function ensureSpace(
   return y;
 }
 
-/**
- * Dibuja todo el contenido en el doc. Si singlePage es true, todo va en una sola hoja (sin añadir páginas).
- * pageHeight: altura de la página en mm (340 oficio).
- */
 /** Márgenes y espaciado compactos para minimizar espacio en blanco */
 const MARGIN = 6;
 const PAD_H = 6;
@@ -156,8 +152,12 @@ const SECTION_GAP = 2;
 const CELL_PAD = 1;
 const LINE_HEIGHT = 1.5;
 
+/**
+ * Dibuja todo el contenido en el doc. Hoja horizontal (oficio apaisado): pageWidth x pageHeight en mm.
+ */
 function drawPlanContent(
   doc: jsPDF,
+  pageWidth: number,
   pageHeight: number,
   lnh: string,
   patientBlock: string,
@@ -166,20 +166,20 @@ function drawPlanContent(
   nombrePacienteForm: string,
   singlePage: boolean
 ): number {
-  const tableWidth = OFICIO_WIDTH - 2 * (MARGIN + PAD_H);
-  const tableMargin = (OFICIO_WIDTH - tableWidth) / 2;
+  const tableWidth = pageWidth - 2 * (MARGIN + PAD_H);
+  const tableMargin = (pageWidth - tableWidth) / 2;
   let y = MARGIN;
 
   // Encabezado compacto
   doc.setFillColor(...PASTEL.purpleLight);
-  doc.rect(0, 0, OFICIO_WIDTH, 10, "F");
+  doc.rect(0, 0, pageWidth, 10, "F");
   doc.setTextColor(...PASTEL.textDark);
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", OFICIO_WIDTH / 2, 5.5, { align: "center" });
+  doc.text("PLAN NUTRICIONAL", pageWidth / 2, 5.5, { align: "center" });
   doc.setFontSize(7);
   doc.setFont("helvetica", "normal");
-  doc.text(lnh, OFICIO_WIDTH / 2, 9, { align: "center" });
+  doc.text(lnh, pageWidth / 2, 9, { align: "center" });
   y = 12;
 
   // Cuadro de información del paciente: nombre en el título (del formulario), tabla sin Nombre ni "Datos del Paciente"
@@ -346,39 +346,39 @@ function drawPlanContent(
     y += 2;
   } else {
     const footerPageHeight = 24;
-    doc.addPage([OFICIO_WIDTH, footerPageHeight], "p");
+    doc.addPage([pageWidth, footerPageHeight], "p");
     y = 8;
     y += 2;
   }
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
-  doc.text(lnh, OFICIO_WIDTH / 2, y, { align: "center" });
+  doc.text(lnh, pageWidth / 2, y, { align: "center" });
   y += 5;
   return y;
 }
 
-/** Altura de página muy grande solo para medir dónde termina el contenido */
-const MEASURE_PAGE_HEIGHT = 600;
+/** Altura muy grande solo para medir dónde termina el contenido (hoja horizontal) */
+const MEASURE_PAGE_HEIGHT = 400;
 
 /**
- * Genera el PDF y dispara la descarga. Una sola hoja con altura ajustada al contenido:
- * se mide el contenido, se crea la página con esa altura + margen inferior y se dibuja,
- * así se elimina el espacio en blanco arriba y abajo.
+ * Genera el PDF en hoja tamaño oficio horizontal (apaisada): 340 mm ancho x 216 mm alto.
+ * Una sola hoja con altura ajustada al contenido para evitar espacio en blanco.
  * nombreLnh: nombre del nutriólogo (LNH); por defecto "L.N.H. Diana Gallardo".
  */
 export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
   const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
   const { patientBlock, days, recommendations } = parsePlanContent(planContent);
 
-  // Pasada 1: medir altura del contenido en una página muy alta
+  // Pasada 1: medir altura del contenido en una hoja horizontal muy alta (340 mm ancho x 400 mm alto)
   const docMeasure = new jsPDF({
-    orientation: "portrait",
+    orientation: "landscape",
     unit: "mm",
-    format: [OFICIO_WIDTH, MEASURE_PAGE_HEIGHT],
+    format: [OFICIO_LANDSCAPE_WIDTH, MEASURE_PAGE_HEIGHT],
     hotfixes: ["px_scaling"],
   });
   const contentEndY = drawPlanContent(
     docMeasure,
+    OFICIO_LANDSCAPE_WIDTH,
     MEASURE_PAGE_HEIGHT,
     lnh,
     patientBlock,
@@ -388,17 +388,27 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     true
   );
 
-  // Altura final = contenido + margen inferior mínimo; máximo oficio por si el plan es muy largo
-  const pageHeight = Math.min(OFICIO_HEIGHT, contentEndY + 5);
+  // Altura final = contenido + margen inferior; máximo 216 mm (oficio horizontal)
+  const pageHeight = Math.min(OFICIO_LANDSCAPE_HEIGHT, contentEndY + 5);
 
-  // Pasada 2: documento con altura justa (sin espacio en blanco)
+  // Pasada 2: documento horizontal con altura justa (340 mm ancho x pageHeight alto)
   const doc = new jsPDF({
-    orientation: "portrait",
+    orientation: "landscape",
     unit: "mm",
-    format: [OFICIO_WIDTH, pageHeight],
+    format: [OFICIO_LANDSCAPE_WIDTH, pageHeight],
     hotfixes: ["px_scaling"],
   });
-  drawPlanContent(doc, pageHeight, lnh, patientBlock, days, recommendations, nombrePaciente, true);
+  drawPlanContent(
+    doc,
+    OFICIO_LANDSCAPE_WIDTH,
+    pageHeight,
+    lnh,
+    patientBlock,
+    days,
+    recommendations,
+    nombrePaciente,
+    true
+  );
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);
