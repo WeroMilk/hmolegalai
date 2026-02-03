@@ -159,7 +159,8 @@ const MIN_CELL_HEIGHT = 1;
 /**
  * Dibuja todo el contenido en el doc.
  * scale: 1 = tamaño normal; <1 comprime para caber en 1 hoja.
- * extraGap: espacio extra (mm) a repartir entre secciones cuando sobra espacio, para que quede bien distribuido.
+ * extraGap: espacio extra (mm) entre secciones cuando sobra espacio.
+ * extraCellHeight: altura extra (mm) por fila de tabla para que las tablas llenen toda la hoja.
  */
 function drawPlanContent(
   doc: jsPDF,
@@ -172,7 +173,8 @@ function drawPlanContent(
   nombrePacienteForm: string,
   singlePage: boolean,
   scale: number = 1,
-  extraGap: number = 0
+  extraGap: number = 0,
+  extraCellHeight: number = 0
 ): number {
   const s = scale;
   const m = MARGIN * s;
@@ -189,7 +191,7 @@ function drawPlanContent(
   const fTable = Math.max(MIN_FONT, 3.5 * s);
   const fRec = Math.max(MIN_FONT, 3.5 * s);
   const fSmall = Math.max(MIN_FONT, 4 * s);
-  const minH = Math.max(MIN_CELL_HEIGHT, 1.5 * s);
+  const minH = Math.max(MIN_CELL_HEIGHT, 1.5 * s) + extraCellHeight;
   const headerH = 5 * s;
   const sectionH = 1.6 * s;
 
@@ -404,13 +406,17 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     1
   );
 
-  // Calcular escala y distribución: que todo quepa en 216 mm y, si sobra espacio, repartirlo entre secciones
+  // Calcular escala y distribución: que todo quepa en 216 mm; si sobra espacio, tablas más altas + gaps
   const pageHeight = OFICIO_LANDSCAPE_HEIGHT;
   const availableHeight = pageHeight - BOTTOM_MARGIN;
   const scale = contentEndY <= availableHeight ? 1 : Math.min(1, availableHeight / contentEndY);
-  const extraSpace = availableHeight - contentEndY * scale;
+  const extraSpace = Math.max(0, availableHeight - contentEndY * scale);
   const numGaps = 6;
-  const extraGap = extraSpace > 0 && scale === 1 ? extraSpace / numGaps : 0;
+  const numTableRows = 8 + 10;
+  const extraForGaps = scale === 1 ? extraSpace * 0.35 : 0;
+  const extraForCells = scale === 1 ? extraSpace * 0.65 : 0;
+  const extraGap = extraForGaps / numGaps;
+  const extraCellHeight = extraForCells / numTableRows;
 
   const doc = new jsPDF({
     orientation: "landscape",
@@ -429,7 +435,8 @@ export function generateDidiPdf(planContent: string, nombrePaciente: string, nom
     nombrePaciente,
     true,
     scale,
-    extraGap
+    extraGap,
+    extraCellHeight
   );
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
