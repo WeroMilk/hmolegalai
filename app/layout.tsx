@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 const siteUrl = "https://www.avatarlegalai.com.mx";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Avatar Legal AI",
   description: "Avatar Legal AI — Genera documentos legales profesionales utilizando inteligencia artificial",
   keywords: "documentos legales, IA, inteligencia artificial, contratos, documentos, Avatar Legal AI",

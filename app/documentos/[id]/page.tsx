@@ -357,10 +357,10 @@ export default function DocumentPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-24">
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-24">
         <Link
           href="/documentos"
-          className="inline-flex items-center text-blue-500 hover:text-blue-400 mb-0 py-2 -my-2 min-h-[44px]"
+          className="inline-flex items-center text-blue-500 hover:text-blue-400 mt-0 mb-4 py-2 min-h-[44px]"
         >
           <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
           {t("doc_back_catalog")}
@@ -414,6 +414,7 @@ export default function DocumentPage() {
                 <div key={field.id}>
                   {field.id === "ciudad_pie" ? (
                     <CiudadPieSelector
+                      id={field.id}
                       value={formData[field.id] || ""}
                       onChange={(val) => handleInputChange(field.id, val)}
                       label={t(getFieldLabelKey(document.id, field.id))}
@@ -421,6 +422,7 @@ export default function DocumentPage() {
                     />
                   ) : field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2" ? (
                     <DomicilioNotificacionesSelector
+                      id={field.id}
                       value={formData[field.id] || ""}
                       onChange={(val) => handleInputChange(field.id, val)}
                       label={label}
@@ -428,7 +430,7 @@ export default function DocumentPage() {
                     />
                   ) : field.type === "person_list" ? (
                     <div className="space-y-4">
-                      <label className="block text-sm font-medium mb-2 text-foreground">
+                      <label htmlFor={`${field.id}-nombre-0`} className="block text-sm font-medium mb-2 text-foreground">
                         {label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
@@ -436,6 +438,8 @@ export default function DocumentPage() {
                         <div key={idx} className="flex flex-wrap items-center gap-3 p-3 rounded-lg bg-card border border-border">
                           <div className="flex-1 min-w-[120px] sm:min-w-[160px]">
                             <Input
+                              id={`${field.id}-nombre-${idx}`}
+                              name={`${field.id}-nombre-${idx}`}
                               value={person.nombre}
                               onChange={(e) => handlePersonChange(field.id, idx, "nombre", e.target.value)}
                               onBlur={() => {
@@ -447,6 +451,8 @@ export default function DocumentPage() {
                           </div>
                           <div className="flex-1 min-w-[120px] sm:min-w-[160px]">
                             <select
+                              id={`${field.id}-parentesco-${idx}`}
+                              name={`${field.id}-parentesco-${idx}`}
                               value={person.parentesco}
                               onChange={(e) => handlePersonChange(field.id, idx, "parentesco", e.target.value)}
                               className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 focus:outline-none focus:border-blue-500/50"
@@ -480,11 +486,13 @@ export default function DocumentPage() {
                     </div>
                   ) : field.type === "textarea" ? (
                     <>
-                      <label className="block text-sm font-medium mb-2 text-foreground">
+                      <label htmlFor={field.id} className="block text-sm font-medium mb-2 text-foreground">
                         {label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
                       <Textarea
+                        id={field.id}
+                        name={field.id}
                         value={formData[field.id] || ""}
                         onChange={(e) => handleInputChange(field.id, e.target.value)}
                         required={field.required}
@@ -494,11 +502,13 @@ export default function DocumentPage() {
                     </>
                   ) : field.type === "select" && field.options ? (
                     <>
-                      <label className="block text-sm font-medium mb-2 text-foreground">
+                      <label htmlFor={field.id} className="block text-sm font-medium mb-2 text-foreground">
                         {label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
                       <select
+                        id={field.id}
+                        name={field.id}
                         value={formData[field.id] || ""}
                         onChange={(e) => handleInputChange(field.id, e.target.value)}
                         required={field.required}
@@ -578,8 +588,10 @@ export default function DocumentPage() {
           <div className="mb-6 p-4 rounded-lg border-2 border-amber-500/60 bg-amber-500/10 dark:bg-amber-500/15 dark:border-amber-400/50">
             <h3 className="text-sm font-semibold text-foreground mb-2">{t("legal_checkout_title")}</h3>
             <p className="text-sm text-muted mb-4 leading-relaxed">{t("legal_checkout_text")}</p>
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label htmlFor="legal-accept" className="flex items-start gap-3 cursor-pointer">
               <input
+                id="legal-accept"
+                name="legalAccepted"
                 type="checkbox"
                 checked={legalAccepted}
                 onChange={(e) => setLegalAccepted(e.target.checked)}
@@ -660,7 +672,7 @@ export default function DocumentPage() {
             </p>
           )}
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 }

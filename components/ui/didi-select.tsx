@@ -9,6 +9,8 @@ interface DidiSelectProps {
   placeholder?: string;
   required?: boolean;
   className?: string;
+  id?: string;
+  "aria-label"?: string;
 }
 
 const optionClassName =
@@ -21,6 +23,8 @@ export function DidiSelect({
   placeholder = "Selecciona",
   required,
   className = "",
+  id,
+  "aria-label": ariaLabel,
 }: DidiSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -48,6 +52,7 @@ export function DidiSelect({
       {placeholder && (
         <li
           role="option"
+          aria-selected={!value}
           onClick={() => handleSelect("")}
           className="px-4 py-3 cursor-pointer text-muted hover:!bg-white hover:!text-purple-600 dark:hover:!bg-white dark:hover:!text-purple-600 active:bg-purple-50 dark:active:bg-purple-500/20"
         >
@@ -72,6 +77,10 @@ export function DidiSelect({
     <div ref={ref} className={`relative ${className}`}>
       <button
         type="button"
+        id={id}
+        aria-label={ariaLabel}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-left text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 flex items-center justify-between"
       >

@@ -102,7 +102,7 @@ function AuthPageContent() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="flex justify-center items-start min-h-screen px-3 xs:px-4 sm:px-6 pt-24 xs:pt-28 sm:pt-32 pb-10 xs:pb-12 sm:pb-20">
+      <main id="main" className="flex justify-center items-start min-h-screen px-3 xs:px-4 sm:px-6 pt-24 xs:pt-28 sm:pt-32 pb-10 xs:pb-12 sm:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -229,11 +229,13 @@ function AuthPageContent() {
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-2 flex items-center text-foreground">
+                <label htmlFor="auth-email" className="block text-sm font-medium mb-2 flex items-center text-foreground">
                   <Mail className="w-4 h-4 mr-2" />
                   {t("auth_email")}
                 </label>
                 <Input
+                  id="auth-email"
+                  name="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -244,7 +246,7 @@ function AuthPageContent() {
 
               <div>
                 <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-medium flex items-center text-foreground">
+                  <label htmlFor="auth-password" className="block text-sm font-medium flex items-center text-foreground">
                     <Lock className="w-4 h-4 mr-2" />
                     {t("auth_password")}
                   </label>
@@ -263,6 +265,8 @@ function AuthPageContent() {
                   )}
                 </div>
                 <Input
+                  id="auth-password"
+                  name="password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -281,11 +285,14 @@ function AuthPageContent() {
                       <p className="text-sm text-muted">{t("auth_placeholder_email")}</p>
                       <div className="flex gap-2">
                         <Input
+                          id="auth-reset-email"
+                          name="resetEmail"
                           type="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder={t("auth_placeholder_email")}
                           className="flex-1"
+                          aria-label={t("auth_email")}
                         />
                         <Button
                           type="button"
@@ -325,11 +332,13 @@ function AuthPageContent() {
 
               {!isLogin && (
                 <div>
-                  <label className="block text-sm font-medium mb-2 flex items-center text-foreground">
+                  <label htmlFor="auth-confirm-password" className="block text-sm font-medium mb-2 flex items-center text-foreground">
                     <Lock className="w-4 h-4 mr-2" />
                     {t("auth_confirm_password")}
                   </label>
                   <Input
+                    id="auth-confirm-password"
+                    name="confirmPassword"
                     type="password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -402,7 +411,7 @@ function AuthPageContent() {
             )}
           </div>
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 }

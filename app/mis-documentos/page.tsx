@@ -105,7 +105,7 @@ export default function MisDocumentosPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
+      <main id="main" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
         <h1 className="text-4xl font-bold mb-8 text-foreground">
           <span className="gradient-text hover-title">{t("mis_docs_title")}</span>
         </h1>
@@ -155,7 +155,7 @@ export default function MisDocumentosPage() {
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

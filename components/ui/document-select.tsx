@@ -8,6 +8,7 @@ interface DocumentSelectProps {
   options: { value: string; label: string }[];
   placeholder?: string;
   disabled?: boolean;
+  id?: string;
   "aria-label"?: string;
   className?: string;
 }
@@ -18,6 +19,7 @@ export function DocumentSelect({
   options,
   placeholder = "Seleccionar",
   disabled,
+  id,
   "aria-label": ariaLabel,
   className = "",
 }: DocumentSelectProps) {
@@ -57,6 +59,7 @@ export function DocumentSelect({
       {placeholder && (
         <li
           role="option"
+          aria-selected={!value}
           onClick={() => handleSelect("")}
           className={`${optionBase} text-muted`}
         >
@@ -81,6 +84,7 @@ export function DocumentSelect({
     <div ref={ref} className={`relative ${className}`}>
       <button
         type="button"
+        id={id}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={triggerClass}

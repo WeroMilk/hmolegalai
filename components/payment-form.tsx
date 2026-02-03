@@ -73,7 +73,7 @@ function PaymentFormInner({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" aria-label="Formulario de pago con tarjeta">
       <PaymentElement
         options={{
           layout: "tabs",

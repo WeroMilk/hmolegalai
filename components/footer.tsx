@@ -12,7 +12,7 @@ export function Footer() {
     <footer className="relative z-10 py-8 px-4 border-t border-border bg-background">
       <div className="flex justify-center mb-4">
         <Link href="/" className="inline-flex items-center gap-2 text-muted hover:text-foreground transition-colors">
-          <Image src="/logo.png" alt="" width={32} height={32} className="w-8 h-8" />
+          <Image src="/logo.png" alt="Avatar Legal AI" width={32} height={32} className="w-8 h-8" />
           <span className="footer-brand font-semibold text-foreground mr-8">Avatar Legal AI</span>
         </Link>
       </div>

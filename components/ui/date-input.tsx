@@ -15,6 +15,7 @@ interface DateInputProps {
   placeholder?: string;
   required?: boolean;
   className?: string;
+  id?: string;
   "aria-label"?: string;
 }
 
@@ -71,6 +72,7 @@ export function DateInput({
   placeholder = "dd/mm/aaaa",
   required = false,
   className,
+  id,
   "aria-label": ariaLabel,
 }: DateInputProps) {
   const [touched, setTouched] = useState(false);
@@ -116,6 +118,7 @@ export function DateInput({
   return (
     <input
       type="text"
+      id={id}
       inputMode="numeric"
       autoComplete="off"
       value={display}

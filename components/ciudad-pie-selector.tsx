@@ -9,6 +9,7 @@ interface CiudadPieSelectorProps {
   onChange: (value: string) => void;
   label?: string;
   required?: boolean;
+  id?: string;
 }
 
 /** Parsea "Municipio, Estado" a { municipio, estado }. */
@@ -23,10 +24,12 @@ function parseCiudadPie(value: string): { municipio: string; estado: string } {
   };
 }
 
-export function CiudadPieSelector({ value, onChange, label, required }: CiudadPieSelectorProps) {
+export function CiudadPieSelector({ value, onChange, label, required, id: baseId }: CiudadPieSelectorProps) {
   const { estado, municipio } = useMemo(() => parseCiudadPie(value), [value]);
   const estadosOptions = useMemo(() => getEstadosOptions(), []);
   const municipiosOptions = useMemo(() => getMunicipiosOptions(estado), [estado]);
+  const idEstado = baseId ? `${baseId}-estado` : undefined;
+  const idMunicipio = baseId ? `${baseId}-municipio` : undefined;
 
   const handleEstadoChange = (newEstado: string) => {
     onChange(newEstado || "");
@@ -40,13 +43,14 @@ export function CiudadPieSelector({ value, onChange, label, required }: CiudadPi
   return (
     <div className="space-y-3">
       {label && (
-        <label className="block text-sm font-medium text-foreground">
+        <label htmlFor={idEstado} className="block text-sm font-medium text-foreground">
           {label}
           {required && <span className="text-red-400 ml-1">*</span>}
         </label>
       )}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <DocumentSelect
+          id={idEstado}
           value={estado}
           onChange={handleEstadoChange}
           options={estadosOptions}
@@ -54,6 +58,7 @@ export function CiudadPieSelector({ value, onChange, label, required }: CiudadPi
           aria-label="Estado"
         />
         <DocumentSelect
+          id={idMunicipio}
           value={municipio}
           onChange={handleMunicipioChange}
           options={municipiosOptions}

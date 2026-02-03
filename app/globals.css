@@ -397,32 +397,42 @@ html.dark select:focus {
   background: linear-gradient(90deg, #2563eb, transparent);
 }
 .didi-plan-content h2 {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #334155;
-  margin: 1.25rem 0 0.5rem;
+  margin: 1.5rem 0 0.5rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+.didi-plan-content h2:first-of-type {
+  margin-top: 0.5rem;
 }
 .didi-plan-content p {
   font-size: 0.9rem;
-  line-height: 1.6;
+  line-height: 1.65;
   color: #475569;
-  margin: 0.25rem 0;
+  margin: 0.4rem 0;
   overflow-wrap: break-word;
   word-wrap: break-word;
+}
+.didi-plan-content strong {
+  font-weight: 600;
+  color: #1e3a5f;
 }
 .didi-plan-content ul {
   list-style: none;
   padding-left: 0;
-  margin: 0.75rem 0 1rem;
+  margin: 0.5rem 0 1.25rem;
 }
 .didi-plan-content ul li {
   font-size: 0.9rem;
   color: #475569;
-  padding: 0.25rem 0 0.25rem 1.25rem;
+  padding: 0.35rem 0 0.35rem 1.25rem;
   position: relative;
-  line-height: 1.5;
+  line-height: 1.55;
   overflow-wrap: break-word;
   word-wrap: break-word;
+  margin-bottom: 0.15rem;
 }
 .didi-plan-content ul li::before {
   content: "•";
@@ -485,9 +495,10 @@ html.dark select:focus {
 .dark .didi-plan-content h1::before,
 .dark .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, #60a5fa); }
 .dark .didi-plan-content h1::after { background: linear-gradient(90deg, #60a5fa, transparent); }
-.dark .didi-plan-content h2 { color: #cbd5e1; }
+.dark .didi-plan-content h2 { color: #cbd5e1; border-color: rgba(255,255,255,0.1); }
 .dark .didi-plan-content p,
 .dark .didi-plan-content ul li { color: #94a3b8; }
+.dark .didi-plan-content strong { color: #93c5fd; }
 .dark .didi-plan-content th { background: #1e3a5f !important; border-color: #1e3a5f; }
 .dark .didi-plan-content td { border-color: #334155; color: #cbd5e1; }
 .dark .didi-plan-content tr:nth-child(even) td { background: #1e293b; }
@@ -495,6 +506,8 @@ html.dark select:focus {
 .dark .didi-plan-content p:last-of-type { color: #94a3b8; border-color: #334155; }
 
 /* Plan DIDI: tema morado en /didi */
+body.didi-theme .didi-plan-content h2 { border-color: rgba(124, 58, 237, 0.25); }
+body.didi-theme .didi-plan-content strong { color: #5b21b6; }
 body.didi-theme .didi-plan-content h1 { color: #5b21b6; }
 body.didi-theme .didi-plan-content h1::before,
 body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, #7c3aed); }

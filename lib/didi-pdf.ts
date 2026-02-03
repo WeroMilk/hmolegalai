@@ -7,8 +7,9 @@
 import { jsPDF } from "jspdf";
 import { autoTable } from "jspdf-autotable";
 
-/** Tamaño oficio México: 216 mm de ancho. Altura se ajusta automáticamente al contenido */
+/** Tamaño oficio México: 216 mm de ancho, 340 mm de alto por página */
 const OFICIO_WIDTH = 216;
+const OFICIO_HEIGHT = 340;
 
 /** Colores morado pastel (RGB 0-255) — todo legible y organizado */
 const PASTEL = {
@@ -127,11 +128,18 @@ export function parsePlanContent(markdown: string): ParsedPlan {
 }
 
 /** Altura muy grande para la pasada de medición */
-const MEASURE_PAGE_HEIGHT = 800;
+/** Añade nueva página si no hay espacio; devuelve la y actualizada */
+function ensureSpace(doc: jsPDF, y: number, pageHeight: number, needMm: number): number {
+  if (y + needMm > pageHeight - 10) {
+    doc.addPage([OFICIO_WIDTH, pageHeight], "p");
+    return 10;
+  }
+  return y;
+}
 
 /**
- * Dibuja todo el contenido en el doc y devuelve la Y final (después del pie).
- * pageHeight: altura de la página en mm (para comprobar espacio).
+ * Dibuja todo el contenido en el doc (varias páginas si hace falta) y devuelve la Y final.
+ * pageHeight: altura de la página en mm (340 oficio).
  */
 function drawPlanContent(
   doc: jsPDF,
@@ -139,7 +147,8 @@ function drawPlanContent(
   lnh: string,
   patientBlock: string,
   days: ParsedDay[],
-  recommendations: string
+  recommendations: string,
+  nombrePacienteForm: string
 ): number {
   const margin = 10;
   const paddingHorizontal = 10;
@@ -158,20 +167,22 @@ function drawPlanContent(
   doc.text(lnh, OFICIO_WIDTH / 2, 12, { align: "center" });
   y = 18;
 
-  // Padding mínimo para reducir espacio en blanco
-  const cellPad = 0.5;
+  // Padding en celdas para que el contenido se vea completo (sin recortes)
+  const cellPad = 1;
 
-  // Cuadro de información del cliente (nombre en el título, sin fila Nombre en la tabla)
+  // Cuadro de información del cliente: nombre en el título (del formulario), tabla sin Nombre ni "Datos del Paciente"
   const patientPairs = parsePatientBlockToPairs(patientBlock);
-  const nombrePaciente = patientPairs.find((p) => p.label.toLowerCase() === "nombre")?.value?.trim() ?? "";
-  const pairsSinNombre = patientPairs.filter((p) => p.label.toLowerCase() !== "nombre");
+  const nombreParaTitulo = (nombrePacienteForm || "").trim() || patientPairs.find((p) => p.label.toLowerCase() === "nombre")?.value?.trim() || "";
+  const pairsParaTabla = patientPairs.filter(
+    (p) => p.label.toLowerCase() !== "nombre" && p.label.toLowerCase() !== "datos del paciente"
+  );
   const maxPatientRows = 12;
   const clientHead = [["Dato", "Valor"]];
-  const clientBody = pairsSinNombre
+  const clientBody = pairsParaTabla
     .slice(0, maxPatientRows)
     .map(({ label, value }) => [label, value || "—"]);
 
-  const tituloCliente = nombrePaciente ? `Información del cliente: ${nombrePaciente}` : "Información del cliente";
+  const tituloCliente = nombreParaTitulo ? `Información del cliente: ${nombreParaTitulo}` : "Información del cliente";
   doc.setFillColor(...PASTEL.purpleLight);
   doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
   doc.setFont("helvetica", "bold");
@@ -180,6 +191,7 @@ function drawPlanContent(
   y += 4;
 
   if (clientBody.length > 0) {
+    y = ensureSpace(doc, y, pageHeight, 30);
     autoTable(doc, {
       head: clientHead,
       body: clientBody,
@@ -187,12 +199,13 @@ function drawPlanContent(
       margin: { left: tableMargin, right: tableMargin },
       tableWidth,
       theme: "plain",
-      pageBreak: "avoid",
+      pageBreak: "auto",
       styles: {
         fontSize: 5,
         cellPadding: cellPad,
         overflow: "linebreak",
         textColor: PASTEL.textDark,
+        minCellHeight: 3,
       },
       headStyles: {
         fillColor: PASTEL.purpleHead,
@@ -230,6 +243,7 @@ function drawPlanContent(
   doc.text("Plan de Alimentación Semanal", tableMargin + tableWidth / 2, y + 2.2, { align: "center" });
   y += 4;
 
+  y = ensureSpace(doc, y, pageHeight, 50);
   const head = [["Día", "Desayuno", "Comida", "Cena", "Colación", "Aprox. kcal"]];
   const body = days.map((d) => [
     d.day,
@@ -247,12 +261,13 @@ function drawPlanContent(
     margin: { left: tableMargin, right: tableMargin },
     tableWidth,
     theme: "plain",
-    pageBreak: "avoid",
+    pageBreak: "auto",
     styles: {
       fontSize: 4,
       cellPadding: cellPad,
       overflow: "linebreak",
       textColor: PASTEL.textDark,
+      minCellHeight: 2.5,
     },
     headStyles: {
       fillColor: PASTEL.purpleHead,
@@ -286,7 +301,8 @@ function drawPlanContent(
   const tbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
   y = (tbl?.finalY ?? y + 40) + 1;
 
-  if (recommendations && y < pageHeight - 18) {
+  if (recommendations) {
+    y = ensureSpace(doc, y, pageHeight, 20);
     doc.setFillColor(...PASTEL.purpleLight);
     doc.rect(tableMargin, y - 1, tableWidth, 3.5, "F");
     doc.setFont("helvetica", "bold");
@@ -296,47 +312,40 @@ function drawPlanContent(
     doc.setFont("helvetica", "normal");
     doc.setFontSize(5);
     const recLines = doc.splitTextToSize(recommendations, tableWidth);
-    const maxRec = 5;
-    recLines.slice(0, maxRec).forEach((line: string) => {
-      if (y > pageHeight - 12) return;
+    for (const line of recLines) {
+      y = ensureSpace(doc, y, pageHeight, 4);
       doc.text(line, tableMargin, y);
       y += 2;
-    });
+    }
   }
 
-  y += 4;
+  y = ensureSpace(doc, y, pageHeight, 15);
+  y += 3;
   doc.setFontSize(6);
   doc.setTextColor(100, 80, 130);
   doc.text(lnh, OFICIO_WIDTH / 2, y, { align: "center" });
-  return y + 2;
+  /** Espacio adicional abajo de la firma de la nutrióloga */
+  y += 10;
+  return y;
 }
 
 /**
- * Genera el PDF y dispara la descarga. La altura de la hoja se ajusta automáticamente al contenido.
+ * Genera el PDF y dispara la descarga. Usa páginas oficio (216×340 mm); si el contenido
+ * no cabe en una página se añaden más. Toda la información (datos del cliente, plan semanal
+ * y recomendaciones completas) se incluye en el PDF.
  * nombreLnh: nombre del nutriólogo (LNH) para encabezado y pie; por defecto "L.N.H. Diana Gallardo".
  */
 export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
   const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
   const { patientBlock, days, recommendations } = parsePlanContent(planContent);
 
-  // Pasada 1: medir altura del contenido en una página muy alta
-  const docMeasure = new jsPDF({
-    orientation: "portrait",
-    unit: "mm",
-    format: [OFICIO_WIDTH, MEASURE_PAGE_HEIGHT],
-    hotfixes: ["px_scaling"],
-  });
-  const contentEndY = drawPlanContent(docMeasure, MEASURE_PAGE_HEIGHT, lnh, patientBlock, days, recommendations);
-
-  // Pasada 2: altura = solo contenido + margen inferior (sin mínimo, elimina espacio en blanco abajo)
-  const pageHeight = Math.min(340, contentEndY + 12);
   const doc = new jsPDF({
     orientation: "portrait",
     unit: "mm",
-    format: [OFICIO_WIDTH, pageHeight],
+    format: [OFICIO_WIDTH, OFICIO_HEIGHT],
     hotfixes: ["px_scaling"],
   });
-  drawPlanContent(doc, pageHeight, lnh, patientBlock, days, recommendations);
+  drawPlanContent(doc, OFICIO_HEIGHT, lnh, patientBlock, days, recommendations, nombrePaciente);
 
   const filename = `Plan-Nutricional-${(nombrePaciente || "Paciente").replace(/\s+/g, "-")}-${new Date().toISOString().slice(0, 10)}.pdf`;
   doc.save(filename);

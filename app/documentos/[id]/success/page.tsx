@@ -163,7 +163,7 @@ export default function SuccessPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -179,7 +179,7 @@ export default function SuccessPage() {
                 {generating ? t("success_ai_creating") : t("success_back_catalog")}
               </p>
               {!generating && (
-                <Button onClick={() => router.push("/documentos")} className="mt-2">
+                <Button onClick={() => router.push("/documentos")} className="mt-1 mb-4">
                   {t("success_back_catalog")}
                 </Button>
               )}
@@ -211,7 +211,7 @@ export default function SuccessPage() {
             </>
           )}
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 }

@@ -117,7 +117,7 @@ export default function PreviewPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -148,11 +148,14 @@ export default function PreviewPage() {
                 <div className="max-w-2xl mx-auto">
                   {isEditing ? (
                     <textarea
+                      id="preview-content"
+                      name="content"
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 dark:placeholder:text-gray-400 border border-border rounded-xl p-6 text-foreground font-serif text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 placeholder:text-muted text-justify"
                       placeholder={t("preview_placeholder")}
                       spellCheck
+                      aria-label={t("preview_placeholder")}
                     />
                   ) : (
                     <div className="legal-document-content font-serif text-base sm:text-lg text-foreground/95 leading-relaxed space-y-0.5">
@@ -238,7 +241,7 @@ export default function PreviewPage() {
             </Button>
           </div>
 
-          <div className="text-center">
+          <div className="text-center mt-2 mb-4">
             <button
               type="button"
               onClick={() => router.push("/documentos")}
@@ -248,7 +251,7 @@ export default function PreviewPage() {
             </button>
           </div>
         </motion.div>
-      </div>
+      </main>
     </div>
   );
 }

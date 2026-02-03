@@ -17,6 +17,25 @@ import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+/** Normaliza el markdown del plan para que la vista previa muestre títulos y listas bien separados */
+function normalizePlanMarkdownForPreview(raw: string): string {
+  if (!raw?.trim()) return raw;
+  let s = raw.trim();
+  // Separa bloques: ## L.N.H., ## LUNES, ## MARTES, etc. y ## RECOMENDACIONES
+  s = s.replace(/\s+(##\s+)/g, "\n\n$1");
+  // Separa cada ítem de comida: - **Desayuno:**, - **Comida:**, etc.
+  s = s.replace(/\s+(-\s+\*\*)/g, "\n\n$1");
+  // "Datos del Paciente" como subencabezado y separado del bloque anterior
+  s = s.replace(/(\S)\s*Datos del Paciente:\s*/gi, "$1\n\n## Datos del Paciente\n\n");
+  s = s.replace(/^Datos del Paciente:\s*/im, "## Datos del Paciente\n\n");
+  // Separa "RECOMENDACIONES GENERALES" si viene pegado
+  s = s.replace(/(\S)\s+(##\s*RECOMENDACIONES GENERALES)/i, "$1\n\n$2");
+  s = s.replace(/(\S)\s+(RECOMENDACIONES GENERALES)/i, "$1\n\n## $2");
+  // Límite de líneas en blanco consecutivas
+  s = s.replace(/\n{4,}/g, "\n\n\n");
+  return s;
+}
+
 const SEXO_OPTIONS = ["Hombre", "Mujer", "Otro"];
 const ACTIVIDAD_OPTIONS = [
   "Sedentario (poco o ningún ejercicio)",
@@ -242,7 +261,7 @@ export default function DidiPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
         <Link
           href="/documentos"
           className="inline-flex items-center text-purple-500 hover:text-purple-400 mb-0 py-2 -my-2 min-h-[44px]"
@@ -279,10 +298,12 @@ export default function DidiPage() {
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-nombreLnh" className="block text-sm font-medium text-foreground mb-2">
                   Nombre del nutriólogo (LNH)
                 </label>
                 <Input
+                  id="didi-nombreLnh"
+                  name="nombreLnh"
                   value={form.nombreLnh}
                   onChange={(e) => handleChange("nombreLnh", e.target.value)}
                   placeholder="L.N.H. Diana Gallardo"
@@ -291,10 +312,12 @@ export default function DidiPage() {
                 <p className="text-xs text-muted mt-1">Aparece en el plan y en el PDF. Por defecto: L.N.H. Diana Gallardo.</p>
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-nombrePaciente" className="block text-sm font-medium text-foreground mb-2">
                   Nombre del paciente *
                 </label>
                 <Input
+                  id="didi-nombrePaciente"
+                  name="nombrePaciente"
                   value={form.nombrePaciente}
                   onChange={(e) => handleChange("nombrePaciente", e.target.value)}
                   onBlur={() => {
@@ -307,11 +330,13 @@ export default function DidiPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-peso" className="block text-sm font-medium text-foreground mb-2">
                   Peso (kg) *
                 </label>
                 <p className="text-xs text-muted mb-1">Formato: 57 → 57.000, 55500 → 55.500. Máx: 150 kg.</p>
                 <Input
+                  id="didi-peso"
+                  name="peso"
                   type="text"
                   inputMode="decimal"
                   value={form.peso}
@@ -326,11 +351,13 @@ export default function DidiPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-estatura" className="block text-sm font-medium text-foreground mb-2">
                   Estatura (m) *
                 </label>
                 <p className="text-xs text-muted mb-1">En metros (1.45) o en cm (155 → se convierte a 1.55 m)</p>
                 <Input
+                  id="didi-estatura"
+                  name="estatura"
                   type="number"
                   inputMode="decimal"
                   step="0.01"
@@ -352,11 +379,13 @@ export default function DidiPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-edad" className="block text-sm font-medium text-foreground mb-2">
                   Edad (años) *
                 </label>
                 <p className="text-xs text-muted mb-1">1-120 años. El plan se adapta a bebés, niños, adolescentes, adultos y adultos mayores.</p>
                 <Input
+                  id="didi-edad"
+                  name="edad"
                   type="number"
                   inputMode="numeric"
                   min="1"
@@ -369,10 +398,12 @@ export default function DidiPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-sexo" className="block text-sm font-medium text-foreground mb-2">
                   Sexo *
                 </label>
                 <DidiSelect
+                  id="didi-sexo"
+                  aria-label="Sexo"
                   value={form.sexo}
                   onChange={(v) => handleChange("sexo", v)}
                   options={SEXO_OPTIONS.map((o) => ({ value: o, label: o }))}
@@ -381,10 +412,12 @@ export default function DidiPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-actividadFisica" className="block text-sm font-medium text-foreground mb-2">
                   Actividad física *
                 </label>
                 <DidiSelect
+                  id="didi-actividadFisica"
+                  aria-label="Actividad física"
                   value={form.actividadFisica}
                   onChange={(v) => handleChange("actividadFisica", v)}
                   options={ACTIVIDAD_OPTIONS.map((o) => ({ value: o, label: o }))}
@@ -393,11 +426,13 @@ export default function DidiPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-objetivo" className="block text-sm font-medium text-foreground mb-2">
                   Objetivo del plan *
                 </label>
                 <p className="text-xs text-muted mb-1">La IA calcula calorías según los datos. Se ajustan por etapa de vida (niños, adolescentes, adultos, mayores).</p>
                 <DidiSelect
+                  id="didi-objetivo"
+                  aria-label="Objetivo del plan"
                   value={form.objetivo}
                   onChange={(v) => handleChange("objetivo", v)}
                   options={OBJETIVO_OPTIONS.map((o) => ({ value: o, label: o }))}
@@ -406,10 +441,12 @@ export default function DidiPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="didi-tipoDieta" className="block text-sm font-medium text-foreground mb-2">
                   Tipo de dieta *
                 </label>
                 <DidiSelect
+                  id="didi-tipoDieta"
+                  aria-label="Tipo de dieta"
                   value={form.tipoDieta}
                   onChange={(v) => handleChange("tipoDieta", v)}
                   options={TIPO_DIETA_OPTIONS.map((o) => ({ value: o, label: o }))}
@@ -428,10 +465,14 @@ export default function DidiPage() {
                 {CONDICIONES_OPTIONS.map((cond) => (
                   <label
                     key={cond}
+                    htmlFor={`didi-condicion-${cond.replace(/\s+/g, "-")}`}
                     className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-border px-3 py-2 hover:border-purple-500/40 transition-colors"
                   >
                     <input
+                      id={`didi-condicion-${cond.replace(/\s+/g, "-")}`}
+                      name="condiciones"
                       type="checkbox"
+                      value={cond}
                       checked={condiciones.includes(cond)}
                       onChange={() => handleCondicionToggle(cond)}
                       className="rounded border-border text-purple-500 accent-purple-500 focus:ring-purple-500/30"
@@ -475,12 +516,12 @@ export default function DidiPage() {
             className="space-y-6"
           >
             <div className="glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40">
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-                <h2 className="text-xl font-semibold text-foreground flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-purple-500" />
+              <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 mb-4">
+                <h2 className="text-xl font-semibold text-foreground flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
+                  <FileText className="w-5 h-5 text-purple-500 shrink-0" />
                   Plan listo para enviar al cliente
                 </h2>
-                <div className="flex flex-wrap gap-3">
+                <div className="flex flex-wrap gap-3 justify-center w-full sm:w-auto">
                   <Button
                     type="button"
                     variant="outline"
@@ -540,15 +581,20 @@ export default function DidiPage() {
               <div className="bg-white dark:bg-gray-900/80 rounded-xl border border-border p-6 sm:p-8 text-foreground overflow-hidden">
                 {isEditing ? (
                   <textarea
+                    id="didi-plan-edit"
+                    name="planContent"
                     value={planContent}
                     onChange={(e) => setPlanContent(e.target.value)}
-                    className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 border border-border rounded-xl p-6 text-foreground font-sans text-sm leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50"
-                    placeholder="Plan nutricional..."
+                    className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 border border-border rounded-xl p-6 text-foreground font-mono text-sm leading-loose whitespace-pre-wrap resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50"
+                    placeholder="Plan nutricional... (puedes editar títulos ##, listas - **Desayuno:**, etc.)"
                     spellCheck
+                    aria-label="Contenido del plan nutricional para editar"
                   />
                 ) : (
-                  <div className="didi-plan-content w-full min-w-0">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{planContent}</ReactMarkdown>
+                  <div className="didi-plan-content w-full min-w-0 prose prose-sm max-w-none">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {normalizePlanMarkdownForPreview(planContent)}
+                    </ReactMarkdown>
                   </div>
                 )}
               </div>
@@ -578,7 +624,7 @@ export default function DidiPage() {
             </div>
           </motion.div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

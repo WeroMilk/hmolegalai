@@ -15,7 +15,7 @@ export default function DocumentosPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <div className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
+      <main id="main" className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -87,7 +87,7 @@ export default function DocumentosPage() {
             </div>
           </motion.div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
