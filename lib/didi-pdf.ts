@@ -231,7 +231,7 @@ function drawPlanContent(
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(fTitle);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerMarginTop + headerContentH * 0.32, { align: "center" });
+  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerMarginTop + headerContentH * 0.22, { align: "center" });
   doc.setFontSize(fSub);
   doc.setFont("helvetica", "normal");
   doc.text(lnh, pageWidth / 2, headerMarginTop + headerContentH * 0.78, { align: "center" });
