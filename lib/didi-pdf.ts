@@ -165,7 +165,7 @@ function ensureSpace(
 /** Márgenes y espaciado: distribución profesional, todo bien separado */
 const MARGIN = 2;
 const PAD_H = 2;
-const SECTION_GAP = 1.4;
+const SECTION_GAP = 1.8;
 const CELL_PAD = 1.2;
 const LINE_HEIGHT = 1.2;
 
@@ -203,25 +203,25 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = m;
 
-  const fTitle = Math.max(MIN_FONT, 15 * s);
-  const fSub = Math.max(MIN_FONT, 8.5 * s);
-  const fSectionTitle = Math.max(MIN_FONT, 8.5 * s);
-  const fTable = Math.max(MIN_FONT, 6 * s);
-  const fPatientTable = Math.max(MIN_FONT, 7 * s);
-  const fRec = Math.max(MIN_FONT, 5 * s);
-  const fSmall = Math.max(MIN_FONT, 7.5 * s);
-  const fSignatureSub = Math.max(MIN_FONT, 5.8 * s);
-  const minH = Math.max(MIN_CELL_HEIGHT, 2.2 * s) + extraCellHeight;
+  const fTitle = Math.max(MIN_FONT, 16.5 * s);
+  const fSub = Math.max(MIN_FONT, 9 * s);
+  const fSectionTitle = Math.max(MIN_FONT, 9.2 * s);
+  const fTable = Math.max(MIN_FONT, 6.5 * s);
+  const fPatientTable = Math.max(MIN_FONT, 7.5 * s);
+  const fRec = Math.max(MIN_FONT, 5.5 * s);
+  const fSmall = Math.max(MIN_FONT, 8 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 6.2 * s);
+  const minH = Math.max(MIN_CELL_HEIGHT, 2.8 * s) + extraCellHeight;
   const headerMarginTop = 5 * s;
   const headerMarginBottom = 3 * s;
-  const headerContentH = 6 * s;
+  const headerContentH = 8 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
-  const gapAfterHeader = 2.5 * s;
-  const sectionH = 5.2 * s;
-  const sectionBarMarginTop = 2.5 * s;
-  const sectionMarginBottom = 2.2 * s;
-  const gapBetweenPatientAndPlan = 2 * s;
-  const gapBeforeFooter = 4 * s;
+  const gapAfterHeader = 3 * s;
+  const sectionH = 5.5 * s;
+  const sectionBarMarginTop = 3 * s;
+  const sectionMarginBottom = 2.6 * s;
+  const gapBetweenPatientAndPlan = 2.5 * s;
+  const gapBeforeFooter = 5 * s;
   const patientTableWidth = Math.min(tableWidth * 0.52, 140);
   const patientTableMargin = (pageWidth - patientTableWidth) / 2;
 
@@ -231,10 +231,10 @@ function drawPlanContent(
   doc.setTextColor(0, 0, 0);
   doc.setFontSize(fTitle);
   doc.setFont("helvetica", "bold");
-  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerMarginTop + headerContentH * 0.45, { align: "center" });
+  doc.text("PLAN NUTRICIONAL", pageWidth / 2, headerMarginTop + headerContentH * 0.32, { align: "center" });
   doc.setFontSize(fSub);
   doc.setFont("helvetica", "normal");
-  doc.text(lnh, pageWidth / 2, headerMarginTop + headerContentH * 0.88, { align: "center" });
+  doc.text(lnh, pageWidth / 2, headerMarginTop + headerContentH * 0.78, { align: "center" });
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.08);
   doc.line(0, headerH, pageWidth, headerH);
@@ -332,8 +332,8 @@ function drawPlanContent(
     d.totalKcal,
   ]);
 
-  const diaWidth = 11;
-  const kcalWidth = 12;
+  const diaWidth = 15;
+  const kcalWidth = 13;
   const mealColWidth = (tableWidth - diaWidth - kcalWidth) / 4;
   autoTable(doc, {
     head,
@@ -392,7 +392,7 @@ function drawPlanContent(
       doc.rect(0, y, pageWidth, recTitleH, "FD");
       doc.setTextColor(...PASTEL.textDark);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(Math.max(MIN_FONT, 5.2 * s));
+      doc.setFontSize(Math.max(MIN_FONT, 5.8 * s));
       doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.5, { align: "center" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
