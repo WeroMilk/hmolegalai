@@ -615,7 +615,7 @@ export default function DidiPage() {
                 </Button>
               </div>
               <p className="text-center text-muted text-xs sm:text-sm max-w-xl mx-auto mb-4">
-                Puedes editar el plan las veces que necesites antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada y colores rosa y morado pastel.
+                Puedes editar el plan las veces que necesites antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada.
               </p>
 
               <div

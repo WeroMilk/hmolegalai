@@ -84,6 +84,16 @@ const PATIENT_LABELS = [
   "Edad",
 ];
 
+/** Fecha de hoy en español: "3 de febrero de 2026" */
+function getTodayDateSpanish(): string {
+  const months = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  const d = new Date();
+  const day = d.getDate();
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
+  return `${day} de ${month} de ${year}`;
+}
+
 /** Parsea el bloque de paciente en pares label: valor para dibujar con etiquetas en negrita */
 function parsePatientBlockToPairs(block: string): { label: string; value: string }[] {
   const text = stripMarkdownFromPatientBlock(block);
@@ -97,7 +107,10 @@ function parsePatientBlockToPairs(block: string): { label: string; value: string
   let m: RegExpExecArray | null;
   while ((m = re.exec(text)) !== null) {
     const label = m[1].trim();
-    const value = (m[2] || "").trim();
+    let value = (m[2] || "").trim();
+    if (label.toLowerCase() === "fecha del plan") {
+      value = getTodayDateSpanish();
+    }
     pairs.push({ label, value });
   }
   return pairs;
@@ -190,21 +203,21 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = m;
 
-  const fTitle = Math.max(MIN_FONT, 13.5 * s);
-  const fSub = Math.max(MIN_FONT, 6.2 * s);
-  const fSectionTitle = Math.max(MIN_FONT, 7.8 * s);
-  const fTable = Math.max(MIN_FONT, 5.4 * s);
-  const fPatientTable = Math.max(MIN_FONT, 6.2 * s);
-  const fRec = Math.max(MIN_FONT, 4.4 * s);
-  const fSmall = Math.max(MIN_FONT, 6.8 * s);
-  const fSignatureSub = Math.max(MIN_FONT, 5.2 * s);
+  const fTitle = Math.max(MIN_FONT, 15 * s);
+  const fSub = Math.max(MIN_FONT, 8.5 * s);
+  const fSectionTitle = Math.max(MIN_FONT, 8.5 * s);
+  const fTable = Math.max(MIN_FONT, 6 * s);
+  const fPatientTable = Math.max(MIN_FONT, 7 * s);
+  const fRec = Math.max(MIN_FONT, 5 * s);
+  const fSmall = Math.max(MIN_FONT, 7.5 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 5.8 * s);
   const minH = Math.max(MIN_CELL_HEIGHT, 2.2 * s) + extraCellHeight;
   const headerMarginTop = 5 * s;
   const headerMarginBottom = 3 * s;
   const headerContentH = 6 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
   const gapAfterHeader = 2.5 * s;
-  const sectionH = 4.2 * s;
+  const sectionH = 5.2 * s;
   const sectionBarMarginTop = 2.5 * s;
   const sectionMarginBottom = 2.2 * s;
   const gapBetweenPatientAndPlan = 2 * s;
@@ -247,7 +260,8 @@ function drawPlanContent(
   doc.setTextColor(...PASTEL.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
-  doc.text(tituloPaciente, pageWidth / 2, y + sectionH * 0.5, { align: "center" });
+  const sectionTextY = y + sectionH * 0.5 + fSectionTitle * 0.12;
+  doc.text(tituloPaciente, pageWidth / 2, sectionTextY, { align: "center" });
   y += sectionH + sectionMarginBottom + gap;
 
   if (patientBody.length > 0) {
@@ -303,7 +317,8 @@ function drawPlanContent(
   doc.setTextColor(...PASTEL.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
-  doc.text("Plan de Alimentación Semanal", pageWidth / 2, y + sectionH * 0.5, { align: "center" });
+  const planSectionTextY = y + sectionH * 0.5 + fSectionTitle * 0.12;
+  doc.text("Plan de Alimentación Semanal", pageWidth / 2, planSectionTextY, { align: "center" });
   y += sectionH + sectionMarginBottom + gap;
 
   y = ensureSpace(doc, y, pageHeight, 50 * s, undefined, singlePage);
@@ -377,7 +392,7 @@ function drawPlanContent(
       doc.rect(0, y, pageWidth, recTitleH, "FD");
       doc.setTextColor(...PASTEL.textDark);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(Math.max(MIN_FONT, 4.5 * s));
+      doc.setFontSize(Math.max(MIN_FONT, 5.2 * s));
       doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.5, { align: "center" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
@@ -403,7 +418,7 @@ function drawPlanContent(
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.15);
   doc.line(tableMargin, y, pageWidth - tableMargin, y);
-  y += 2 * s;
+  y += 4 * s;
   doc.setFontSize(fSmall);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(...PASTEL.signature);
@@ -411,7 +426,7 @@ function drawPlanContent(
   doc.setFont("helvetica", "normal");
   doc.setFontSize(fSignatureSub);
   doc.setTextColor(...PASTEL.textMuted);
-  doc.text("Nutrióloga", pageWidth / 2, y + 1.5 * s, { align: "center" });
+  doc.text("Nutrióloga", pageWidth / 2, y + 3 * s, { align: "center" });
   y += 4 * s;
   return y;
 }
