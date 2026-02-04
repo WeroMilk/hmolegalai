@@ -16,7 +16,8 @@ REGLAS:
 2. Aplica SOLO los cambios que el usuario pida (sustituir alimentos que no le gustan, corregir errores, cambiar porciones, etc.). No inventes cambios adicionales.
 3. Mantén el mismo formato Markdown, las mismas calorías por día salvo que el usuario pida cambiarlas, y comidas regionales de México/Hermosillo/Sonora (asequibles, nada exótico).
 4. Si piden quitar un alimento (ej. "no le gusta el huevo"), sustituye por alternativas equivalentes en proteína y calorías (ej. queso, jamón, avena, yogur, etc.) en todas las comidas donde aparezca.
-5. Devuelve ÚNICAMENTE el plan completo en Markdown, sin explicaciones ni texto extra antes o después.`;
+5. Devuelve ÚNICAMENTE el plan completo en Markdown, sin explicaciones ni texto extra antes o después.
+6. Mantén siempre porciones y medidas según el SMAE (Sistema Mexicano de Alimentos Equivalentes): cdita, cda, gr, taza, pieza, ½, rebanadas. No cambies el sistema de equivalentes al sustituir alimentos.`;
 
 export async function POST(request: NextRequest) {
   try {

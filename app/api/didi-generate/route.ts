@@ -53,6 +53,8 @@ FORMATO OBLIGATORIO: Entregar el plan en Markdown con la siguiente estructura EX
 
 IMPORTANTE: NO uses tabla. USA formato VERTICAL día por día: ## LUNES, luego lista con - **Desayuno:**, - **Comida:**, etc. Todo hacia abajo, bien organizado, sin scroll horizontal. Ejemplo: "- **Desayuno:** Huevos con espinaca. (3 huevos revueltos con ½ taza espinacas cocidas) 2 piezas tortilla de maíz y ½ taza frijol."
 
+REGLA DE UNICIDAD (OBLIGATORIA): Cada plan que generes DEBE ser ÚNICO y DIFERENTE a cualquier otro. NUNCA repitas el mismo menú, las mismas cantidades ni la misma secuencia de platillos. Varía siempre: nombres de platillos, ingredientes, porciones (ej. 2 vs 3 huevos, 100 vs 120 gr de pollo), orden de los días, tipos de colación, acompañamientos. Dos planes no deben parecerse; los clientes deben percibir que cada dieta es personalizada y hecha desde cero, no copiada.
+
 CÁLCULO CALÓRICO BASADO EN SMAE Y RECOMENDACIONES PARA LA POBLACIÓN MEXICANA (OBLIGATORIO - CRÍTICO):
 
 Las calorías de cada dieta DEBEN basarse en el SMAE (Sistema Mexicano de Alimentos Equivalentes) y en las recomendaciones de ingestión de nutrimentos para la población mexicana (NOM-043, Lineamientos de Nutrición). **NUNCA uses Harris-Benedict ni Mifflin-St Jeor en menores de 18 años.**
@@ -121,7 +123,10 @@ export async function POST(request: NextRequest) {
     const condicionesList = Array.isArray(condiciones) ? (condiciones as string[]) : [];
     const lnhNombre = typeof nombreLnh === "string" && nombreLnh.trim() ? nombreLnh.trim() : "L.N.H. Diana Gallardo";
 
-    const userPrompt = `Genera un plan nutricional SEMANAL (Lunes a Domingo) para el siguiente paciente.
+    const uniquenessCue = `[Solicitud ${new Date().toISOString()} — Genera un plan ÚNICO: varía platillos, cantidades y orden. No repitas menús.]`;
+    const userPrompt = `${uniquenessCue}
+
+Genera un plan nutricional SEMANAL (Lunes a Domingo) para el siguiente paciente.
 
 NOMBRE DEL NUTRIÓLOGO (LNH): Usa en todo el plan el nombre: "${lnhNombre}". Debajo del título # PLAN NUTRICIONAL escribe exactamente ## L.N.H. [este nombre en mayúsculas]. Al final del plan, en el pie, escribe "L.N.H. [nombre tal cual]".
 
@@ -166,7 +171,7 @@ Entrega el plan en Markdown VERTICAL (día por día, sin tabla). ## LUNES, ## MA
         { role: "system", content: SYSTEM_PROMPT },
         { role: "user", content: userPrompt },
       ],
-      temperature: 0.7,
+      temperature: 0.85,
       max_tokens: 8000,
     });
 

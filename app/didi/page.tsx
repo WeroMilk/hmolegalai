@@ -112,6 +112,7 @@ FORMATO DE SALIDA:
 
 IMPORTANTE:
 - No cambiar alimentos, cantidades ni calorías.
+- Las cantidades y equivalentes siguen el SMAE (Sistema Mexicano de Alimentos Equivalentes): cdita, cda, gr, taza, pieza, ½; no modificar.
 - Mantener el texto tal cual, solo reorganizarlo visualmente.
 - Pensar como documento clínico profesional.
 
@@ -334,6 +335,9 @@ export default function DidiPage() {
           </h1>
           <p className="text-muted text-base sm:text-lg max-w-xl mx-auto">
             {form.nombreLnh || "L.N.H. Diana Gallardo"}
+          </p>
+          <p className="text-muted text-sm max-w-2xl mx-auto mt-2">
+            Los planes se rigen por el <strong className="text-foreground/90">Sistema Mexicano de Alimentos Equivalentes (SMAE)</strong> y por las recomendaciones de ingestión de nutrimentos para la población mexicana (NOM-043).
           </p>
         </motion.div>
 
@@ -615,7 +619,7 @@ export default function DidiPage() {
                 </Button>
               </div>
               <p className="text-center text-muted text-xs sm:text-sm max-w-xl mx-auto mb-4">
-                Puedes editar el plan las veces que necesites antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada.
+                Puedes editar el plan las veces que necesites antes de descargar el PDF. El PDF se genera en hoja tamaño oficio horizontal (apaisada), con tabla organizada. Porciones y medidas según SMAE (cdita, cda, gr, taza, pieza).
               </p>
 
               <div

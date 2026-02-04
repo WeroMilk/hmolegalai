@@ -221,7 +221,7 @@ function drawPlanContent(
   const sectionBarMarginTop = 3.2 * s;
   const sectionMarginBottom = 2.8 * s;
   const gapBetweenPatientAndPlan = 2.8 * s;
-  const gapBeforeFooter = 5.5 * s;
+  const gapBeforeFooter = 8 * s;
   const patientTableWidth = Math.min(tableWidth * 0.52, 140);
   const patientTableMargin = (pageWidth - patientTableWidth) / 2;
 
