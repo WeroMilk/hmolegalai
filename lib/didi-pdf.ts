@@ -149,12 +149,12 @@ function ensureSpace(
   return y;
 }
 
-/** Márgenes y espaciado: simétricos para que todo quede centrado y organizado */
+/** Márgenes y espaciado: texto flotando dentro de cada renglón con margen arriba/abajo */
 const MARGIN = 2;
 const PAD_H = 2;
 const SECTION_GAP = 0.8;
-const CELL_PAD = 0.2;
-const LINE_HEIGHT = 1;
+const CELL_PAD = 1.2;
+const LINE_HEIGHT = 1.2;
 
 /** Mínimos para que el texto siga legible al escalar */
 const MIN_FONT = 2.5;
@@ -190,20 +190,20 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = m;
 
-  const fTitle = Math.max(MIN_FONT, 12 * s);
-  const fSub = Math.max(MIN_FONT, 5.5 * s);
-  const fSectionTitle = Math.max(MIN_FONT, 7 * s);
-  const fTable = Math.max(MIN_FONT, 4.8 * s);
-  const fPatientTable = Math.max(MIN_FONT, 5.5 * s);
-  const fRec = Math.max(MIN_FONT, 4 * s);
-  const fSmall = Math.max(MIN_FONT, 6 * s);
-  const fSignatureSub = Math.max(MIN_FONT, 4.5 * s);
-  const minH = Math.max(MIN_CELL_HEIGHT, 1.5 * s) + extraCellHeight;
+  const fTitle = Math.max(MIN_FONT, 13 * s);
+  const fSub = Math.max(MIN_FONT, 6 * s);
+  const fSectionTitle = Math.max(MIN_FONT, 7.5 * s);
+  const fTable = Math.max(MIN_FONT, 5.2 * s);
+  const fPatientTable = Math.max(MIN_FONT, 6 * s);
+  const fRec = Math.max(MIN_FONT, 4.2 * s);
+  const fSmall = Math.max(MIN_FONT, 6.5 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 5 * s);
+  const minH = Math.max(MIN_CELL_HEIGHT, 2.2 * s) + extraCellHeight;
   const headerMarginTop = 5 * s;
   const headerMarginBottom = 3 * s;
   const headerContentH = 6 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
-  const sectionH = 2.4 * s;
+  const sectionH = 3.8 * s;
   const sectionMarginTop = 1.5 * s;
   const sectionMarginBottom = 1.5 * s;
   const patientTableWidth = Math.min(tableWidth * 0.52, 140);
@@ -244,7 +244,7 @@ function drawPlanContent(
   doc.setTextColor(...PASTEL.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
-  doc.text(tituloPaciente, pageWidth / 2, y + sectionH * 0.55, { align: "center" });
+  doc.text(tituloPaciente, pageWidth / 2, y + sectionH * 0.5, { align: "center" });
   y += sectionH + sectionMarginBottom + gap;
 
   if (patientBody.length > 0) {
@@ -300,7 +300,7 @@ function drawPlanContent(
   doc.setTextColor(...PASTEL.textDark);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
-  doc.text("Plan de Alimentación Semanal", pageWidth / 2, y + sectionH * 0.55, { align: "center" });
+  doc.text("Plan de Alimentación Semanal", pageWidth / 2, y + sectionH * 0.5, { align: "center" });
   y += sectionH + sectionMarginBottom + gap;
 
   y = ensureSpace(doc, y, pageHeight, 50 * s, undefined, singlePage);
@@ -350,7 +350,7 @@ function drawPlanContent(
     },
     alternateRowStyles: { fillColor: PASTEL.tableRowAlt },
     columnStyles: {
-      0: { cellWidth: diaWidth, halign: "center" },
+      0: { cellWidth: diaWidth, halign: "center", fontStyle: "bold" },
       1: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
       2: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
       3: { cellWidth: mealColWidth, cellPadding: 1.5, halign: "left" },
@@ -367,7 +367,7 @@ function drawPlanContent(
   if (recommendations) {
     y = ensureSpace(doc, y, pageHeight, 6 * s, undefined, singlePage);
     if (y < pageHeight - 5 * s) {
-      const recTitleH = 1.4 * s;
+      const recTitleH = 2.2 * s;
       doc.setFillColor(...PASTEL.sectionBg);
       doc.setDrawColor(...PASTEL.border);
       doc.setLineWidth(0.06);
@@ -375,7 +375,7 @@ function drawPlanContent(
       doc.setTextColor(...PASTEL.textDark);
       doc.setFont("helvetica", "bold");
       doc.setFontSize(Math.max(MIN_FONT, 4.5 * s));
-      doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.55, { align: "center" });
+      doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.5, { align: "center" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(fRec);

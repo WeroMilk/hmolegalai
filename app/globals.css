@@ -200,25 +200,9 @@ input[type="number"] {
     animation: document-select-sheet-in 0.35s cubic-bezier(0.32, 0.72, 0, 1) forwards;
   }
 
-  /* Títulos: efecto azul en hover (todo el sitio excepto DIDI) */
+  /* Títulos: sin sombra en hover */
   .hover-title {
     @apply transition-all duration-300 ease-out inline-block;
-  }
-  /* Light y dark: efecto azul en hover */
-  .hover-title:hover {
-    text-shadow:
-      0 0 12px rgba(59, 130, 246, 0.6),
-      0 0 22px rgba(59, 130, 246, 0.45),
-      0 0 32px rgba(59, 130, 246, 0.3);
-  }
-  /* Títulos gradient/azul: también efecto azul */
-  .gradient-text.hover-title:hover,
-  .hover-title.glow-white:hover,
-  .hover-title.text-blue-500:hover {
-    text-shadow:
-      0 0 12px rgba(59, 130, 246, 0.6),
-      0 0 22px rgba(59, 130, 246, 0.45),
-      0 0 32px rgba(59, 130, 246, 0.3);
   }
 
   /* Botones: todos los resplandores en azul */
@@ -327,12 +311,6 @@ body.didi-theme .hover-box:hover {
 body.didi-theme .hover-button:hover,
 body.didi-theme .hover-button.btn-primary:hover {
   box-shadow: 0 0 28px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.35);
-}
-/* DIDI: mantener efecto morado en títulos (no azul) */
-body.didi-theme .hover-title:hover,
-body.didi-theme .gradient-text.hover-title:hover,
-body.didi-theme .dark .hover-title:hover {
-  text-shadow: 0 0 12px rgba(168, 85, 247, 0.6), 0 0 22px rgba(168, 85, 247, 0.45), 0 0 32px rgba(168, 85, 247, 0.3);
 }
 body.didi-theme .border-border {
   border-color: rgba(168, 85, 247, 0.2);
