@@ -190,22 +190,24 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = m;
 
-  const fTitle = Math.max(MIN_FONT, 11 * s);
-  const fSub = Math.max(MIN_FONT, 5 * s);
-  const fSectionTitle = Math.max(MIN_FONT, 6.5 * s);
-  const fTable = Math.max(MIN_FONT, 4.2 * s);
-  const fPatientTable = Math.max(MIN_FONT, 5 * s);
-  const fRec = Math.max(MIN_FONT, 3.5 * s);
-  const fSmall = Math.max(MIN_FONT, 5.5 * s);
-  const fSignatureSub = Math.max(MIN_FONT, 4 * s);
+  const fTitle = Math.max(MIN_FONT, 12 * s);
+  const fSub = Math.max(MIN_FONT, 5.5 * s);
+  const fSectionTitle = Math.max(MIN_FONT, 7 * s);
+  const fTable = Math.max(MIN_FONT, 4.8 * s);
+  const fPatientTable = Math.max(MIN_FONT, 5.5 * s);
+  const fRec = Math.max(MIN_FONT, 4 * s);
+  const fSmall = Math.max(MIN_FONT, 6 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 4.5 * s);
   const minH = Math.max(MIN_CELL_HEIGHT, 1.5 * s) + extraCellHeight;
-  const headerMarginTop = 3 * s;
+  const headerMarginTop = 5 * s;
   const headerMarginBottom = 3 * s;
   const headerContentH = 6 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
-  const sectionH = 1.6 * s;
+  const sectionH = 2.4 * s;
   const sectionMarginTop = 1.5 * s;
   const sectionMarginBottom = 1.5 * s;
+  const patientTableWidth = Math.min(tableWidth * 0.52, 140);
+  const patientTableMargin = (pageWidth - patientTableWidth) / 2;
 
   // Encabezado: barra pastel, texto NEGRO, márgenes superior e inferior
   doc.setFillColor(...PASTEL.headerBar);
@@ -251,8 +253,8 @@ function drawPlanContent(
       head: patientHead,
       body: patientBody,
       startY: y,
-      margin: { left: tableMargin, right: tableMargin },
-      tableWidth,
+      margin: { left: patientTableMargin, right: patientTableMargin },
+      tableWidth: patientTableWidth,
       theme: "plain",
       pageBreak: singlePage ? "avoid" : "auto",
       styles: {
@@ -280,8 +282,8 @@ function drawPlanContent(
       },
       alternateRowStyles: { fillColor: PASTEL.tableRowAlt },
       columnStyles: {
-        0: { cellWidth: tableWidth * 0.32, fontStyle: "bold", halign: "center" },
-        1: { cellWidth: tableWidth * 0.68, fontStyle: "normal", halign: "left" },
+        0: { cellWidth: patientTableWidth * 0.38, fontStyle: "bold", halign: "center" },
+        1: { cellWidth: patientTableWidth * 0.62, fontStyle: "normal", halign: "center" },
       },
       tableLineColor: PASTEL.border,
       tableLineWidth: 0.1,
@@ -372,7 +374,7 @@ function drawPlanContent(
       doc.rect(0, y, pageWidth, recTitleH, "FD");
       doc.setTextColor(...PASTEL.textDark);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(Math.max(MIN_FONT, 4 * s));
+      doc.setFontSize(Math.max(MIN_FONT, 4.5 * s));
       doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.55, { align: "center" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
