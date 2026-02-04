@@ -212,7 +212,7 @@ function drawPlanContent(
   const fSmall = Math.max(MIN_FONT, 8.2 * s);
   const fSignatureSub = Math.max(MIN_FONT, 6.5 * s);
   const minH = Math.max(MIN_CELL_HEIGHT, 3 * s) + extraCellHeight;
-  const headerMarginTop = 8 * s;
+  const headerMarginTop = 11 * s;
   const headerMarginBottom = 3 * s;
   const headerContentH = 8 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
