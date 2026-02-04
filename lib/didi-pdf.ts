@@ -203,25 +203,25 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = m;
 
-  const fTitle = Math.max(MIN_FONT, 16.5 * s);
-  const fSub = Math.max(MIN_FONT, 9 * s);
-  const fSectionTitle = Math.max(MIN_FONT, 9.2 * s);
-  const fTable = Math.max(MIN_FONT, 6.5 * s);
-  const fPatientTable = Math.max(MIN_FONT, 7.5 * s);
-  const fRec = Math.max(MIN_FONT, 5.5 * s);
-  const fSmall = Math.max(MIN_FONT, 8 * s);
-  const fSignatureSub = Math.max(MIN_FONT, 6.2 * s);
-  const minH = Math.max(MIN_CELL_HEIGHT, 2.8 * s) + extraCellHeight;
-  const headerMarginTop = 5 * s;
+  const fTitle = Math.max(MIN_FONT, 17.5 * s);
+  const fSub = Math.max(MIN_FONT, 9.5 * s);
+  const fSectionTitle = Math.max(MIN_FONT, 9.5 * s);
+  const fTable = Math.max(MIN_FONT, 6.8 * s);
+  const fPatientTable = Math.max(MIN_FONT, 7.8 * s);
+  const fRec = Math.max(MIN_FONT, 5.8 * s);
+  const fSmall = Math.max(MIN_FONT, 8.2 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 6.5 * s);
+  const minH = Math.max(MIN_CELL_HEIGHT, 3 * s) + extraCellHeight;
+  const headerMarginTop = 8 * s;
   const headerMarginBottom = 3 * s;
   const headerContentH = 8 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
-  const gapAfterHeader = 3 * s;
-  const sectionH = 5.5 * s;
-  const sectionBarMarginTop = 3 * s;
-  const sectionMarginBottom = 2.6 * s;
-  const gapBetweenPatientAndPlan = 2.5 * s;
-  const gapBeforeFooter = 5 * s;
+  const gapAfterHeader = 3.2 * s;
+  const sectionH = 5.8 * s;
+  const sectionBarMarginTop = 3.2 * s;
+  const sectionMarginBottom = 2.8 * s;
+  const gapBetweenPatientAndPlan = 2.8 * s;
+  const gapBeforeFooter = 5.5 * s;
   const patientTableWidth = Math.min(tableWidth * 0.52, 140);
   const patientTableMargin = (pageWidth - patientTableWidth) / 2;
 
@@ -257,7 +257,7 @@ function drawPlanContent(
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.06);
   doc.rect(0, y, pageWidth, sectionH, "FD");
-  doc.setTextColor(...PASTEL.textDark);
+  doc.setTextColor(0, 0, 0);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
   const sectionTextY = y + sectionH * 0.5 + fSectionTitle * 0.12;
@@ -314,7 +314,7 @@ function drawPlanContent(
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.06);
   doc.rect(0, y, pageWidth, sectionH, "FD");
-  doc.setTextColor(...PASTEL.textDark);
+  doc.setTextColor(0, 0, 0);
   doc.setFont("helvetica", "bold");
   doc.setFontSize(fSectionTitle);
   const planSectionTextY = y + sectionH * 0.5 + fSectionTitle * 0.12;
@@ -392,7 +392,7 @@ function drawPlanContent(
       doc.rect(0, y, pageWidth, recTitleH, "FD");
       doc.setTextColor(...PASTEL.textDark);
       doc.setFont("helvetica", "bold");
-      doc.setFontSize(Math.max(MIN_FONT, 5.8 * s));
+      doc.setFontSize(Math.max(MIN_FONT, 6.2 * s));
       doc.text("Recomendaciones generales", pageWidth / 2, y + recTitleH * 0.5, { align: "center" });
       y += recTitleH + gap;
       doc.setFont("helvetica", "normal");
