@@ -149,10 +149,10 @@ function ensureSpace(
   return y;
 }
 
-/** Márgenes y espaciado: texto flotando dentro de cada renglón con margen arriba/abajo */
+/** Márgenes y espaciado: distribución profesional, todo bien separado */
 const MARGIN = 2;
 const PAD_H = 2;
-const SECTION_GAP = 0.8;
+const SECTION_GAP = 1.4;
 const CELL_PAD = 1.2;
 const LINE_HEIGHT = 1.2;
 
@@ -190,22 +190,25 @@ function drawPlanContent(
   const tableMargin = (pageWidth - tableWidth) / 2;
   let y = m;
 
-  const fTitle = Math.max(MIN_FONT, 13 * s);
-  const fSub = Math.max(MIN_FONT, 6 * s);
-  const fSectionTitle = Math.max(MIN_FONT, 7.5 * s);
-  const fTable = Math.max(MIN_FONT, 5.2 * s);
-  const fPatientTable = Math.max(MIN_FONT, 6 * s);
-  const fRec = Math.max(MIN_FONT, 4.2 * s);
-  const fSmall = Math.max(MIN_FONT, 6.5 * s);
-  const fSignatureSub = Math.max(MIN_FONT, 5 * s);
+  const fTitle = Math.max(MIN_FONT, 13.5 * s);
+  const fSub = Math.max(MIN_FONT, 6.2 * s);
+  const fSectionTitle = Math.max(MIN_FONT, 7.8 * s);
+  const fTable = Math.max(MIN_FONT, 5.4 * s);
+  const fPatientTable = Math.max(MIN_FONT, 6.2 * s);
+  const fRec = Math.max(MIN_FONT, 4.4 * s);
+  const fSmall = Math.max(MIN_FONT, 6.8 * s);
+  const fSignatureSub = Math.max(MIN_FONT, 5.2 * s);
   const minH = Math.max(MIN_CELL_HEIGHT, 2.2 * s) + extraCellHeight;
   const headerMarginTop = 5 * s;
   const headerMarginBottom = 3 * s;
   const headerContentH = 6 * s;
   const headerH = headerMarginTop + headerContentH + headerMarginBottom;
-  const sectionH = 3.8 * s;
-  const sectionMarginTop = 1.5 * s;
-  const sectionMarginBottom = 1.5 * s;
+  const gapAfterHeader = 2.5 * s;
+  const sectionH = 4.2 * s;
+  const sectionBarMarginTop = 2.5 * s;
+  const sectionMarginBottom = 2.2 * s;
+  const gapBetweenPatientAndPlan = 2 * s;
+  const gapBeforeFooter = 4 * s;
   const patientTableWidth = Math.min(tableWidth * 0.52, 140);
   const patientTableMargin = (pageWidth - patientTableWidth) / 2;
 
@@ -222,7 +225,7 @@ function drawPlanContent(
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.08);
   doc.line(0, headerH, pageWidth, headerH);
-  y = headerH + 0.5 * s;
+  y = headerH + gapAfterHeader;
 
   const patientPairs = parsePatientBlockToPairs(patientBlock);
   const nombreParaTitulo = (nombrePacienteForm || "").trim() || patientPairs.find((p) => p.label.toLowerCase() === "nombre")?.value?.trim() || "";
@@ -236,7 +239,7 @@ function drawPlanContent(
     .map(({ label, value }) => [label, value || "—"]);
 
   const tituloPaciente = nombreParaTitulo ? `Información del paciente: ${nombreParaTitulo}` : "Información del paciente";
-  y += sectionMarginTop;
+  y += sectionBarMarginTop;
   doc.setFillColor(...PASTEL.sectionBg);
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.06);
@@ -289,10 +292,10 @@ function drawPlanContent(
       tableLineWidth: 0.1,
     });
     const patientTbl = (doc as unknown as { lastAutoTable?: { finalY: number } }).lastAutoTable;
-    y = (patientTbl?.finalY ?? y + 10 * s) + gap;
+    y = (patientTbl?.finalY ?? y + 10 * s) + gap + gapBetweenPatientAndPlan;
   }
 
-  y += sectionMarginTop;
+  y += sectionBarMarginTop;
   doc.setFillColor(...PASTEL.sectionBg);
   doc.setDrawColor(...PASTEL.border);
   doc.setLineWidth(0.06);
@@ -391,7 +394,7 @@ function drawPlanContent(
 
   if (singlePage) {
     if (y > pageHeight - 3 * s) y = pageHeight - 3 * s;
-    y += 0.5 * s;
+    y += gapBeforeFooter;
   } else {
     doc.addPage([pageWidth, 24], "p");
     y = 8;
