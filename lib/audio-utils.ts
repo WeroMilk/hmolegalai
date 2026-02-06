@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Utilidades para reproducción de audio en múltiples idiomas.
  * Soporta comca'ac, español e inglés con mejor calidad de voz.
