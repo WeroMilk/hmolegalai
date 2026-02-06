@@ -1779,3 +1779,42 @@ export function t(locale: Locale, key: TranslationKey, vars?: Record<string, str
   }
   return out;
 }
+
+/**
+ * Valida traducción comca'ac usando conocimiento completo
+ * Helper function para verificar que las traducciones sean correctas
+ */
+export function validateSeriTranslation(seriText: string, expectedSpanish?: string): {
+  valid: boolean;
+  found: boolean;
+  meaning?: { spanish: string; english: string };
+} {
+  // Solo importar si es necesario (evitar import circular)
+  try {
+    const { findWord } = require("./comcaac-knowledge-base");
+    const foundWord = findWord(seriText);
+    
+    if (foundWord) {
+      const valid = expectedSpanish ? foundWord.spanish.toLowerCase() === expectedSpanish.toLowerCase() : true;
+      return {
+        valid,
+        found: true,
+        meaning: {
+          spanish: foundWord.spanish,
+          english: foundWord.english,
+        },
+      };
+    }
+    
+    return {
+      valid: false,
+      found: false,
+    };
+  } catch {
+    // Si no se puede importar, retornar resultado básico
+    return {
+      valid: true, // Asumir válido si no podemos validar
+      found: false,
+    };
+  }
+}

@@ -1,4 +1,6 @@
 import { translations, type Locale, type TranslationKey } from "@/lib/translations";
+import { findWord, GRAMMAR_RULES } from "@/lib/comcaac-knowledge-base";
+import { validatePhoneticSpelling } from "@/lib/comcaac-phonetics";
 
 type TriLang = Locale; // "es" | "en" | "seri"
 
@@ -53,6 +55,39 @@ function scoreTextMatch(query: string, candidate: string): number {
   return sim * 0.75;
 }
 
+/**
+ * Mejora el matching usando conocimiento completo de comca'ac
+ */
+function enhancedScoreTextMatch(query: string, candidate: string, fromLang: TriLang, toLang: TriLang): number {
+  const baseScore = scoreTextMatch(query, candidate);
+  
+  // Si es comca'ac, usar conocimiento adicional
+  if (fromLang === "seri" || toLang === "seri") {
+    // Buscar palabra en base de conocimiento
+    const foundWord = findWord(query);
+    if (foundWord) {
+      // Si la palabra está en el conocimiento base, aumentar confianza
+      const candidateWord = findWord(candidate);
+      if (candidateWord && foundWord.seri === candidateWord.seri) {
+        return Math.min(1.0, baseScore + 0.1); // Boost para palabras conocidas
+      }
+    }
+    
+    // Validar fonética para mejorar matching
+    const phoneticValidation = validatePhoneticSpelling(query);
+    if (phoneticValidation.valid && phoneticValidation.suggestions) {
+      // Si hay sugerencias fonéticas, considerar variaciones
+      for (const suggestion of phoneticValidation.suggestions) {
+        if (suggestion.toLowerCase() === candidate.toLowerCase()) {
+          return Math.min(1.0, baseScore + 0.05);
+        }
+      }
+    }
+  }
+  
+  return baseScore;
+}
+
 type CorpusRow = {
   key: TranslationKey;
   es: string;
@@ -92,7 +127,8 @@ export function corpusTranslate(
     const fromText = getByLang(row, fromLang);
     const toText = getByLang(row, toLang);
     if (!fromText || !toText) continue;
-    const score = scoreTextMatch(query, fromText);
+    // Usar scoring mejorado con conocimiento completo
+    const score = enhancedScoreTextMatch(query, fromText, fromLang, toLang);
     if (score >= minScore) scored.push({ key: row.key, fromText, toText, score });
   }
 

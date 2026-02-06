@@ -1,56 +1,58 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getAllVocabularyText, GRAMMAR_RULES, VERBS_WITH_CONJUGATIONS } from "@/lib/comcaac-knowledge-base";
 
-/** Vocabulario legal y general Seri–Español (cmiique iitom). Fuentes: SIL, INALI, Pueblos Indígenas, Moser & Marlett. */
-const SERI_LEGAL_VOCAB = `
-VOCABULARIO LEGAL SERI-ESPAÑOL:
-- ley = cöihcapxöt
-- contrato = cöihcapxöt ziix
-- documento = ziix hapáctim
-- persona = haxt
-- firma = xaap iti
-- testigo = cöihcaaitoj
-- juez = hast cöpaac
-- abogado = haxt quih ooca
-- derecho = cöihyáax
-- verdad = hapáctim
-- justicia = quih iti capxöt
-- firmar = xaap iti
-- prometer = quih islixp
-- cumplir = quih yaza
-- demandar / pedir = quih ano coti
-- autoridad = hast
-- acto = ziix
-- violación = ziix coii
+/** Vocabulario legal y general Seri–Español (cmiique iitom). 
+ * Fuentes: SIL, INALI, Pueblos Indígenas, Moser & Marlett.
+ * Expandido con base de conocimiento completa.
+ */
+function getSeriLegalVocab(): string {
+  const vocab = getAllVocabularyText();
+  const grammar = `
+GRAMÁTICA COMPLETA:
+- Orden: ${GRAMMAR_RULES.wordOrder.pattern} (${GRAMMAR_RULES.wordOrder.description})
+  Ejemplos: ${GRAMMAR_RULES.wordOrder.examples.join("; ")}
 
-VOCABULARIO GENERAL (documentación y comunidad):
-- cmiique = persona comca'ac (singular)
-- comcaac = pueblo comca'ac / personas comca'ac (plural de cmiique)
-- cocsar iitom = idioma español
-- hehe = casa
-- zo hehe = en mi casa
-- hant iiha = la tierra (lugar, territorio)
-- hant iicp = mi tierra
-- tahejöc = gracias
-- caacoj = trabajo
-- quííp = dinero
-- iizax = océano / mar
-- xicaast = enseñar
-- hapaspoj = papel
-- tooj = sol
-- xnoois = luna
-- cöicöt = estrella
-- haxöl = historia / relato
-- xepe ania = mariposa
-- ziix = cosa, acto, cosa (también usado como artículo/objeto)
-- cocáac = pelícano (referencia cultural)
-- hamiigo = amigo (préstamo del español "amigo")
+- Posesivos: 
+  * Primera persona: ${GRAMMAR_RULES.possessive.firstPerson} (mi)
+  * Segunda persona: ${GRAMMAR_RULES.possessive.secondPerson} (tu)
+  Ejemplos: ${GRAMMAR_RULES.possessive.examples.join("; ")}
 
-GRAMÁTICA:
-- Orden típico: Sujeto + Objeto + Verbo (SOV).
-- Posesivo: "hac" (mi), "mapt" (tu). Ej: zo hehe = en mi casa.
-- Plural: "com" en muchos nombres; algunos tienen plural irregular (cmiique → comca'ac, ziix → xiica).
-- Artículos: quih (singular), coi (plural); zo/z = un/una.
+- Plurales:
+  * Regular: prefijo "${GRAMMAR_RULES.plural.regular}"
+  * Irregulares: ${Object.entries(GRAMMAR_RULES.plural.irregular).map(([s, p]) => `${s} → ${p}`).join(", ")}
+  Ejemplos: ${GRAMMAR_RULES.plural.examples.join("; ")}
+
+- Artículos:
+  * Singular: ${GRAMMAR_RULES.articles.singular.join(", ")}
+  * Plural: ${GRAMMAR_RULES.articles.plural.join(", ")}
+  Ejemplos: ${GRAMMAR_RULES.articles.examples.join("; ")}
+
+- Pronombres personales:
+  ${Object.entries(GRAMMAR_RULES.pronouns.personal).map(([es, seri]) => `  * ${es}: ${seri}`).join("\n")}
+
+- Sintaxis:
+  * Cláusulas relativas: ${GRAMMAR_RULES.syntax.relativeClauses}
+  * Formación de preguntas: ${GRAMMAR_RULES.syntax.questionFormation}
+  * Negación: ${GRAMMAR_RULES.syntax.negation}
+  Ejemplos: ${GRAMMAR_RULES.syntax.examples.join("; ")}
 `;
+
+  const verbExamples = VERBS_WITH_CONJUGATIONS
+    .slice(0, 5)
+    .map((v) => `- ${v.root} (${v.spanish}): presente singular "${v.conjugations.present.singular}", plural "${v.conjugations.present.plural}"`)
+    .join("\n");
+
+  return `VOCABULARIO COMPLETO SERI-ESPAÑOL-INGLÉS:
+${vocab}
+
+${grammar}
+
+CONJUGACIONES VERBALES (ejemplos):
+${verbExamples}
+
+NOTA: El sistema verbal comca'ac tiene más de 250 clases de inflexión. Cada verbo tiene su propia conjugación específica.
+`;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -75,17 +77,31 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `Eres un traductor experto en la lengua comca'ac (cmiique iitom) de Sonora, México. Tu tarea es traducir texto en comca'ac al español.
+          content: `Eres un traductor experto nativo en la lengua comca'ac (cmiique iitom) de Sonora, México. Tienes conocimiento completo del idioma, incluyendo vocabulario extenso, gramática avanzada, conjugaciones verbales, fonética, variaciones dialectales y contexto cultural profundo.
 
-${SERI_LEGAL_VOCAB}
+${getSeriLegalVocab()}
 
-Reglas:
-1. Traduce el texto en cmiique iitom (comca'ac) al español de manera clara y natural.
-2. Si el usuario mezcla español (cocsar iitom) con comca'ac, integra ambos en una sola traducción coherente.
-3. Si detectas intención legal (demanda, queja, denuncia, solicitud de justicia), exprésala en español jurídico adecuado.
-4. Usa el vocabulario listado arriba; si una palabra no la conoces, haz tu mejor aproximación semántica.
-5. Prioriza la intención del hablante sobre la traducción literal.
-6. Responde ÚNICAMENTE con la traducción al español, sin explicaciones adicionales.`,
+CONTEXTO CULTURAL IMPORTANTE:
+- El pueblo comca'ac es un pueblo costero con fuerte conexión al mar (iizax)
+- El pelícano (cocáac) tiene significado cultural especial
+- La tierra (hant iiha) es territorio ancestral importante
+- El idioma refleja valores comunitarios y relación con la naturaleza
+
+REGLAS DE TRADUCCIÓN (NIVEL EXPERTO):
+1. Traduce el texto en cmiique iitom (comca'ac) al español de manera clara, natural y culturalmente apropiada.
+2. Si el usuario mezcla español (cocsar iitom) con comca'ac, integra ambos en una sola traducción coherente manteniendo el significado completo.
+3. Si detectas intención legal (demanda, queja, denuncia, solicitud de justicia), exprésala en español jurídico mexicano adecuado y formal.
+4. Usa el vocabulario completo listado arriba. Si encuentras una palabra no listada:
+   - Analiza su estructura morfológica (raíz, prefijos, sufijos)
+   - Considera el contexto y la intención del hablante
+   - Aplica reglas gramaticales conocidas
+   - Haz tu mejor aproximación semántica basada en conocimiento del idioma
+5. Prioriza SIEMPRE la intención del hablante sobre la traducción literal.
+6. Respeta el orden SOV (Sujeto + Objeto + Verbo) al entender la estructura.
+7. Identifica conjugaciones verbales correctamente según las clases de inflexión.
+8. Considera variaciones dialectales si son evidentes en el texto.
+9. Mantén el contexto cultural comca'ac en la traducción.
+10. Responde ÚNICAMENTE con la traducción al español, sin explicaciones adicionales, sin notas, sin comentarios.`,
         },
         {
           role: "user",

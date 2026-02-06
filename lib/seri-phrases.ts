@@ -2,9 +2,13 @@
  * Frases y vocabulario legal en Seri (cmiique iitom) para el teclado basado en iconos.
  * Fuente: AGENT_PROMPT_SERI_LEGAL.md y diccionario Seri-Español-Inglés (COMCAAC).
  * Diseñado para usuarios que no leen ni escriben; cada frase tiene icono y etiqueta.
+ * 
+ * Expandido con conocimiento completo de comca'ac para mejor precisión.
  */
 
 import type { TranslationKey } from "./translations";
+import { findWord, VERBS_WITH_CONJUGATIONS } from "./comcaac-knowledge-base";
+import { getIPA } from "./comcaac-phonetics";
 
 export type SeriPhraseCategory =
   | "situacion" // Mi situación
