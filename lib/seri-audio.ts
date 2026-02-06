@@ -18,13 +18,46 @@ export interface SeriPhraseForAudio {
 }
 
 let audioInstance: HTMLAudioElement | null = null;
+let audioContextActivated = false;
 
 function getAudio(): HTMLAudioElement {
   if (typeof window === "undefined") throw new Error("window undefined");
   if (!audioInstance) {
     audioInstance = new Audio();
+    // En iOS, el audio debe tener estas propiedades para funcionar correctamente
+    audioInstance.preload = "auto";
+    // playsInline es un atributo HTML, no una propiedad JS
+    audioInstance.setAttribute("playsinline", "true");
   }
   return audioInstance;
+}
+
+/**
+ * Activa el AudioContext en iOS (requiere interacción del usuario).
+ * Debe llamarse en respuesta a un evento de usuario (click, touch).
+ */
+async function activateAudioContext(): Promise<void> {
+  if (audioContextActivated || typeof window === "undefined") return;
+  try {
+    // Crear y activar un AudioContext temporal para desbloquear el audio en iOS
+    const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext)();
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+    await ctx.close();
+    audioContextActivated = true;
+  } catch {
+    // Si falla, intentamos activar con el audio element
+    try {
+      const audio = getAudio();
+      await audio.play();
+      audio.pause();
+      audio.currentTime = 0;
+      audioContextActivated = true;
+    } catch {
+      // Silenciar errores
+    }
+  }
 }
 
 /**
@@ -33,6 +66,10 @@ function getAudio(): HTMLAudioElement {
  */
 async function playPreRecorded(phraseId: string): Promise<boolean> {
   if (typeof window === "undefined") return false;
+  
+  // Activar contexto de audio en iOS antes de reproducir
+  await activateAudioContext();
+  
   const base = typeof window !== "undefined" ? window.location.origin : "";
   const url = `${base}/audio/seri/${phraseId}.mp3`;
 
@@ -43,8 +80,21 @@ async function playPreRecorded(phraseId: string): Promise<boolean> {
     const audio = getAudio();
     audio.src = url;
     audio.load();
-    await audio.play();
-    return true;
+    
+    // En iOS, puede requerir múltiples intentos
+    try {
+      await audio.play();
+      return true;
+    } catch (playError) {
+      // Si falla, intentar una vez más después de un pequeño delay
+      await new Promise(resolve => setTimeout(resolve, 100));
+      try {
+        await audio.play();
+        return true;
+      } catch {
+        return false;
+      }
+    }
   } catch {
     return false;
   }
@@ -82,6 +132,10 @@ function getVoices(): Promise<SpeechSynthesisVoice[]> {
  */
 async function speakWithTTS(seriText: string): Promise<void> {
   if (typeof window === "undefined") return;
+  
+  // Activar contexto de audio en iOS antes de usar TTS
+  await activateAudioContext();
+  
   try {
     const synth = window.speechSynthesis;
     synth.cancel();
@@ -89,6 +143,8 @@ async function speakWithTTS(seriText: string): Promise<void> {
     const utterance = new SpeechSynthesisUtterance(seriText);
     utterance.rate = 0.85;
     utterance.pitch = 1;
+    // En iOS, asegurar que el volumen esté al máximo
+    utterance.volume = 1.0;
 
     const voices = await getVoices();
     const seiVoice = voices.find((v) => v.lang.toLowerCase().startsWith("sei"));
@@ -105,6 +161,8 @@ async function speakWithTTS(seriText: string): Promise<void> {
       utterance.lang = "es-MX";
     }
 
+    // En iOS, puede requerir un pequeño delay antes de hablar
+    await new Promise(resolve => setTimeout(resolve, 50));
     synth.speak(utterance);
   } catch {
     /* silenciar */

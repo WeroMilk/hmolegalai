@@ -85,8 +85,15 @@ export default function SeriPage() {
 
       if (!genRes.ok) {
         const data = await genRes.json().catch(() => ({}));
-        throw new Error(data?.error || t("seri_error_generate"));
+        const errorMsg = data?.error || `Error ${genRes.status}: ${genRes.statusText}` || t("seri_error_generate");
+        throw new Error(errorMsg);
       }
+      
+      const genData = await genRes.json().catch(() => ({}));
+      if (!genData.success && !genData.content) {
+        throw new Error(genData?.error || t("seri_error_generate"));
+      }
+      
       setSuccess(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : t("seri_error_generic"));
@@ -104,7 +111,7 @@ export default function SeriPage() {
   return (
     <div className="min-h-screen text-foreground flex flex-col">
       <Navbar />
-      <main className="flex-1 w-full max-w-2xl mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-6 sm:pb-8 flex flex-col min-h-0">
+      <main className="flex-1 w-full max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-6 sm:pb-8 flex flex-col min-h-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -113,10 +120,10 @@ export default function SeriPage() {
           <div className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/20 border-2 border-blue-500/50 mb-1.5">
             <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
           </div>
-          <h1 className="text-base sm:text-lg font-bold text-foreground mb-0.5">
+          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-foreground mb-1 lg:mb-2">
             {t("seri_title")}
           </h1>
-          <p className="text-muted text-xs max-w-md mx-auto">
+          <p className="text-muted text-xs lg:text-sm max-w-2xl mx-auto">
             {t("seri_subtitle")}
           </p>
         </motion.div>
@@ -127,7 +134,7 @@ export default function SeriPage() {
             animate={{ opacity: 1, y: 0 }}
             className="flex-1 min-h-0 flex flex-col"
           >
-            <section className="glass-effect hover-box p-3 sm:p-4 rounded-xl border border-blue-500/40 flex-1 min-h-0 flex flex-col">
+            <section className="glass-effect hover-box p-4 sm:p-6 lg:p-8 rounded-xl border border-blue-500/40 flex-1 min-h-0 flex flex-col">
               <SeriWizardFlow
                 data={wizardData}
                 onChange={setWizardData}

@@ -136,7 +136,7 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
   const fieldValue = currentStep?.field ? (data as unknown as Record<string, string>)[currentStep.field] ?? "" : "";
 
   return (
-    <div className="flex flex-col min-h-0 max-h-[60vh] overflow-hidden">
+    <div className="flex flex-col min-h-0 max-h-[70vh] lg:max-h-[75vh] overflow-hidden">
       <AnimatePresence mode="wait">
         {isDocStep ? (
           <motion.div
@@ -144,14 +144,14 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            className="space-y-2 min-h-0 flex-1"
+            className="space-y-4 min-h-0 flex-1"
           >
-            <div className="mb-3 flex flex-col gap-1">
-              <p className="text-2xl mb-1" role="img" aria-hidden>{currentStep?.emojis}</p>
-              <p className="text-base font-semibold text-foreground">{getSeriText("seri_question_what_doc" as TranslationKey)}</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">{getSpanishLabel("seri_question_what_doc" as TranslationKey)}</p>
+            <div className="mb-4 lg:mb-6 flex flex-col gap-2">
+              <p className="text-2xl lg:text-3xl mb-1" role="img" aria-hidden>{currentStep?.emojis}</p>
+              <p className="text-base lg:text-lg font-semibold text-foreground">{getSeriText("seri_question_what_doc" as TranslationKey)}</p>
+              <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">{getSpanishLabel("seri_question_what_doc" as TranslationKey)}</p>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
               {LEGAL_DOCUMENTS.map((doc) => {
                 const keys = DOC_NAME_DESC_KEYS[doc.id];
                 const name = keys ? t(keys.name) : doc.name;
@@ -164,13 +164,13 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
                     disabled={disabled}
                     onClick={() => handleDocTap(doc)}
                     whileTap={{ scale: 0.98 }}
-                    className={`text-left px-3 py-2.5 rounded-xl border-2 transition-colors flex flex-col gap-0.5 min-h-[56px] ${
+                    className={`text-left px-4 py-3 lg:px-5 lg:py-4 rounded-xl border-2 transition-colors flex flex-col gap-2 min-h-[80px] lg:min-h-[100px] ${
                       isSelected ? "border-green-500/60 bg-green-500/20" : "border-blue-500/40 bg-blue-500/10 hover:bg-blue-500/20"
                     }`}
                   >
-                    <span className="text-lg">{doc.icon}</span>
-                    <span className="text-sm font-medium truncate">{name}</span>
-                    <span className="text-xs text-muted line-clamp-2">{desc}</span>
+                    <span className="text-xl lg:text-2xl flex-shrink-0">{doc.icon}</span>
+                    <span className="text-sm lg:text-base font-medium break-words leading-tight">{name}</span>
+                    <span className="text-xs lg:text-sm text-muted line-clamp-3 lg:line-clamp-4 break-words leading-relaxed">{desc}</span>
                   </motion.button>
                 );
               })}
@@ -233,21 +233,21 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-border">
+      <div className="flex items-center justify-between gap-3 lg:gap-4 mt-6 lg:mt-8 pt-4 lg:pt-5 border-t border-border">
         <button
           type="button"
           onClick={handleBack}
           disabled={!canGoBack || disabled}
-          className="flex items-center gap-1 px-3 py-2 rounded-lg border border-border text-muted hover:text-foreground hover:bg-card disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-4 py-2.5 lg:px-5 lg:py-3 rounded-lg border border-border text-muted hover:text-foreground hover:bg-card disabled:opacity-50 disabled:cursor-not-allowed text-sm lg:text-base"
         >
           <ChevronLeft className="w-5 h-5" />
-          <span className="text-sm">{t("amparo_q_prev")}</span>
+          <span>{t("amparo_q_prev")}</span>
         </button>
         <button
           type="button"
           onClick={handleNext}
           disabled={!canGoNext || disabled}
-          className="flex items-center gap-1 px-4 py-2.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+          className="flex items-center gap-2 px-5 py-2.5 lg:px-6 lg:py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm lg:text-base font-medium"
         >
           {isLastStep ? (
             <>

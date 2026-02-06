@@ -244,8 +244,8 @@ export function SeriPhraseKeyboard({
                         title={`${t(phrase.labelKey)} — ${phrase.seri}`}
                         className="flex flex-col items-center justify-center min-w-[72px] min-h-[72px] sm:min-w-[80px] sm:min-h-[80px] rounded-xl bg-white dark:bg-gray-700/80 text-foreground border border-gray-200 dark:border-gray-600 shadow-sm hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:border-blue-300 dark:hover:border-blue-600/50 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400/50 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <IconComp className="w-7 h-7 sm:w-8 sm:h-8 mb-1 text-blue-600 dark:text-blue-400" />
-                        <span className="text-[11px] sm:text-xs text-center leading-tight line-clamp-2 px-1">
+                        <IconComp className="w-7 h-7 sm:w-8 sm:h-8 mb-1 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+                        <span className="text-[11px] sm:text-xs text-center leading-tight line-clamp-2 px-1 break-words overflow-wrap-anywhere">
                           {t(phrase.labelKey)}
                         </span>
                       </motion.button>
