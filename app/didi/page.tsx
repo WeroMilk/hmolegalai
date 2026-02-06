@@ -12,7 +12,7 @@ import { motion } from "framer-motion";
 import { isDidiUser } from "@/lib/didi";
 import { toTitleCase, formatPesoDisplay, parsePesoForApi } from "@/lib/formatters";
 import { generateDidiPdf } from "@/lib/didi-pdf";
-import { Leaf, Loader2, FileText, Download, ArrowLeft, Copy, Edit3, Check, MessageSquare } from "lucide-react";
+import { Leaf, Loader2, FileText, Download, Copy, Edit3, Check, MessageSquare } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -313,15 +313,7 @@ export default function DidiPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
-        <Link
-          href="/documentos"
-          className="inline-flex items-center text-purple-500 hover:text-purple-400 mb-0 py-2 -my-2 min-h-[44px]"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
-          Volver
-        </Link>
-
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -359,6 +351,7 @@ export default function DidiPage() {
                 <Input
                   id="didi-nombreLnh"
                   name="nombreLnh"
+                  autoComplete="name"
                   value={form.nombreLnh}
                   onChange={(e) => handleChange("nombreLnh", e.target.value)}
                   placeholder="L.N.H. Diana Gallardo"
@@ -373,6 +366,7 @@ export default function DidiPage() {
                 <Input
                   id="didi-nombrePaciente"
                   name="nombrePaciente"
+                  autoComplete="name"
                   value={form.nombrePaciente}
                   onChange={(e) => handleChange("nombrePaciente", e.target.value)}
                   onBlur={() => {
@@ -394,6 +388,7 @@ export default function DidiPage() {
                   name="peso"
                   type="text"
                   inputMode="decimal"
+                  autoComplete="off"
                   value={form.peso}
                   onChange={(e) => handleChange("peso", e.target.value)}
                   onBlur={() => {
@@ -415,6 +410,7 @@ export default function DidiPage() {
                   name="estatura"
                   type="number"
                   inputMode="decimal"
+                  autoComplete="off"
                   step="0.01"
                   min="0.5"
                   max="250"
@@ -634,6 +630,7 @@ export default function DidiPage() {
                   <textarea
                     id="didi-plan-edit"
                     name="planContent"
+                    autoComplete="off"
                     value={planContent}
                     onChange={(e) => setPlanContent(e.target.value)}
                     className="w-full min-h-[360px] font-mono text-sm leading-loose whitespace-pre-wrap resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-lg p-4 border border-gray-300"
@@ -694,6 +691,8 @@ export default function DidiPage() {
                       Escribe una instrucción para modificar el plan. Por ejemplo: &quot;A mi paciente no le gusta el huevo&quot;, &quot;Cambia el pollo por pescado&quot;, &quot;Corrige la edad a 35 años&quot;.
                     </p>
                     <textarea
+                      id="didi-prompt-edit"
+                      name="promptEditText"
                       value={promptEditText}
                       onChange={(e) => {
                         setPromptEditText(e.target.value);

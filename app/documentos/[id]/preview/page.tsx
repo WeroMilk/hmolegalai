@@ -12,7 +12,6 @@ import { getEditsRemaining, PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
 import { motion } from "framer-motion";
 import { DOC_NAME_DESC_KEYS } from "@/lib/translations";
 import { Edit3, Download, Printer, Check, FileText } from "lucide-react";
-
 const MAX_EDITS = 2;
 
 /** Detecta si una línea del documento es un título (para centrarla). */
@@ -117,7 +116,7 @@ export default function PreviewPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-16">
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -131,6 +130,9 @@ export default function PreviewPage() {
               <div>
                 <h1 className="text-2xl font-bold text-foreground">{docTitle}</h1>
                 <p className="text-muted text-sm">{t("preview_title")}</p>
+                <p className="text-muted text-xs mt-1">
+                  Este documento será revisado por un abogado. Aparecerá en Mis documentos en 24-48 horas una vez aprobado.
+                </p>
               </div>
             </div>
           </div>
@@ -150,6 +152,7 @@ export default function PreviewPage() {
                     <textarea
                       id="preview-content"
                       name="content"
+                      autoComplete="off"
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
                       className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 dark:placeholder:text-gray-400 border border-border rounded-xl p-6 text-foreground font-serif text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 placeholder:text-muted text-justify"
@@ -241,15 +244,6 @@ export default function PreviewPage() {
             </Button>
           </div>
 
-          <div className="text-center mt-2 mb-4">
-            <button
-              type="button"
-              onClick={() => router.push("/documentos")}
-              className="text-blue-500 hover:text-blue-400 text-sm mr-8"
-            >
-              ← {t("preview_back_catalog")}
-            </button>
-          </div>
         </motion.div>
       </main>
     </div>

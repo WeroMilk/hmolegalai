@@ -40,7 +40,7 @@ export function Footer() {
         {t("footer_location")}
       </p>
       <p className="text-center text-muted text-sm mt-1">
-        <Link href="/" className="footer-brand text-muted hover:text-blue-500 transition-colors">
+        <Link href="/" className="footer-brand text-blue-500 hover:text-blue-600 transition-colors">
           © {year} Avatar Legal AI
         </Link>
         {t("footer_copyright_suffix")}

@@ -3,6 +3,7 @@
 import { DocumentCatalog } from "@/components/document-catalog";
 import { Navbar } from "@/components/navbar";
 import { LEGAL_DOCUMENTS } from "@/lib/documents";
+import { formatPriceMXN } from "@/lib/formatters";
 import { DOC_NAME_DESC_KEYS, DOC_POTENTIAL_KEYS } from "@/lib/translations";
 import { useI18n } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
@@ -66,7 +67,7 @@ export default function DocumentosPage() {
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
                       <h3 className="hover-title text-xl md:text-2xl font-bold leading-tight text-foreground">{name}</h3>
                       <span className="text-xl md:text-2xl font-bold text-blue-500">
-                        ${doc.price} <span className="text-sm text-muted font-normal">MXN</span>
+                        {formatPriceMXN(doc.price)}
                       </span>
                     </div>
                     <p className="text-muted text-base md:text-lg mb-4 flex-grow">{desc}</p>

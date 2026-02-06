@@ -1,30 +1,31 @@
-# 🔑 Información de Superusuario para Pruebas
+# 🔑 Superusuarios y usuarios demo
 
-## Credenciales de Acceso
+## Superusuarios (solo tú)
 
-**Email:** `admin@avatar.com`  
-**Password:** `admin123`
+| Email | Uso |
+|-------|-----|
+| `admin@avatar.com` | Panel admin: aprueba abogados, edita tu perfil. Genera documentos sin pagar. |
+| `didi@dietas.com` | Cliente con acceso a DIDI (planes nutricionales comca'ac) |
 
-## Características del Superusuario
+**Password admin:** `admin123`  
+**Password didi:** `didi123`
 
-- ✅ Puede generar documentos **sin necesidad de pagar**
-- ✅ Acceso completo a todas las funcionalidades
-- ✅ Ideal para pruebas y desarrollo
+## Usuarios demo (para otros)
 
-## Cómo Usar
+| Email | Uso |
+|-------|-----|
+| `abogado@avatar.com` | Ejemplo de abogado: dashboard con solicitudes, configuración editable |
+| `cliente@avatar.com` | Ejemplo de cliente: genera documentos y ve Mis Documentos |
 
-1. Ve a la página de inicio de sesión (`/auth`)
-2. Ingresa las credenciales del superusuario
-3. Navega al catálogo de documentos
-4. Selecciona cualquier documento
-5. Completa el formulario
-6. Verás un mensaje indicando que eres superusuario
-7. El botón dirá "Generar Documento Gratis (Superusuario)"
-8. El documento se generará sin pasar por el proceso de pago
+**Password abogado:** `abogado123`  
+**Password cliente:** `cliente123`
 
-## Nota de Seguridad
+## Flujo
 
-⚠️ **IMPORTANTE:** Estas credenciales son solo para desarrollo y pruebas. En producción, deberás:
-- Eliminar o cambiar estas credenciales
-- Implementar un sistema de autenticación más robusto
-- Usar Firebase Admin para gestionar usuarios especiales
+- **admin@avatar.com** → `/admin/abogados` (administrar abogados + mi perfil)
+- **abogado@avatar.com** → `/abogado/dashboard` (solicitudes + configuración)
+- **cliente@avatar.com** y **didi@dietas.com** → catálogo, Mis Documentos, DIDI
+
+## Más detalles
+
+Ver **[DEMO_USERS.md](./DEMO_USERS.md)**.

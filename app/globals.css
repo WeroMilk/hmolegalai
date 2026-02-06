@@ -228,6 +228,11 @@ input[type="number"] {
     display: inline-block;
     white-space: nowrap;
   }
+  /* Header: hover azul en light y dark (desktop y móvil) */
+  .navbar-link-hover:hover,
+  .dark .navbar-link-hover:hover {
+    color: rgb(59 130 246) !important; /* blue-500, visible en ambos temas */
+  }
   .i18n-stable-btn {
     min-width: 10rem;
     text-align: center;

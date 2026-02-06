@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { LEGAL_DOCUMENTS } from "@/lib/documents";
+import { formatPriceMXN } from "@/lib/formatters";
 import { useI18n } from "@/lib/i18n-context";
 import { DOC_NAME_DESC_KEYS } from "@/lib/translations";
 import Link from "next/link";
@@ -40,8 +41,7 @@ export function DocumentCatalog({ compactTop, reduceTopPadding }: { compactTop?:
                     </p>
                     <div className="flex items-center justify-between mt-4 pt-4 border-t border-border flex-shrink-0">
                       <span className="text-xl font-bold text-blue-500">
-                        ${document.price}
-                        <span className="text-sm text-muted font-normal"> MXN</span>
+                        {formatPriceMXN(document.price)}
                       </span>
                       <ArrowRight className="w-5 h-5 text-muted group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
                     </div>

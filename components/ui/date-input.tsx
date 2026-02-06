@@ -16,6 +16,7 @@ interface DateInputProps {
   required?: boolean;
   className?: string;
   id?: string;
+  name?: string;
   "aria-label"?: string;
 }
 
@@ -119,6 +120,7 @@ export function DateInput({
     <input
       type="text"
       id={id}
+      name={name ?? id}
       inputMode="numeric"
       autoComplete="off"
       value={display}

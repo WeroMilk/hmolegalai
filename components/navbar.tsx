@@ -5,65 +5,81 @@ import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
+import { useFlag } from "@/lib/flag-context";
+import { useUserProfile } from "@/lib/use-user-profile";
 import { isDidiUser } from "@/lib/didi";
-import { User, LogOut, Menu, X, Sun, Moon } from "lucide-react";
+import { isSuperUser } from "@/lib/superuser";
+import { User, LogOut, Menu, X, Sun, Moon, Languages } from "lucide-react";
 import { useState } from "react";
 
 export function Navbar() {
   const { user, logout } = useAuth();
+  const { profile } = useUserProfile();
   const { theme, toggleThemeWithEffect } = useTheme();
   const { locale, setLocale, t } = useI18n();
+  const { setFlag } = useFlag();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border navbar-no-frame">
       <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 xs:h-16">
+        <div className="flex justify-between items-center h-14 xs:h-16 gap-2 min-w-0">
           <Link
             href="/"
-            className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left min-w-0"
+            className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
           >
             <Image src="/logo.png" alt="Avatar Legal AI" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
-            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text">AVATAR</div>
-            <span className="text-xs xs:text-sm text-blue-500 font-medium hidden xs:inline">{t("nav_legal_ai")}</span>
+            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">AVATAR</div>
+            <span className="text-xs xs:text-sm text-blue-500 font-medium hidden xs:inline shrink-0">{t("nav_legal_ai")}</span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 flex-shrink-0">
-            <Link
-              href="/"
-              className="i18n-nav-link min-w-[4.5rem] text-center text-muted hover:text-foreground transition-colors py-2 border-b-2 border-transparent hover:border-transparent"
-            >
-              {t("nav_home")}
-            </Link>
-            <Link
-              href="/documentos"
-              className="i18n-nav-link min-w-[7.5rem] text-center text-muted hover:text-foreground transition-colors py-2 border-b-2 border-transparent hover:border-transparent"
-            >
-              {t("nav_documents")}
-            </Link>
-            {user && isDidiUser(user.email) && (
-              <Link
-                href="/didi"
-                className="i18n-nav-link min-w-[4.5rem] text-center text-muted hover:text-foreground transition-colors py-2 border-b-2 border-transparent hover:border-transparent font-semibold"
-              >
-                DIDI
-              </Link>
-            )}
+          <div className="hidden md:flex items-center shrink-0 min-w-0">
+            <div className="flex items-center gap-1.5 lg:gap-2">
+              {(isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved)) ? (
+                <>
+                  <Link href="/documentos" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_documents")}>
+                    {t("nav_documents")}
+                  </Link>
+                  <Link
+                    href={isSuperUser(user?.email ?? "") ? "/admin/abogados" : "/abogado/dashboard"}
+                    className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link href="/" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors" title={t("nav_home")}>
+                    {t("nav_home")}
+                  </Link>
+                  <Link href="/documentos" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_documents")}>
+                    {t("nav_documents")}
+                  </Link>
+                  <Link href="/seri" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
+                    comca&apos;ac
+                  </Link>
+                  {user && isDidiUser(user.email) && (
+                    <Link href="/didi" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-semibold text-muted transition-colors">
+                      DIDI
+                    </Link>
+                  )}
+                  {user && (
+                    <Link href="/mis-documentos" className="i18n-nav-link navbar-link-hover shrink-0 max-w-[8rem] truncate px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_my_documents")}>
+                      {t("nav_my_documents")}
+                    </Link>
+                  )}
+                </>
+              )}
+              {user && (
+                <span className="shrink-0 max-w-[8rem] truncate px-1.5 py-2 text-sm text-muted lg:max-w-[10rem]" title={user.email ?? undefined}>
+                  {user.email}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-2 pl-3 ml-1 border-l border-border shrink-0">
             {user ? (
               <>
-                <Link
-                  href="/mis-documentos"
-                  className="i18n-nav-link min-w-[8.5rem] text-center text-muted hover:text-foreground transition-colors py-2 border-b-2 border-transparent hover:border-transparent"
-                >
-                  {t("nav_my_documents")}
-                </Link>
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="flex items-center gap-2 text-muted min-w-0 max-w-[11rem] truncate py-2">
-                    <User className="w-4 h-4 flex-shrink-0" />
-                    <span className="text-sm hidden lg:inline truncate">{user.email}</span>
-                    <span className="text-sm lg:hidden min-w-[4rem] text-center">{t("nav_user")}</span>
-                  </div>
-                  <button
+                <button
                     type="button"
                     onClick={logout}
                     dir="ltr"
@@ -72,26 +88,42 @@ export function Navbar() {
                     <LogOut className="w-4 h-4" aria-hidden />
                     <span className="whitespace-nowrap">{t("nav_sign_out")}</span>
                   </button>
-                </div>
-                <div className="flex items-center gap-2 w-[8rem] flex-shrink-0 justify-end">
-                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border w-[4.5rem]">
+                <div className="flex items-center gap-2 flex-shrink-0 justify-end">
+                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
                     <button
                       type="button"
-                      onClick={() => setLocale("es")}
-                      className={`flex-1 min-w-0 py-1 rounded text-sm font-medium transition-colors ${locale === "es" ? "bg-blue-600 text-white" : "text-muted hover:text-foreground"}`}
+                      onClick={() => { setLocale("es"); setFlag("mx"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_spanish")}
                     >
-                      ES
+                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => setLocale("en")}
-                      className={`flex-1 min-w-0 py-1 rounded text-sm font-medium transition-colors ${locale === "en" ? "bg-blue-600 text-white" : "text-muted hover:text-foreground"}`}
+                      onClick={() => { setLocale("seri"); setFlag("seri"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
+                      aria-label={t("nav_aria_seri")}
+                    >
+                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setLocale("en"); setFlag("us"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_english")}
                     >
-                      EN
+                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
                     </button>
                   </div>
+                  {user && (isSuperUser(user.email ?? "") || (profile?.role === "abogado" && profile?.approved) || isDidiUser(user.email ?? "")) && (
+                    <Link
+                      href="/traductor"
+                      className="flex items-center justify-center w-10 h-10 rounded-lg border border-border text-foreground hover:bg-card transition-colors shrink-0"
+                      aria-label="Traductor por voz"
+                    >
+                      <Languages className="w-5 h-5" />
+                    </Link>
+                  )}
                   <button
                     type="button"
                     onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
@@ -110,23 +142,31 @@ export function Navbar() {
                 >
                   {t("nav_sign_in")}
                 </Link>
-                <div className="flex items-center gap-2 w-[8rem] flex-shrink-0 justify-end">
-                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border w-[4.5rem]">
+                <div className="flex items-center gap-2 w-[10rem] flex-shrink-0 justify-end">
+                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
                     <button
                       type="button"
-                      onClick={() => setLocale("es")}
-                      className={`flex-1 min-w-0 py-1 rounded text-sm font-medium transition-colors ${locale === "es" ? "bg-blue-600 text-white" : "text-muted hover:text-foreground"}`}
+                      onClick={() => { setLocale("es"); setFlag("mx"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_spanish")}
                     >
-                      ES
+                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
                     </button>
                     <button
                       type="button"
-                      onClick={() => setLocale("en")}
-                      className={`flex-1 min-w-0 py-1 rounded text-sm font-medium transition-colors ${locale === "en" ? "bg-blue-600 text-white" : "text-muted hover:text-foreground"}`}
+                      onClick={() => { setLocale("seri"); setFlag("seri"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
+                      aria-label={t("nav_aria_seri")}
+                    >
+                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setLocale("en"); setFlag("us"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_english")}
                     >
-                      EN
+                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
                     </button>
                   </div>
                   <button
@@ -140,25 +180,45 @@ export function Navbar() {
                 </div>
               </>
             )}
+            </div>
           </div>
 
           <div className="flex items-center gap-2 md:hidden">
             <div className="flex items-center gap-0.5 p-0.5 rounded bg-background/80 border border-border">
               <button
                 type="button"
-                onClick={() => setLocale("es")}
-                className={`px-2 py-1 rounded text-xs font-medium ${locale === "es" ? "bg-blue-600 text-white" : "text-muted"}`}
+                onClick={() => { setLocale("es"); setFlag("mx"); }}
+                className={`flex items-center justify-center w-7 h-5 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70"}`}
+                aria-label={t("nav_aria_spanish")}
               >
-                ES
+                <Image src="/flag-mexico.png" alt="" width={20} height={15} className="w-5 h-[14px] rounded-sm object-cover" />
               </button>
               <button
                 type="button"
-                onClick={() => setLocale("en")}
-                className={`px-2 py-1 rounded text-xs font-medium ${locale === "en" ? "bg-blue-600 text-white" : "text-muted"}`}
+                onClick={() => { setLocale("seri"); setFlag("seri"); }}
+                className={`flex items-center justify-center w-7 h-5 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70"}`}
+                aria-label={t("nav_aria_seri")}
               >
-                EN
+                <Image src="/flag-seri.png" alt="" width={20} height={15} className="w-5 h-[14px] rounded-sm object-cover" />
+              </button>
+              <button
+                type="button"
+                onClick={() => { setLocale("en"); setFlag("us"); }}
+                className={`flex items-center justify-center w-7 h-5 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70"}`}
+                aria-label={t("nav_aria_english")}
+              >
+                <Image src="/flag-usa.png" alt="" width={20} height={15} className="w-5 h-[14px] rounded-sm object-cover" />
               </button>
             </div>
+            {user && (isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved) || isDidiUser(user?.email ?? "")) && (
+              <Link
+                href="/traductor"
+                className="flex items-center justify-center min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-card transition-colors shrink-0"
+                aria-label="Traductor por voz"
+              >
+                <Languages className="w-5 h-5" />
+              </Link>
+            )}
             <button
               type="button"
               onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
@@ -180,38 +240,45 @@ export function Navbar() {
 
         {mobileMenuOpen && (
           <div className="md:hidden py-4 space-y-1 border-t border-border">
-            <Link
-              href="/"
-              className="block py-3 px-4 min-h-[44px] flex items-center text-muted hover:text-foreground hover:bg-card/50 rounded-lg active:bg-card transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {t("nav_home")}
-            </Link>
-            <Link
-              href="/documentos"
-              className="block py-3 px-4 min-h-[44px] flex items-center text-muted hover:text-foreground hover:bg-card/50 rounded-lg active:bg-card transition-colors"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              {t("nav_documents")}
-            </Link>
-            {user && isDidiUser(user.email) && (
-              <Link
-                href="/didi"
-                className="block py-3 px-4 min-h-[44px] flex items-center text-muted hover:text-foreground hover:bg-card/50 rounded-lg active:bg-card transition-colors font-semibold"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                DIDI
-              </Link>
+            {(isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved)) ? (
+              <>
+                <Link href="/documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav_documents")}
+                </Link>
+                <Link href={isSuperUser(user?.email ?? "") ? "/admin/abogados" : "/abogado/dashboard"} className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  Dashboard
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link href="/" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav_home")}
+                </Link>
+                <Link href="/documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav_documents")}
+                </Link>
+                <Link href="/seri" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  comca&apos;ac
+                </Link>
+                {user && isDidiUser(user.email) && (
+                  <Link href="/didi" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors font-semibold" onClick={() => setMobileMenuOpen(false)}>
+                    DIDI
+                  </Link>
+                )}
+                {user && (
+                  <Link href="/mis-documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                    {t("nav_my_documents")}
+                  </Link>
+                )}
+              </>
+            )}
+            {user && (
+              <div className="py-3 px-4 text-sm text-muted truncate" title={user.email ?? undefined}>
+                {user.email}
+              </div>
             )}
             {user ? (
               <>
-                <Link
-                  href="/mis-documentos"
-                  className="block py-3 px-4 min-h-[44px] flex items-center text-muted hover:text-foreground hover:bg-card/50 rounded-lg active:bg-card transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {t("nav_my_documents")}
-                </Link>
                 <button
                   type="button"
                   onClick={() => {

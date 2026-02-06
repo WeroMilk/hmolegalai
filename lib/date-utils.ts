@@ -50,3 +50,9 @@ export function formatDDMMYYYY(day: number, month: number, year: number): string
   const y = String(year).padStart(4, "0");
   return `${d}/${m}/${y}`;
 }
+
+/** Fecha de hoy en formato dd/mm/yyyy. */
+export function getTodayDDMMYYYY(): string {
+  const now = new Date();
+  return formatDDMMYYYY(now.getDate(), now.getMonth() + 1, now.getFullYear());
+}

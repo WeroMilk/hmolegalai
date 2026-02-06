@@ -10,13 +10,22 @@ import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/navbar";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Mail, Lock, LogIn, UserPlus, Settings } from "lucide-react";
+import { Mail, Lock, LogIn, UserPlus, Settings, User, Briefcase } from "lucide-react";
+import { auth } from "@/lib/firebase";
+import type { UserRole } from "@/lib/user-profile";
+import { isDidiUser } from "@/lib/didi";
+import { isSuperUser } from "@/lib/superuser";
 
 function AuthPageContent() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<UserRole | null>(null);
+  const [nombreCompleto, setNombreCompleto] = useState("");
+  const [nombreDespacho, setNombreDespacho] = useState("");
+  const [direccionDespacho, setDireccionDespacho] = useState("");
+  const [telefonoDespacho, setTelefonoDespacho] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showVerifyEmail, setShowVerifyEmail] = useState(false);
@@ -62,15 +71,66 @@ function AuthPageContent() {
       return;
     }
 
+    if (!isLogin && !role) {
+      setError("Selecciona si eres Cliente o Abogado. Esta elección no podrá cambiarse.");
+      return;
+    }
+    if (!isLogin && role === "abogado" && !nombreCompleto.trim()) {
+      setError("Ingresa tu nombre completo.");
+      return;
+    }
+
     setLoading(true);
     try {
       if (isLogin) {
         await signIn(email, password);
+        const currentUser = auth?.currentUser ?? null;
+        const token = currentUser ? await currentUser.getIdToken() : null;
+        if (token && (isDidiUser(email) || isSuperUser(email))) {
+          await fetch("/api/user-profile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              role: isDidiUser(email) ? "cliente" : "abogado",
+              ...(isSuperUser(email) && {
+                nombreCompleto: "Lic. Roberto Mendoza García",
+                nombreDespacho: "Bufete Jurídico Mendoza & Asociados",
+                direccionDespacho: "Blvd. Luis Encinas 222, Col. Centro, Hermosillo, Sonora, CP 83000",
+                telefonoDespacho: "(662) 212-4500",
+              }),
+            }),
+          });
+        }
         const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
-        router.push(target);
+        router.replace(target);
       } else {
         await signUp(email, password);
-        const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
+        const currentUser = auth?.currentUser ?? null;
+        const token = currentUser ? await currentUser.getIdToken() : null;
+        if (token) {
+          const profileRes = await fetch("/api/user-profile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              role,
+              nombreCompleto: role === "abogado" ? nombreCompleto.trim() : undefined,
+              nombreDespacho: role === "abogado" ? nombreDespacho.trim() || undefined : undefined,
+              direccionDespacho: role === "abogado" ? direccionDespacho.trim() || undefined : undefined,
+              telefonoDespacho: role === "abogado" ? telefonoDespacho.trim() || undefined : undefined,
+            }),
+          });
+          if (!profileRes.ok) {
+            const data = await profileRes.json().catch(() => ({}));
+            throw new Error(data?.error || "Error al guardar perfil");
+          }
+        }
+        const target = role === "abogado" ? "/abogado/dashboard" : (returnTo && returnTo.startsWith("/") ? returnTo : "/documentos");
         router.push(target);
       }
     } catch (err: any) {
@@ -85,8 +145,29 @@ function AuthPageContent() {
     setError("");
     try {
       await signInWithGoogle();
+      const currentUser = auth?.currentUser ?? null;
+      const userEmail = currentUser?.email ?? "";
+      const token = currentUser ? await currentUser.getIdToken() : null;
+      if (token && (isDidiUser(userEmail) || isSuperUser(userEmail))) {
+        await fetch("/api/user-profile", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            role: isDidiUser(userEmail) ? "cliente" : "abogado",
+            ...(isSuperUser(userEmail) && {
+              nombreCompleto: "Lic. Roberto Mendoza García",
+              nombreDespacho: "Bufete Jurídico Mendoza & Asociados",
+              direccionDespacho: "Blvd. Luis Encinas 222, Col. Centro, Hermosillo, Sonora, CP 83000",
+              telefonoDespacho: "(662) 212-4500",
+            }),
+          }),
+        });
+      }
       const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
-      router.push(target);
+      router.replace(target);
     } catch (err: any) {
       setError(friendlyAuthError(err.message || "", t("auth_error_google")));
     } finally {
@@ -170,8 +251,12 @@ function AuthPageContent() {
                   <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-left space-y-2">
                     <p className="text-sm text-muted">{t("auth_verify_email_resend")}</p>
                     <div className="flex gap-2">
+                      <label htmlFor="auth-verify-password" className="sr-only">{t("auth_password")}</label>
                       <Input
+                        id="auth-verify-password"
+                        name="verifyPassword"
                         type="password"
+                        autoComplete="current-password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
@@ -237,6 +322,7 @@ function AuthPageContent() {
                   id="auth-email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -268,6 +354,7 @@ function AuthPageContent() {
                   id="auth-password"
                   name="password"
                   type="password"
+                  autoComplete={isLogin ? "current-password" : "new-password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
@@ -288,6 +375,7 @@ function AuthPageContent() {
                           id="auth-reset-email"
                           name="resetEmail"
                           type="email"
+                          autoComplete="email"
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
                           placeholder={t("auth_placeholder_email")}
@@ -340,12 +428,102 @@ function AuthPageContent() {
                     id="auth-confirm-password"
                     name="confirmPassword"
                     type="password"
+                    autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required={!isLogin}
                     placeholder="••••••••"
                     minLength={6}
                   />
+                </div>
+              )}
+
+              {!isLogin && (
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-foreground">
+                    ¿Eres Cliente o Abogado?
+                  </label>
+                  <p className="text-xs text-muted mb-2">Esta elección no podrá cambiarse después.</p>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setRole("cliente")}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+                        role === "cliente"
+                          ? "border-blue-500 bg-blue-500/10 text-foreground"
+                          : "border-border text-muted hover:border-blue-500/50"
+                      }`}
+                    >
+                      <User className="w-5 h-5" />
+                      Cliente
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRole("abogado")}
+                      className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
+                        role === "abogado"
+                          ? "border-blue-500 bg-blue-500/10 text-foreground"
+                          : "border-border text-muted hover:border-blue-500/50"
+                      }`}
+                    >
+                      <Briefcase className="w-5 h-5" />
+                      Abogado
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {!isLogin && role === "abogado" && (
+                <div className="space-y-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/30">
+                  <p className="text-sm font-medium text-foreground">Datos del despacho (requeridos para verificación)</p>
+                  <div>
+                    <label htmlFor="auth-nombreCompleto" className="sr-only">Nombre completo</label>
+                    <Input
+                      id="auth-nombreCompleto"
+                      name="nombreCompleto"
+                      autoComplete="name"
+                      placeholder="Nombre completo"
+                      value={nombreCompleto}
+                      onChange={(e) => setNombreCompleto(e.target.value)}
+                      required={role === "abogado"}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="auth-nombreDespacho" className="sr-only">Nombre del despacho</label>
+                    <Input
+                      id="auth-nombreDespacho"
+                      name="nombreDespacho"
+                      autoComplete="organization"
+                      placeholder="Nombre del despacho"
+                      value={nombreDespacho}
+                      onChange={(e) => setNombreDespacho(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="auth-direccionDespacho" className="sr-only">Dirección del despacho</label>
+                    <Input
+                      id="auth-direccionDespacho"
+                      name="direccionDespacho"
+                      autoComplete="street-address"
+                      placeholder="Dirección del despacho"
+                      value={direccionDespacho}
+                      onChange={(e) => setDireccionDespacho(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="auth-telefonoDespacho" className="sr-only">Teléfono del despacho</label>
+                    <Input
+                      id="auth-telefonoDespacho"
+                      name="telefonoDespacho"
+                      autoComplete="tel"
+                      placeholder="Teléfono del despacho"
+                      value={telefonoDespacho}
+                      onChange={(e) => setTelefonoDespacho(e.target.value)}
+                    />
+                  </div>
+                  <p className="text-xs text-muted">
+                    Después del registro deberás enviar tu foto, INE y título profesional para que podamos verificar tu cuenta y activar la aprobación de documentos.
+                  </p>
                 </div>
               )}
 
@@ -401,6 +579,11 @@ function AuthPageContent() {
                   setIsLogin(!isLogin);
                   setError("");
                   setConfirmPassword("");
+                  setRole(null);
+                  setNombreCompleto("");
+                  setNombreDespacho("");
+                  setDireccionDespacho("");
+                  setTelefonoDespacho("");
                 }}
                 className="text-blue-500 hover:text-blue-400 text-sm"
               >

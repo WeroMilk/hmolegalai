@@ -42,10 +42,10 @@ export default function MisDocumentosPage() {
     }
 
     try {
-      // Solo where(userId) para no requerir índice compuesto; ordenamos en memoria
       const q = query(
-        collection(db, "documents"),
-        where("userId", "==", user.uid)
+        collection(db!, "documents"),
+        where("userId", "==", user.uid),
+        where("status", "==", "approved")
       );
       const querySnapshot = await getDocs(q);
       const docs: Document[] = [];

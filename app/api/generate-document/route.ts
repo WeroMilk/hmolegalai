@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       user = { uid: decoded.uid };
     }
 
-    const { documentId, documentType, userInputs, sessionId, saveToAccount } = await request.json();
+    const { documentId, documentType, userInputs, sessionId, saveToAccount, abogadoId } = await request.json();
 
     const doc = getDocumentById(documentId);
     const parte1Label = doc?.parte1Label;
@@ -57,8 +57,8 @@ export async function POST(request: NextRequest) {
       .replace(/^\s*```\s*\r?\n?/m, "")
       .trim();
 
-    // Guardar en Firestore solo si el usuario pagó la opción "guardar en Mi cuenta" ($99)
-    if (adminDb && saveToAccount === true) {
+    // Guardar en Firestore: todos los documentos pasan por abogado (status pending_abogado)
+    if (adminDb) {
       try {
         await adminDb.collection("documents").add({
           userId: user.uid,
@@ -67,8 +67,10 @@ export async function POST(request: NextRequest) {
           content: documentContent,
           userInputs,
           sessionId,
+          saveToAccount: saveToAccount === true,
+          abogadoId: typeof abogadoId === "string" && abogadoId.trim() ? abogadoId.trim() : null,
           createdAt: FieldValue.serverTimestamp(),
-          status: "completed",
+          status: "pending_abogado",
         });
       } catch (dbErr) {
         console.warn("Firestore save skipped:", dbErr);

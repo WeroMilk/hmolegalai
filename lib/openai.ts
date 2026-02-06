@@ -9,7 +9,10 @@ function getOpenAI(): OpenAI {
   return new OpenAI({ apiKey: key });
 }
 
-/** Nota de validez que debe aparecer al inicio de cada documento privado (Código Civil Federal y, en su caso, del Estado de Sonora). */
+/** Nota de validez para documentos Ley de Amparo */
+const NOTA_AMPARO = `DOCUMENTO DE AMPARO: El presente documento ha sido generado como borrador para juicio de amparo conforme a la Ley de Amparo, Reglamentaria de los Artículos 103 y 107 de la Constitución Política de los Estados Unidos Mexicanos. Requiere revisión, firma y sello de un abogado autorizado antes de su presentación ante la autoridad competente. No constituye asesoría legal ni garantía de resultado.`;
+
+/** Nota de validez para documentos privados civiles/mercantiles (legacy) */
 const NOTA_VALIDEZ = `DOCUMENTO PRIVADO: El presente instrumento es un documento privado celebrado de conformidad con la legislación aplicable en los Estados Unidos Mexicanos (Código Civil Federal y, en su caso, Código Civil del Estado de Sonora). Surtirá efectos jurídicos entre las partes signantes una vez que sea firmado por ellas. Para su validez frente a terceros o su inscripción en el Registro Público, podrá requerirse su formalización ante Notario Público o fedatario competente. No constituye asesoría legal ni garantía de resultado.`;
 
 export interface DocumentGenerationParams {
@@ -72,14 +75,17 @@ export async function generateLegalDocument(
       ? " 5. Si el documento es de COMPRAVENTA o DONACIÓN: indica explícitamente que aplica ÚNICAMENTE a bienes muebles (no a inmuebles como terrenos o casas); para inmuebles se requiere formalización notarial."
       : "";
 
-  const prompt = `Eres un abogado experto en derecho mexicano (civil y mercantil). Genera un documento legal profesional del tipo "${documentType}" en español.
+  const isAmparo = documentType.toLowerCase().includes("amparo") || documentType.toLowerCase().includes("alegatos") || documentType.toLowerCase().includes("revisión") || documentType.toLowerCase().includes("suspensión") || documentType.toLowerCase().includes("contestación");
+  const notaUsar = isAmparo ? NOTA_AMPARO : NOTA_VALIDEZ;
+
+  const prompt = `Eres un abogado experto en derecho mexicano${isAmparo ? " (Ley de Amparo, arts. 103 y 107 constitucionales)" : " (civil y mercantil)"}. Genera un documento legal profesional del tipo "${documentType}" en español.
 
 Información proporcionada por el usuario:
 ${JSON.stringify(userInputs, null, 2)}
 
 INSTRUCCIONES OBLIGATORIAS:
-1. Al inicio del documento, inmediatamente después del título, incluye un recuadro con esta NOTA DE VALIDEZ (texto exacto o muy similar):
-"${notaValidezText}"
+1. Al inicio del documento, inmediatamente después del título, incluye un recuadro con esta NOTA (texto exacto o muy similar):
+"${notaUsar}"
 
 2. El documento debe incluir de manera clara: identificación completa de las partes, declaraciones, cláusulas específicas (objeto, obligaciones, duración, causales de terminación), domicilio para oír y recibir notificaciones, y un bloque de firmas con espacios para nombre, firma y fecha.
 
@@ -114,8 +120,9 @@ Responde SOLO con el contenido del documento legal, sin comentarios adicionales.
       messages: [
         {
           role: "system",
-          content:
-            "Eres un asistente legal experto en derecho mexicano (civil y mercantil), con conocimiento del Código Civil Federal y del Estado de Sonora. Generas documentos legales profesionales. Siempre incluyes la NOTA DE VALIDEZ al inicio (después del título) y estructuras estándar con partes, cláusulas, domicilios y firmas. NUNCA uses 'Parte 1' ni 'Parte 2' en el texto: siempre refiere a las partes por su rol (ej. el Arrendador, el Arrendatario, el Contratante, el Prestador de Servicios, el Empleador, el Trabajador). En compraventa y donación, limitas explícitamente el alcance a bienes muebles.",
+          content: isAmparo
+            ? "Eres un asistente legal experto en la Ley de Amparo mexicana (arts. 103 y 107 constitucionales). Generas documentos de amparo profesionales. Incluyes la NOTA DE AMPARO al inicio. Estructura: quejoso, autoridad responsable, acto reclamado, preceptos violados, fundamentos, pretensiones, domicilios, firmas."
+            : "Eres un asistente legal experto en derecho mexicano (civil y mercantil), con conocimiento del Código Civil Federal y del Estado de Sonora. Generas documentos legales profesionales. Siempre incluyes la NOTA DE VALIDEZ al inicio (después del título) y estructuras estándar con partes, cláusulas, domicilios y firmas. NUNCA uses 'Parte 1' ni 'Parte 2' en el texto: siempre refiere a las partes por su rol. En compraventa y donación, limitas explícitamente el alcance a bienes muebles.",
         },
         {
           role: "user",

@@ -36,6 +36,41 @@ export function toTitleCase(s: string): string {
     .join(" ");
 }
 
+/** Formato teléfono: (662) 215-3000 */
+export function formatTelefono(raw: string): string {
+  if (!raw || typeof raw !== "string") return "";
+  const digits = raw.replace(/\D/g, "");
+  if (digits.length >= 10) {
+    const area = digits.slice(-10, -7);
+    const rest = digits.slice(-7);
+    return `(${area}) ${rest.slice(0, 3)}-${rest.slice(3)}`;
+  }
+  if (digits.length >= 7) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  return raw.trim();
+}
+
+/** Formato dirección: Av. Reforma 150, Col. Centro, Hermosillo, Sonora */
+export function formatDireccion(raw: string): string {
+  if (!raw || typeof raw !== "string") return "";
+  const s = raw.trim();
+  if (!s) return "";
+  const parts = s.split(",").map((p) => p.trim()).filter(Boolean);
+  const formatted = parts.map((p) => {
+    if (/^col\.?\s*/i.test(p)) return "Col. " + toTitleCase(p.replace(/^col\.?\s*/i, ""));
+    if (/^av\.?\s*/i.test(p) || /^avenida\s*/i.test(p)) return "Av. " + toTitleCase(p.replace(/^(av\.?|avenida)\s*/i, ""));
+    if (/^calle\s*/i.test(p)) return "Calle " + toTitleCase(p.replace(/^calle\s*/i, ""));
+    return toTitleCase(p);
+  });
+  return formatted.join(", ");
+}
+
+/** Formato precio: MXN $1990.00 */
+export function formatPriceMXN(amount: number): string {
+  return `MXN $${Number(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+}
+
 export type PersonEntry = { nombre: string; parentesco: string };
 
 export function parsePersonList(value: string): PersonEntry[] {

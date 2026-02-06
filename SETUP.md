@@ -73,18 +73,34 @@ OPENAI_API_KEY=tu_openai_key
 Crea las siguientes colecciones en Firestore:
 - `documents` - Para almacenar los documentos generados
 
-Reglas de seguridad recomendadas:
+Reglas de seguridad recomendadas (también en `firestore.rules`):
 
 ```javascript
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /documents/{documentId} {
-      allow read, write: if request.auth != null && request.auth.uid == resource.data.userId;
+      // Cliente: lee y escribe sus documentos
+      // Abogado: lee los documentos asignados (abogadoId)
+      allow read: if request.auth != null && (
+        request.auth.uid == resource.data.userId ||
+        request.auth.uid == resource.data.abogadoId
+      );
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
+    }
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /abogado_citas/{citaId} {
+      allow read, update, delete: if request.auth != null && resource.data.abogadoId == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.abogadoId == request.auth.uid;
     }
   }
 }
 ```
+
+⚠️ **Importante:** Si el abogado ve "Missing or insufficient permissions", aplica estas reglas en [Firebase Console](https://console.firebase.google.com/) → Firestore → Reglas.
 
 ### 7. Ejecutar el Proyecto
 

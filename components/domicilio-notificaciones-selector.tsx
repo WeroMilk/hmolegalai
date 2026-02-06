@@ -72,18 +72,18 @@ export function DomicilioNotificacionesSelector({
   onChange,
   label,
   required,
-  id: baseId,
+  id: baseId = "domicilio",
 }: DomicilioNotificacionesSelectorProps) {
   const parts = useMemo(() => parseDomicilioValue(value), [value]);
   const estadosOptions = useMemo(() => getEstadosOptions(), []);
   const municipiosOptions = useMemo(() => getMunicipiosOptions(parts.estado), [parts.estado]);
-  const idEstado = baseId ? `${baseId}-estado` : undefined;
-  const idMunicipio = baseId ? `${baseId}-municipio` : undefined;
-  const idCalle = baseId ? `${baseId}-calle` : undefined;
-  const idNumExt = baseId ? `${baseId}-numeroExterior` : undefined;
-  const idNumInt = baseId ? `${baseId}-numeroInterior` : undefined;
-  const idColonia = baseId ? `${baseId}-colonia` : undefined;
-  const idCp = baseId ? `${baseId}-cp` : undefined;
+  const idEstado = `${baseId}-estado`;
+  const idMunicipio = `${baseId}-municipio`;
+  const idCalle = `${baseId}-calle`;
+  const idNumExt = `${baseId}-numeroExterior`;
+  const idNumInt = `${baseId}-numeroInterior`;
+  const idColonia = `${baseId}-colonia`;
+  const idCp = `${baseId}-cp`;
 
   const update = useCallback(
     (next: Partial<DomicilioParts>) => {
@@ -125,60 +125,65 @@ export function DomicilioNotificacionesSelector({
           />
         </div>
         <div className="sm:col-span-2">
+          <label htmlFor={idCalle} className="sr-only">Calle</label>
           <Input
             id={idCalle}
             name={idCalle}
+            autoComplete="street-address"
             value={parts.calle}
             onChange={(e) => update({ calle: e.target.value })}
             placeholder="Calle"
             className="rounded-xl border-border focus:border-blue-500/50"
-            aria-label="Calle"
           />
         </div>
         <div>
+          <label htmlFor={idNumExt} className="sr-only">Número exterior</label>
           <Input
             id={idNumExt}
             name={idNumExt}
+            autoComplete="off"
             value={parts.numeroExterior}
             onChange={(e) => update({ numeroExterior: e.target.value })}
             placeholder="Núm. exterior"
             className="rounded-xl border-border focus:border-blue-500/50"
-            aria-label="Número exterior"
           />
         </div>
         <div>
+          <label htmlFor={idNumInt} className="sr-only">Número interior (opcional)</label>
           <Input
             id={idNumInt}
             name={idNumInt}
+            autoComplete="off"
             value={parts.numeroInterior}
             onChange={(e) => update({ numeroInterior: e.target.value })}
             placeholder="Núm. interior (opcional)"
             className="rounded-xl border-border focus:border-blue-500/50"
-            aria-label="Número interior (opcional)"
           />
         </div>
         <div>
+          <label htmlFor={idColonia} className="sr-only">Colonia</label>
           <Input
             id={idColonia}
             name={idColonia}
+            autoComplete="address-level3"
             value={parts.colonia}
             onChange={(e) => update({ colonia: e.target.value })}
             placeholder="Colonia"
             className="rounded-xl border-border focus:border-blue-500/50"
-            aria-label="Colonia"
           />
         </div>
         <div>
+          <label htmlFor={idCp} className="sr-only">Código postal</label>
           <Input
             id={idCp}
             name={idCp}
+            autoComplete="postal-code"
             value={parts.cp}
             onChange={(e) => update({ cp: e.target.value.replace(/\D/g, "").slice(0, 5) })}
             placeholder="CP (5 dígitos)"
             inputMode="numeric"
             maxLength={5}
             className="rounded-xl border-border focus:border-blue-500/50"
-            aria-label="Código postal"
           />
         </div>
       </div>

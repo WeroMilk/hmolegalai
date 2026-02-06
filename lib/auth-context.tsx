@@ -15,6 +15,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from "./superuser";
+import { DEMO_AUTO_CREATE } from "./demo-users";
 
 const DEMO_USER_STORAGE = "avatar_demo_superuser";
 
@@ -113,9 +114,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (signInErr: any) {
       const code = signInErr?.code || "";
       const userNotFound = code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/wrong-password";
-      if (isSuperuserCreds && userNotFound) {
-        await createUserWithEmailAndPassword(auth, SUPERUSER_EMAIL, SUPERUSER_PASSWORD);
-        await signInWithEmailAndPassword(auth, SUPERUSER_EMAIL, SUPERUSER_PASSWORD);
+      const demoMatch = DEMO_AUTO_CREATE.find(
+        (d) => d.email.toLowerCase().trim() === email.trim().toLowerCase() && d.password === password
+      );
+      if (userNotFound && demoMatch) {
+        await createUserWithEmailAndPassword(auth, demoMatch.email.trim(), demoMatch.password);
+        await signInWithEmailAndPassword(auth, demoMatch.email.trim(), demoMatch.password);
       } else {
         throw new Error(getFriendlyAuthMessage(code, signInErr?.message || "Error al iniciar sesión."));
       }

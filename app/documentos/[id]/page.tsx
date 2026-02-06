@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { getDocumentById, getFieldsForForm, type LegalDocument, PARENTESCO_OPTIONS, BASE_PRICE, SAVE_FOREVER_PRICE } from "@/lib/documents";
+import { getDocumentById, getFieldsForForm, applyPrefillFromProfile, type LegalDocument, PARENTESCO_OPTIONS, BASE_PRICE, SAVE_FOREVER_PRICE } from "@/lib/documents";
 import {
   parsePersonList,
   serializePersonList,
@@ -15,8 +15,9 @@ import {
   type PersonEntry,
 } from "@/lib/formatters";
 import { useAuth } from "@/lib/auth-context";
+import { useUserProfile } from "@/lib/use-user-profile";
 import { useI18n } from "@/lib/i18n-context";
-import { getFieldLabelKey, DOC_NAME_DESC_KEYS, PARENTESCO_OPTIONS_EN } from "@/lib/translations";
+import { getFieldDisplayLabel, DOC_NAME_DESC_KEYS, PARENTESCO_OPTIONS_EN } from "@/lib/translations";
 import { isSuperUser } from "@/lib/superuser";
 import { Navbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
@@ -24,12 +25,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { DateInput } from "@/components/ui/date-input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowLeft, Loader2, Plus, Trash2 } from "lucide-react";
+import { Loader2, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { shouldSkipPayment } from "@/lib/superuser";
 import { createCheckoutSession } from "@/lib/stripe";
 import { PREVIEW_STORAGE_KEYS } from "@/lib/preview-utils";
-import { parseDDMMYYYY, isValidDate } from "@/lib/date-utils";
+import { parseDDMMYYYY, isValidDate, getTodayDDMMYYYY } from "@/lib/date-utils";
 import { CiudadPieSelector } from "@/components/ciudad-pie-selector";
 import { DomicilioNotificacionesSelector } from "@/components/domicilio-notificaciones-selector";
 
@@ -39,6 +40,7 @@ export default function DocumentPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
+  const { profile } = useUserProfile();
   const { t, locale } = useI18n();
   const parentescoOptions = locale === "en" ? PARENTESCO_OPTIONS_EN : PARENTESCO_OPTIONS;
   const [document, setDocument] = useState<LegalDocument | null>(null);
@@ -48,43 +50,50 @@ export default function DocumentPage() {
   const [legalAccepted, setLegalAccepted] = useState(false);
   const [saveForever, setSaveForever] = useState(false);
   const [promoInfo, setPromoInfo] = useState<{ hasPromo: boolean; freeDocsRemaining: number } | null>(null);
+  const [abogados, setAbogados] = useState<{ id: string; nombreCompleto: string; nombreDespacho: string; email: string }[]>([]);
+  const [selectedAbogadoId, setSelectedAbogadoId] = useState("");
+  const [abogadosLoading, setAbogadosLoading] = useState(true);
 
   useEffect(() => {
-    if (params.id) {
-      const doc = getDocumentById(params.id as string);
-      setDocument(doc || null);
-      if (doc) {
-        const initialData: Record<string, string> = {};
-        getFieldsForForm(doc).forEach((field) => {
-          if (field.type === "person_list") {
-            initialData[field.id] = serializePersonList([{ nombre: "", parentesco: "" }]);
-          } else {
-            initialData[field.id] = "";
-          }
-        });
-        try {
-          const pending = typeof window !== "undefined" ? sessionStorage.getItem(PENDING_FORM_KEY) : null;
-          if (pending) {
-            const parsed = JSON.parse(pending) as { documentId: string; formData?: Record<string, string>; saveForever?: boolean; legalAccepted?: boolean };
-            if (parsed.documentId === doc.id && parsed.formData && typeof parsed.formData === "object") {
-              const restored: Record<string, string> = { ...initialData };
-              for (const key of Object.keys(parsed.formData)) {
-                if (key in restored) restored[key] = String(parsed.formData[key] ?? "");
-              }
-              setFormData(restored);
-              if (typeof parsed.saveForever === "boolean") setSaveForever(parsed.saveForever);
-              if (typeof parsed.legalAccepted === "boolean") setLegalAccepted(parsed.legalAccepted);
-              sessionStorage.removeItem(PENDING_FORM_KEY);
-              return;
-            }
-          }
-        } catch {
-          /* ignore */
-        }
-        setFormData(initialData);
+    if (!params.id) return;
+    const doc = getDocumentById(params.id as string);
+    setDocument(doc || null);
+    if (!doc) return;
+
+    const initialData: Record<string, string> = {};
+    getFieldsForForm(doc).forEach((field) => {
+      if (field.type === "person_list") {
+        initialData[field.id] = serializePersonList([{ nombre: "", parentesco: "" }]);
+      } else {
+        initialData[field.id] = "";
       }
+    });
+
+    // Prellenar desde perfil (todos los campos prellenables para los 6 documentos)
+    applyPrefillFromProfile(initialData, doc, profile, getTodayDDMMYYYY());
+
+    try {
+      const pending = typeof window !== "undefined" ? sessionStorage.getItem(PENDING_FORM_KEY) : null;
+      if (pending) {
+        const parsed = JSON.parse(pending) as { documentId: string; formData?: Record<string, string>; saveForever?: boolean; legalAccepted?: boolean; selectedAbogadoId?: string };
+        if (parsed.documentId === doc.id && parsed.formData && typeof parsed.formData === "object") {
+          const restored: Record<string, string> = { ...initialData };
+          for (const key of Object.keys(parsed.formData)) {
+            if (key in restored) restored[key] = String(parsed.formData[key] ?? "");
+          }
+          setFormData(restored);
+          if (typeof parsed.saveForever === "boolean") setSaveForever(parsed.saveForever);
+          if (typeof parsed.legalAccepted === "boolean") setLegalAccepted(parsed.legalAccepted);
+          if (typeof parsed.selectedAbogadoId === "string") setSelectedAbogadoId(parsed.selectedAbogadoId);
+          sessionStorage.removeItem(PENDING_FORM_KEY);
+          return;
+        }
+      }
+    } catch {
+      /* ignore */
     }
-  }, [params.id]);
+    setFormData(initialData);
+  }, [params.id, profile]);
 
   useEffect(() => {
     const fetchPromo = async () => {
@@ -106,6 +115,25 @@ export default function DocumentPage() {
     };
     fetchPromo();
   }, [user, document]);
+
+  useEffect(() => {
+    const fetchAbogados = async () => {
+      try {
+        const res = await fetch("/api/abogados/list");
+        const data = await res.json();
+        const list = data.abogados ?? [];
+        setAbogados(list);
+        if (list.length > 0) {
+          setSelectedAbogadoId((prev) => prev || list[0].id);
+        }
+      } catch {
+        setAbogados([]);
+      } finally {
+        setAbogadosLoading(false);
+      }
+    };
+    fetchAbogados();
+  }, []);
 
   const handleInputChange = (fieldId: string, value: string) => {
     setFormData((prev) => ({ ...prev, [fieldId]: value }));
@@ -171,6 +199,15 @@ export default function DocumentPage() {
 
     if (!document) return;
 
+    const needsAbogado = !shouldSkipPayment(user?.email) && abogados.length > 0;
+    if (needsAbogado && !selectedAbogadoId) {
+      setError(t("doc_select_abogado"));
+      return;
+    }
+    if (abogados.length === 0 && !shouldSkipPayment(user?.email)) {
+      setError(t("doc_no_abogados"));
+      return;
+    }
     if (!legalAccepted) {
       setError(t("legal_checkout_agree"));
       return;
@@ -178,9 +215,10 @@ export default function DocumentPage() {
 
     // Validar campos requeridos
     const missingFields: string[] = [];
-    for (const field of document.fields) {
+    const allFields = getFieldsForForm(document);
+    for (const field of allFields) {
       if (!field.required) continue;
-      const label = t(getFieldLabelKey(document.id, field.id));
+      const label = getFieldDisplayLabel(document.id, field, t);
       if (field.type === "person_list") {
         const list = parsePersonList(formData[field.id]);
         const hasValid = list.some((p) => p.nombre.trim() !== "");
@@ -210,8 +248,9 @@ export default function DocumentPage() {
     setError("");
 
     try {
-      // Guardar datos del formulario en sessionStorage
+      // Guardar datos del formulario y abogado seleccionado en sessionStorage
       sessionStorage.setItem(`formData_${document.id}`, JSON.stringify(formData));
+      sessionStorage.setItem(`selectedAbogadoId_${document.id}`, selectedAbogadoId || "");
       
       // Si tiene documentos gratis (promo primeros 10), usar uno
       const canUsePromo = promoInfo?.hasPromo && (promoInfo?.freeDocsRemaining ?? 0) > 0;
@@ -242,6 +281,7 @@ export default function DocumentPage() {
             userInputs: buildUserInputsForApi(formData, document),
             sessionId: `promo-${Date.now()}`,
             saveToAccount: saveForever,
+            abogadoId: selectedAbogadoId || null,
           }),
         });
         if (!genRes.ok) {
@@ -277,6 +317,7 @@ export default function DocumentPage() {
             documentType: document.name,
             userInputs: buildUserInputsForApi(formData, document),
             sessionId: `superuser-${Date.now()}`,
+            abogadoId: selectedAbogadoId || null,
           }),
         });
 
@@ -343,13 +384,13 @@ export default function DocumentPage() {
 
   if (!document) {
     return (
-      <div className="min-h-screen text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">{t("doc_not_found")}</h1>
-          <Link href="/documentos" className="text-blue-500 hover:text-blue-400">
-            {t("doc_back_catalog")}
-          </Link>
-        </div>
+      <div className="min-h-screen text-foreground">
+        <Navbar />
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+          <div className="text-center py-12">
+            <h1 className="text-2xl font-bold mb-4">{t("doc_not_found")}</h1>
+          </div>
+        </main>
       </div>
     );
   }
@@ -357,15 +398,7 @@ export default function DocumentPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-24 pb-12 sm:pb-24">
-        <Link
-          href="/documentos"
-          className="inline-flex items-center text-blue-500 hover:text-blue-400 mt-0 mb-4 py-2 min-h-[44px]"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2 shrink-0" />
-          {t("doc_back_catalog")}
-        </Link>
-
+      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 sm:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -409,7 +442,7 @@ export default function DocumentPage() {
             )}
 
             {getFieldsForForm(document).map((field) => {
-              const label = (field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2") ? field.label : t(getFieldLabelKey(document.id, field.id));
+              const label = getFieldDisplayLabel(document.id, field, t);
               return (
                 <div key={field.id}>
                   {field.id === "ciudad_pie" ? (
@@ -417,7 +450,7 @@ export default function DocumentPage() {
                       id={field.id}
                       value={formData[field.id] || ""}
                       onChange={(val) => handleInputChange(field.id, val)}
-                      label={t(getFieldLabelKey(document.id, field.id))}
+                      label={getFieldDisplayLabel(document.id, field, t)}
                       required={field.required}
                     />
                   ) : field.id === "domicilio_notificaciones_1" || field.id === "domicilio_notificaciones_2" ? (
@@ -524,11 +557,13 @@ export default function DocumentPage() {
                     </>
                   ) : field.type === "date" ? (
                     <>
-                      <label className="block text-sm font-medium mb-2 text-foreground">
+                      <label htmlFor={field.id} className="block text-sm font-medium mb-2 text-foreground">
                         {label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
                       <DateInput
+                        id={field.id}
+                        name={field.id}
                         value={formData[field.id] || ""}
                         onChange={(val) => handleInputChange(field.id, val)}
                         placeholder="dd/mm/aaaa"
@@ -538,16 +573,19 @@ export default function DocumentPage() {
                     </>
                   ) : field.money ? (
                     <>
-                      <label className="block text-sm font-medium mb-2 text-foreground">
+                      <label htmlFor={field.id} className="block text-sm font-medium mb-2 text-foreground">
                         {label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
                       <div className="flex items-center rounded-lg border border-border bg-card dark:bg-gray-800/90 dark:border-gray-600/50 overflow-hidden focus-within:border-blue-500/50 focus-within:ring-2 focus-within:ring-blue-500/20">
                         <span className="pl-4 text-muted dark:text-gray-400">$</span>
                         <input
+                          id={field.id}
+                          name={field.id}
                           type="text"
                           inputMode="decimal"
                           pattern="[0-9.]*"
+                          autoComplete="off"
                           value={formatMoneyInputValue(formData[field.id] ?? "")}
                           onChange={(e) => handleMoneyChange(field.id, e.target.value)}
                           onBlur={() => handleMoneyBlur(field.id)}
@@ -558,12 +596,15 @@ export default function DocumentPage() {
                     </>
                   ) : (
                     <>
-                      <label className="block text-sm font-medium mb-2 text-foreground">
+                      <label htmlFor={field.id} className="block text-sm font-medium mb-2 text-foreground">
                         {label}
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
                       <Input
+                        id={field.id}
+                        name={field.id}
                         type={field.type}
+                        autoComplete={field.id.includes("email") ? "email" : "off"}
                         value={formData[field.id] || ""}
                         onChange={(e) => handleInputChange(field.id, e.target.value)}
                         onBlur={
@@ -584,6 +625,31 @@ export default function DocumentPage() {
               );
             })}
           </div>
+
+          {!abogadosLoading && (
+            <div className="mb-6 p-4 rounded-xl border-2 border-blue-500/40 bg-blue-500/5 dark:bg-blue-500/10">
+              <h3 className="text-sm font-semibold text-foreground mb-2">{t("doc_select_abogado")}</h3>
+              {abogados.length === 0 ? (
+                <p className="text-sm text-amber-600 dark:text-amber-400">{t("doc_no_abogados")}</p>
+              ) : (
+                <select
+                  id="abogado-select"
+                  name="abogadoId"
+                  value={selectedAbogadoId}
+                  onChange={(e) => setSelectedAbogadoId(e.target.value)}
+                  className="w-full mt-2 px-4 py-3 bg-card border border-border rounded-lg text-foreground dark:bg-gray-800/90 dark:border-gray-600/50 focus:outline-none focus:border-blue-500/50"
+                >
+                  <option value="">{t("doc_select_abogado_placeholder")}</option>
+                  {abogados.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nombreCompleto || a.email}
+                      {a.nombreDespacho ? ` — ${a.nombreDespacho}` : ""}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+          )}
 
           <div className="mb-6 p-4 rounded-lg border-2 border-amber-500/60 bg-amber-500/10 dark:bg-amber-500/15 dark:border-amber-400/50">
             <h3 className="text-sm font-semibold text-foreground mb-2">{t("legal_checkout_title")}</h3>

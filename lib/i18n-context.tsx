@@ -21,7 +21,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem(LANG_STORAGE) as Locale | null;
-    if (stored === "es" || stored === "en") setLocaleState(stored);
+    if (stored === "es" || stored === "en" || stored === "seri") setLocaleState(stored);
   }, []);
 
   useEffect(() => {
