@@ -194,33 +194,14 @@ export function Navbar() {
                 <Languages className="w-5 h-5" />
               </Link>
             )}
-            {/* Switch bonito para móvil */}
+            {/* Botón de tema igual que desktop */}
             <button
               type="button"
               onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
-              className="relative h-8 w-14 rounded-full bg-gray-300 dark:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:hidden"
+              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
               aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
             >
-              <div
-                className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white dark:bg-gray-800 transition-transform duration-300 flex items-center justify-center ${
-                  theme === "dark" ? "translate-x-6" : "translate-x-0"
-                }`}
-              >
-                {theme === "dark" ? (
-                  <Sun className="w-4 h-4 text-yellow-500" />
-                ) : (
-                  <Moon className="w-4 h-4 text-gray-600" />
-                )}
-              </div>
-            </button>
-            {/* Botón simple para desktop */}
-            <button
-              type="button"
-              onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
-              className="hidden sm:flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
-              aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
-            >
-              {theme === "dark" ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
+              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             <button
               type="button"
