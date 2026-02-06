@@ -7,7 +7,7 @@ Credenciales para probar los distintos roles de la plataforma AVATAR Legal AI.
 | Rol | Email | Contraseña | Qué ve |
 |-----|-------|------------|--------|
 | **DIDI** | `didi@dietas.com` | `didi123` | Cliente con acceso a la pestaña DIDI (planes nutricionales comca'ac) |
-| **Admin** | `admin@avatar.com` | `admin123` | Panel para **aprobar abogados** que se inscriben al programa |
+| **Admin** | `admin@avatar.com` | `admin1234` | Panel para **aprobar abogados** que se inscriben al programa |
 | **Abogado** | `abogado@avatar.com` | `abogado123` | Dashboard con **solicitudes/documentos** que le llegan para revisar |
 | **Cliente** | `cliente@avatar.com` | `cliente123` | Usuario normal: genera documentos y ve Mis Documentos |
 

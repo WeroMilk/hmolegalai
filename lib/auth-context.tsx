@@ -106,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(createDemoUser());
         return;
       }
-      throw new Error("Firebase no está configurado. Usa admin@avatar.com / admin123 para modo demo.");
+      throw new Error("Firebase no está configurado. Usa admin@avatar.com / admin1234 para modo demo.");
     }
 
     try {

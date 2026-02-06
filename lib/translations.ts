@@ -376,6 +376,40 @@ const _base = {
     field_fecha_pie: "Fecha para el pie del documento",
     field_domicilio_notificaciones_1: "Domicilio para oír y recibir notificaciones (Parte 1)",
     field_domicilio_notificaciones_2: "Domicilio para oír y recibir notificaciones (Parte 2)",
+    // Campos específicos de amparo
+    field_nombre_quejoso: "Nombre completo del quejoso (agravado / parte actora)",
+    field_domicilio_quejoso: "Domicilio particular del quejoso",
+    field_quien_promueve: "Quien promueve en nombre del quejoso",
+    field_nombre_tercero_interesado: "Nombre del tercero interesado (contraparte en el juicio de origen)",
+    field_domicilio_tercero_interesado: "Domicilio del tercero interesado",
+    field_autoridad_responsable: "Autoridad responsable (órgano que emitió el acto reclamado)",
+    field_acto_reclamado: "Norma general, acto u omisión reclamado",
+    field_hechos_antecedentes: "Hechos que constituyan los antecedentes del acto reclamado",
+    field_normas_violadas: "Preceptos constitucionales o legales violados",
+    field_fundamentos: "Conceptos de violación",
+    field_resolucion_impugnada: "Resolución o sentencia impugnada (acto reclamado)",
+    field_fecha_notificacion: "Fecha de notificación del acto reclamado",
+    field_tribunal_circuito: "Tribunal Colegiado de Circuito ante el que se presenta el recurso",
+    field_numero_expediente_amparo: "Número de expediente del juicio de amparo",
+    field_juzgado_distrito: "Juzgado de Distrito que conoce del juicio de amparo",
+    field_acto_suspender: "Acto cuya suspensión se solicita",
+    field_fundamentos_suspension: "Fundamentos para la suspensión",
+    field_garantia: "Garantía que ofrece el quejoso (si el juez la exige)",
+    field_domicilio_autoridad: "Domicilio de la autoridad para oír y recibir notificaciones",
+    field_acto_reclamado_resumen: "Breve reseña del acto reclamado (qué impugna el quejoso)",
+    field_argumentos: "Argumentos y defensa de la autoridad (contestación al fondo)",
+    field_pruebas: "Pruebas que ofrece la autoridad responsable",
+    field_nombre_parte: "Nombre completo de la parte que presenta los alegatos",
+    field_calidad: "Calidad procesal en que actúa",
+    field_juzgado_tribunal: "Juzgado de Distrito o Tribunal Colegiado que conoce del juicio",
+    field_alegatos: "Alegatos y argumentos de la parte",
+    field_nombre_recurrente: "Nombre completo del recurrente",
+    field_domicilio_recurrente: "Domicilio del recurrente para oír y recibir notificaciones",
+    field_numero_expediente: "Número de expediente del juicio de amparo",
+    field_sentencia_revisar: "Sentencia o resolución del Juez de Distrito que se impugna",
+    field_fecha_resolucion: "Fecha en que se dictó la resolución impugnada",
+    field_juzgado_origen: "Juzgado de Distrito de origen (que dictó la resolución impugnada)",
+    field_agravios: "Agravios y fundamentos del recurso de revisión",
 
     // Seri page
     seri_back: "Volver",
@@ -870,6 +904,40 @@ const _base = {
     field_fecha_pie: "Date for document footer",
     field_domicilio_notificaciones_1: "Address for service of process (Party 1)",
     field_domicilio_notificaciones_2: "Address for service of process (Party 2)",
+    // Amparo-specific fields
+    field_nombre_quejoso: "Full name of plaintiff (aggravated party / plaintiff)",
+    field_domicilio_quejoso: "Plaintiff's home address",
+    field_quien_promueve: "Who files on behalf of the plaintiff",
+    field_nombre_tercero_interesado: "Name of interested third party (counterparty in original proceeding)",
+    field_domicilio_tercero_interesado: "Address of interested third party",
+    field_autoridad_responsable: "Responsible authority (body that issued the challenged act)",
+    field_acto_reclamado: "General rule, act or omission challenged",
+    field_hechos_antecedentes: "Facts constituting the background of the challenged act",
+    field_normas_violadas: "Constitutional or legal provisions violated",
+    field_fundamentos: "Violation concepts",
+    field_resolucion_impugnada: "Resolution or judgment challenged (challenged act)",
+    field_fecha_notificacion: "Date of notification of the challenged act",
+    field_tribunal_circuito: "Collegiate Circuit Court before which the appeal is filed",
+    field_numero_expediente_amparo: "Case number of the amparo proceeding",
+    field_juzgado_distrito: "District Court hearing the amparo proceeding",
+    field_acto_suspender: "Act whose suspension is requested",
+    field_fundamentos_suspension: "Grounds for suspension",
+    field_garantia: "Guarantee offered by the plaintiff (if required by the judge)",
+    field_domicilio_autoridad: "Authority's address for service of process",
+    field_acto_reclamado_resumen: "Brief summary of the challenged act (what the plaintiff challenges)",
+    field_argumentos: "Arguments and defense of the authority (response on the merits)",
+    field_pruebas: "Evidence offered by the responsible authority",
+    field_nombre_parte: "Full name of the party filing the arguments",
+    field_calidad: "Procedural capacity in which they act",
+    field_juzgado_tribunal: "District Court or Collegiate Court hearing the proceeding",
+    field_alegatos: "Arguments and briefs of the party",
+    field_nombre_recurrente: "Full name of the appellant",
+    field_domicilio_recurrente: "Appellant's address for service of process",
+    field_numero_expediente: "Case number of the amparo proceeding",
+    field_sentencia_revisar: "Judgment or resolution of the District Judge being challenged",
+    field_fecha_resolucion: "Date on which the challenged resolution was issued",
+    field_juzgado_origen: "District Court of origin (that issued the challenged resolution)",
+    field_agravios: "Grievances and grounds for the review appeal",
 
     // Seri page
     seri_back: "Back",
@@ -1383,6 +1451,40 @@ const _seri: Record<keyof typeof _base.es, string> = {
   field_fecha_pie: "Ziix hapáctim fecha",
   field_domicilio_notificaciones_1: "Hant mapt ziix hapáctim quih itaal (parte 1)",
   field_domicilio_notificaciones_2: "Hant mapt ziix hapáctim quih itaal (parte 2)",
+  // Campos específicos de amparo (Seri)
+  field_nombre_quejoso: "Hac ziix hac (quejoso)",
+  field_domicilio_quejoso: "Hant quejoso",
+  field_quien_promueve: "Haxt ziix quih ano coti quejoso",
+  field_nombre_tercero_interesado: "Haxt ziix hac (tercero interesado)",
+  field_domicilio_tercero_interesado: "Hant tercero interesado",
+  field_autoridad_responsable: "Hast ziix quih yaza ziix hac",
+  field_acto_reclamado: "Ziix hac quih ano coti mapt",
+  field_hechos_antecedentes: "Ziix quih yaza mapt ziix hac",
+  field_normas_violadas: "Cöihcapxöt quih ano coti",
+  field_fundamentos: "Ziix quih ano coti cöihcapxöt",
+  field_resolucion_impugnada: "Ziix hapáctim quih ano coti mapt",
+  field_fecha_notificacion: "Ziix hapáctim fecha",
+  field_tribunal_circuito: "Hast cöpaac com",
+  field_numero_expediente_amparo: "Ziix hapáctim hac amparo",
+  field_juzgado_distrito: "Hast cöpaac amparo",
+  field_acto_suspender: "Ziix hac quih yoocz quih ano coti",
+  field_fundamentos_suspension: "Ziix quih ano coti quih yoocz",
+  field_garantia: "Quííp quih ano coti quejoso",
+  field_domicilio_autoridad: "Hant hast",
+  field_acto_reclamado_resumen: "Ziix hac quih ano coti mapt",
+  field_argumentos: "Ziix quih ano coti hast",
+  field_pruebas: "Ziix hapáctim quih ano coti hast",
+  field_nombre_parte: "Hac ziix hac (parte)",
+  field_calidad: "Ziix quih yaza",
+  field_juzgado_tribunal: "Hast cöpaac ziix hast cöpaac com",
+  field_alegatos: "Ziix quih ano coti parte",
+  field_nombre_recurrente: "Hac ziix hac (recurrente)",
+  field_domicilio_recurrente: "Hant recurrente",
+  field_numero_expediente: "Ziix hapáctim hac amparo",
+  field_sentencia_revisar: "Ziix quih yaza hast cöpaac quih ano coti",
+  field_fecha_resolucion: "Ziix hapáctim fecha quih yaza",
+  field_juzgado_origen: "Hast cöpaac ziix quih yaza",
+  field_agravios: "Ziix quih ano coti quih ano coti",
 
   // Seri page (cmiique iitom)
   seri_back: "Quih yoocz",
@@ -1557,14 +1659,21 @@ export function getFieldLabelKey(docId: string, fieldId: string): TranslationKey
   return (FIELD_LABEL_KEYS[fieldId as keyof typeof FIELD_LABEL_KEYS] ?? "doc_name") as TranslationKey;
 }
 
-/** Etiqueta a mostrar en el formulario: prefiere field.label (definida en documents.ts) para documentos de amparo. */
+/** Etiqueta a mostrar en el formulario: busca traducción primero, luego usa field.label como fallback. */
 export function getFieldDisplayLabel(
   docId: string,
   field: { id: string; label: string },
   tFn: (k: TranslationKey) => string
 ): string {
-  if (field.label?.trim()) return field.label;
-  return tFn(getFieldLabelKey(docId, field.id));
+  // Primero intentar obtener traducción por clave
+  const translationKey = getFieldLabelKey(docId, field.id);
+  const translated = tFn(translationKey);
+  // Si la traducción existe y no es igual a la clave (significa que encontró traducción), usarla
+  if (translated && translated !== translationKey) {
+    return translated;
+  }
+  // Si no hay traducción, usar field.label como fallback
+  return field.label?.trim() || field.id;
 }
 const FIELD_LABEL_KEYS: Record<string, TranslationKey> = {
   "contrato-arrendamiento_monto": "field_monto_mensual",
@@ -1625,6 +1734,40 @@ const FIELD_LABEL_KEYS: Record<string, TranslationKey> = {
   fecha_pie: "field_fecha_pie",
   domicilio_notificaciones_1: "field_domicilio_notificaciones_1",
   domicilio_notificaciones_2: "field_domicilio_notificaciones_2",
+  // Campos de amparo
+  nombre_quejoso: "field_nombre_quejoso",
+  domicilio_quejoso: "field_domicilio_quejoso",
+  quien_promueve: "field_quien_promueve",
+  nombre_tercero_interesado: "field_nombre_tercero_interesado",
+  domicilio_tercero_interesado: "field_domicilio_tercero_interesado",
+  autoridad_responsable: "field_autoridad_responsable",
+  acto_reclamado: "field_acto_reclamado",
+  hechos_antecedentes: "field_hechos_antecedentes",
+  normas_violadas: "field_normas_violadas",
+  fundamentos: "field_fundamentos",
+  resolucion_impugnada: "field_resolucion_impugnada",
+  fecha_notificacion: "field_fecha_notificacion",
+  tribunal_circuito: "field_tribunal_circuito",
+  numero_expediente_amparo: "field_numero_expediente_amparo",
+  juzgado_distrito: "field_juzgado_distrito",
+  acto_suspender: "field_acto_suspender",
+  fundamentos_suspension: "field_fundamentos_suspension",
+  garantia: "field_garantia",
+  domicilio_autoridad: "field_domicilio_autoridad",
+  acto_reclamado_resumen: "field_acto_reclamado_resumen",
+  argumentos: "field_argumentos",
+  pruebas: "field_pruebas",
+  nombre_parte: "field_nombre_parte",
+  calidad: "field_calidad",
+  juzgado_tribunal: "field_juzgado_tribunal",
+  alegatos: "field_alegatos",
+  nombre_recurrente: "field_nombre_recurrente",
+  domicilio_recurrente: "field_domicilio_recurrente",
+  numero_expediente: "field_numero_expediente",
+  sentencia_revisar: "field_sentencia_revisar",
+  fecha_resolucion: "field_fecha_resolucion",
+  juzgado_origen: "field_juzgado_origen",
+  agravios: "field_agravios",
 };
 
 export function t(locale: Locale, key: TranslationKey, vars?: Record<string, string | number>): string {

@@ -7,7 +7,7 @@
 | `admin@avatar.com` | Panel admin: aprueba abogados, edita tu perfil. Genera documentos sin pagar. |
 | `didi@dietas.com` | Cliente con acceso a DIDI (planes nutricionales comca'ac) |
 
-**Password admin:** `admin123`  
+**Password admin:** `admin1234`  
 **Password didi:** `didi123`
 
 ## Usuarios demo (para otros)
