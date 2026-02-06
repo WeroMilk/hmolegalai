@@ -51,13 +51,15 @@ export async function speakText(text: string, lang: SupportedLanguage): Promise<
     preferredVoice =
       voices.find((v) => v.lang === "es-MX") ??
       voices.find((v) => v.lang === "es-ES") ??
-      voices.find((v) => v.lang.startsWith("es"));
+      voices.find((v) => v.lang.startsWith("es")) ??
+      null;
   } else {
     // Preferir voces estadounidenses, luego británicas, luego cualquier inglés
     preferredVoice =
       voices.find((v) => v.lang === "en-US") ??
       voices.find((v) => v.lang === "en-GB") ??
-      voices.find((v) => v.lang.startsWith("en"));
+      voices.find((v) => v.lang.startsWith("en")) ??
+      null;
   }
 
   if (preferredVoice) {
@@ -79,12 +81,14 @@ export async function speakText(text: string, lang: SupportedLanguage): Promise<
             newPreferredVoice =
               newVoices.find((v) => v.lang === "es-MX") ??
               newVoices.find((v) => v.lang === "es-ES") ??
-              newVoices.find((v) => v.lang.startsWith("es"));
+              newVoices.find((v) => v.lang.startsWith("es")) ??
+              null;
           } else {
             newPreferredVoice =
               newVoices.find((v) => v.lang === "en-US") ??
               newVoices.find((v) => v.lang === "en-GB") ??
-              newVoices.find((v) => v.lang.startsWith("en"));
+              newVoices.find((v) => v.lang.startsWith("en")) ??
+              null;
           }
           
           if (newPreferredVoice) {
