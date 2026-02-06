@@ -285,17 +285,17 @@ export default function AbogadoDashboardPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 pb-16">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Dashboard</h1>
-            <p className="text-muted text-sm mt-1">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">Dashboard</h1>
+            <p className="text-muted text-sm sm:text-base mt-1">
               Hola, {profile?.nombreCompleto || user?.email?.split("@")[0] || "Abogado"}
             </p>
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 sm:gap-3 mb-6 sm:mb-8">
           {[
             { id: "documentos" as const, label: "Documentos", icon: FileText },
             { id: "agenda" as const, label: "Agenda", icon: CalendarDays },
@@ -304,7 +304,7 @@ export default function AbogadoDashboardPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all ${
+              className={`flex items-center gap-2 px-4 py-2 sm:px-5 sm:py-2.5 rounded-xl font-medium transition-all text-sm sm:text-base ${
                 activeTab === tab.id
                   ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
                   : "bg-card border border-border text-muted hover:text-foreground hover:border-blue-500/40"
@@ -325,7 +325,7 @@ export default function AbogadoDashboardPage() {
               exit={{ opacity: 0, y: -10 }}
               className="space-y-6"
             >
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
                 <div className="glass-effect p-4 rounded-xl border border-border flex items-center gap-3">
                   <div className="w-12 h-12 rounded-xl bg-amber-500/20 flex items-center justify-center">
                     <Clock className="w-6 h-6 text-amber-500" />

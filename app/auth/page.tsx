@@ -299,10 +299,10 @@ function AuthPageContent() {
               </div>
             ) : (
               <>
-            <h1 className="hover-title block w-full text-2xl sm:text-3xl font-bold mb-2 text-center text-foreground">
+            <h1 className="hover-title block w-full text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-center text-foreground">
               {isLogin ? t("auth_sign_in") : t("auth_sign_up")}
             </h1>
-            <p className="text-muted text-center mb-6 sm:mb-8 text-sm sm:text-base">
+            <p className="text-muted text-center mb-6 sm:mb-8 md:mb-10 text-sm sm:text-base md:text-lg">
               {isLogin ? t("auth_access_continue") : t("auth_create_begin")}
             </p>
 
@@ -312,7 +312,7 @@ function AuthPageContent() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5 md:space-y-6">
               <div>
                 <label htmlFor="auth-email" className="block text-sm font-medium mb-2 flex items-center text-foreground">
                   <Mail className="w-4 h-4 mr-2" />

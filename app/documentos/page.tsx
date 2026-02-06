@@ -16,18 +16,18 @@ export default function DocumentosPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4 sm:px-6 lg:px-8">
+      <main id="main" className="pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 lg:px-10">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25 }}
-            className="text-center mb-4 md:mb-6"
+            className="text-center mb-6 sm:mb-8 md:mb-10"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-6 leading-tight text-foreground">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-foreground">
               <span className="gradient-text hover-title">{t("catalog_title")}</span>
             </h1>
-            <p className="text-xl md:text-2xl text-muted max-w-3xl mx-auto mt-2">
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-muted max-w-3xl mx-auto mt-2 sm:mt-3">
               {t("catalog_subtitle")}
             </p>
           </motion.div>

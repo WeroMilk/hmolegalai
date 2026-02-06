@@ -105,8 +105,8 @@ export default function MisDocumentosPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16">
-        <h1 className="text-4xl font-bold mb-8 text-foreground">
+      <main id="main" className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 pt-28 sm:pt-32 md:pt-36 pb-12 sm:pb-16 md:pb-20">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 sm:mb-8 md:mb-10 text-foreground">
           <span className="gradient-text hover-title">{t("mis_docs_title")}</span>
         </h1>
 
@@ -127,14 +127,14 @@ export default function MisDocumentosPage() {
             </button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6">
             {documents.map((doc, index) => (
               <motion.div
                 key={doc.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="glass-effect hover-box p-6 rounded-xl border border-blue-500/40 group"
+                className="glass-effect hover-box p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/40 group"
               >
                 <div className="flex items-start justify-between mb-4">
                   <FileText className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12" />

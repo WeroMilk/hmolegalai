@@ -33,8 +33,8 @@ export function Navbar() {
             <span className="text-xs xs:text-sm text-blue-500 font-medium hidden xs:inline shrink-0">{t("nav_legal_ai")}</span>
           </Link>
 
-          <div className="hidden md:flex items-center shrink-0 min-w-0">
-            <div className="flex items-center gap-1.5 lg:gap-2">
+          <div className="hidden sm:flex items-center shrink-0 min-w-0">
+            <div className="flex items-center gap-1.5 md:gap-2 lg:gap-3">
               {(isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved)) ? (
                 <>
                   <Link href="/documentos" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_documents")}>
@@ -183,7 +183,7 @@ export function Navbar() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 md:hidden">
+          <div className="flex items-center gap-2 sm:hidden">
             <div className="flex items-center gap-0.5 p-0.5 rounded bg-background/80 border border-border">
               <button
                 type="button"
@@ -239,7 +239,7 @@ export function Navbar() {
         </div>
 
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 space-y-1 border-t border-border">
+          <div className="sm:hidden py-4 space-y-1 border-t border-border">
             {(isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved)) ? (
               <>
                 <Link href="/documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>

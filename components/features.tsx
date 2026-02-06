@@ -34,7 +34,7 @@ export function Features() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 xs:gap-4 sm:gap-6 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 xs:gap-5 sm:gap-6 md:gap-8">
           {FEATURE_KEYS.map((feat, index) => {
             const Icon = ICONS[index];
             return (
@@ -44,7 +44,7 @@ export function Features() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.25, delay: index * 0.03 }}
-                className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
+                className="glass-effect hover-box p-4 xs:p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[260px] sm:min-h-[280px] md:min-h-[300px] flex flex-col"
               >
                 <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
                   <Icon className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125" />

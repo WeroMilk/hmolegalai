@@ -398,28 +398,28 @@ export default function DocumentPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 sm:pb-24">
+      <main id="main" className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 pt-20 sm:pt-24 pb-12 sm:pb-16 md:pb-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-effect hover-box p-6 md:p-8 rounded-xl border border-blue-500/40 group"
+          className="glass-effect hover-box p-5 sm:p-6 md:p-8 lg:p-10 rounded-xl border border-blue-500/40 group"
         >
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-8 gap-4">
-            <div className="flex-1">
-              <div className="text-4xl mb-4 origin-left transition-transform duration-300 ease-out group-hover:scale-125 group-hover:translate-x-1">{document.icon}</div>
-              <h1 className="hover-title text-3xl md:text-4xl font-bold mb-2 text-foreground">{docName}</h1>
-              <p className="text-muted text-base md:text-lg">{docDesc}</p>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-6 sm:mb-8 gap-4 sm:gap-6">
+            <div className="flex-1 min-w-0">
+              <div className="text-4xl sm:text-5xl mb-4 origin-left transition-transform duration-300 ease-out group-hover:scale-125 group-hover:translate-x-1">{document.icon}</div>
+              <h1 className="hover-title text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 text-foreground break-words">{docName}</h1>
+              <p className="text-muted text-sm sm:text-base md:text-lg break-words">{docDesc}</p>
             </div>
-            <div className="text-left md:text-right">
-              <div className="text-2xl font-bold text-blue-500">
+            <div className="text-left sm:text-right flex-shrink-0">
+              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-500">
                 {t("doc_price_base")}
-                <span className="text-sm text-muted font-normal block mt-1">{t("doc_download_only_desc")}</span>
+                <span className="text-xs sm:text-sm text-muted font-normal block mt-1">{t("doc_download_only_desc")}</span>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6 mb-8">
-            <h2 className="text-2xl font-semibold text-foreground">{t("doc_complete_info")}</h2>
+          <div className="space-y-5 sm:space-y-6 md:space-y-8 mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-foreground">{t("doc_complete_info")}</h2>
 
             {!user && (
               <div className="p-4 rounded-lg border-2 border-amber-500/50 bg-amber-500/10 dark:bg-amber-500/15 dark:border-amber-400/50">
@@ -468,8 +468,8 @@ export default function DocumentPage() {
                         {field.required && <span className="text-red-400 ml-1">*</span>}
                       </label>
                       {parsePersonList(formData[field.id] || "").map((person, idx) => (
-                        <div key={idx} className="flex flex-wrap items-center gap-3 p-3 rounded-lg bg-card border border-border">
-                          <div className="flex-1 min-w-[120px] sm:min-w-[160px]">
+                        <div key={idx} className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 sm:p-4 rounded-lg bg-card border border-border">
+                          <div className="flex-1 w-full sm:min-w-[160px] md:min-w-[200px]">
                             <Input
                               id={`${field.id}-nombre-${idx}`}
                               name={`${field.id}-nombre-${idx}`}
@@ -482,13 +482,13 @@ export default function DocumentPage() {
                               placeholder={t("doc_name")}
                             />
                           </div>
-                          <div className="flex-1 min-w-[120px] sm:min-w-[160px]">
+                          <div className="flex-1 w-full sm:min-w-[160px] md:min-w-[200px]">
                             <select
                               id={`${field.id}-parentesco-${idx}`}
                               name={`${field.id}-parentesco-${idx}`}
                               value={person.parentesco}
                               onChange={(e) => handlePersonChange(field.id, idx, "parentesco", e.target.value)}
-                              className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 focus:outline-none focus:border-blue-500/50"
+                              className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 focus:outline-none focus:border-blue-500/50 text-sm sm:text-base"
                             >
                               <option value="">{t("doc_relationship")}</option>
                               {parentescoOptions.map((opt) => (

@@ -15,7 +15,7 @@ export function DocumentCatalog({ compactTop, reduceTopPadding }: { compactTop?:
   return (
     <section className={`px-3 xs:px-4 sm:px-6 lg:px-8 overflow-visible w-full min-w-0 ${paddingClass}`}>
       <div className="max-w-7xl mx-auto w-full">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 lg:gap-8">
           {LEGAL_DOCUMENTS.map((document, index) => {
             const keys = DOC_NAME_DESC_KEYS[document.id];
             const name = keys ? t(keys.name) : document.name;
@@ -29,7 +29,7 @@ export function DocumentCatalog({ compactTop, reduceTopPadding }: { compactTop?:
                 transition={{ duration: 0.25, delay: index * 0.03 }}
               >
                 <Link href={`/documentos/${document.id}`} className="block h-full">
-                  <div className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group h-full flex flex-col min-h-[220px] xs:min-h-[280px]">
+                  <div className="glass-effect hover-box p-4 xs:p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/40 group h-full flex flex-col min-h-[220px] xs:min-h-[260px] sm:min-h-[280px] md:min-h-[300px]">
                     <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0 text-3xl">
                       {document.icon}
                     </div>

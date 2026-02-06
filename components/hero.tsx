@@ -41,7 +41,7 @@ export function Hero() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 xs:gap-8 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-24 xs:mt-28 md:mt-20">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 xs:gap-8 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-20 xs:mt-24 sm:mt-20 md:mt-16">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export function Hero() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="group flex flex-col items-center text-center md:border-x border-black/30 dark:border-white/30 md:px-12"
+              className="group flex flex-col items-center text-center sm:border-x border-black/30 dark:border-white/30 sm:px-8 md:px-12"
             >
               <div className="mb-5 text-foreground/50 group-hover:text-blue-500/80 transition-colors duration-300">
                 <Shield className="w-7 h-7" strokeWidth={1.5} />

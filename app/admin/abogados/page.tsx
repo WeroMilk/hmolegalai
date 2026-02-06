@@ -117,19 +117,19 @@ export default function AdminAbogadosPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 pt-20 pb-16">
+      <main className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 pb-12 sm:pb-16">
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-6 sm:mt-8 mb-8"
+          className="mt-6 sm:mt-8 mb-6 sm:mb-8"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-blue-500/15 border border-blue-500/30">
-              <Scale className="w-6 h-6 text-blue-500" />
+          <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-blue-500/15 border border-blue-500/30 flex-shrink-0">
+              <Scale className="w-6 h-6 sm:w-7 sm:h-7 text-blue-500" />
             </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-foreground">Administrar abogados</h1>
-              <p className="text-sm text-muted mt-0.5">
+            <div className="min-w-0">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground break-words">Administrar abogados</h1>
+              <p className="text-sm sm:text-base text-muted mt-0.5 sm:mt-1 break-words">
                 Revisa y aprueba a los profesionales que se registran en la plataforma.
               </p>
             </div>
@@ -171,7 +171,7 @@ export default function AdminAbogadosPage() {
                   setTimeout(() => setProfileSaved(false), 3000);
                 }
               }}
-              className="p-4 pt-0 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-border"
+              className="p-4 sm:p-5 md:p-6 pt-0 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 border-t border-border"
             >
               <div>
                 <label className="block text-sm text-muted mb-1">Nombre completo</label>
@@ -218,7 +218,7 @@ export default function AdminAbogadosPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                className={`glass-effect rounded-xl border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 transition-all ${
+                className={`glass-effect rounded-xl border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-5 p-4 sm:p-5 md:p-6 transition-all ${
                   (a as Abogado & { esEjemplo?: boolean }).esEjemplo
                     ? "border-dashed border-border opacity-90"
                     : "border-border hover:border-blue-500/30"

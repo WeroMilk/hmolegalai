@@ -236,12 +236,12 @@ export default function TraductorPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-20 sm:pt-24 pb-16 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
-        <div className="w-full max-w-lg mx-auto">
-          <h1 className="text-[28px] sm:text-[34px] font-semibold text-foreground tracking-[-0.02em] mb-2">
+      <main className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 lg:px-10 flex flex-col items-center justify-center">
+        <div className="w-full max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-[-0.02em] mb-2 sm:mb-3">
             Traductor
           </h1>
-          <p className="text-[15px] text-muted mb-10 sm:mb-12">
+          <p className="text-sm sm:text-base md:text-lg text-muted mb-8 sm:mb-10 md:mb-12">
             {"comca'ac"} · Español · English
           </p>
 
@@ -251,11 +251,11 @@ export default function TraductorPage() {
             </p>
           )}
 
-          <div className="space-y-6 sm:space-y-8">
+          <div className="space-y-5 sm:space-y-6 md:space-y-8">
             <select
               value={pair}
               onChange={(e) => setPair(e.target.value as LangPair)}
-              className="w-full text-[15px] rounded-xl bg-[var(--card)] border-0 px-4 py-3.5 text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 appearance-none cursor-pointer"
+              className="w-full text-sm sm:text-base md:text-lg rounded-xl bg-[var(--card)] border-0 px-4 sm:px-5 py-3 sm:py-3.5 md:py-4 text-foreground focus:outline-none focus:ring-2 focus:ring-foreground/20 appearance-none cursor-pointer"
             >
               {PAIRS.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -276,7 +276,7 @@ export default function TraductorPage() {
                       : "Type or speak in English…"
                 }
                 rows={5}
-                className="w-full rounded-2xl bg-[var(--card)] border-0 px-5 py-4 pr-16 text-[17px] text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-foreground/15 resize-none leading-relaxed"
+                className="w-full rounded-2xl bg-[var(--card)] border-0 px-4 sm:px-5 md:px-6 py-4 sm:py-5 pr-14 sm:pr-16 text-base sm:text-lg md:text-xl text-foreground placeholder:text-muted/60 focus:outline-none focus:ring-2 focus:ring-foreground/15 resize-none leading-relaxed"
               />
               <button
                 type="button"

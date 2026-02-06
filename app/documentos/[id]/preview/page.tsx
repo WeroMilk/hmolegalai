@@ -116,21 +116,21 @@ export default function PreviewPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <main id="main" className="max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 md:px-8 lg:px-10 pt-20 sm:pt-24 pb-12 sm:pb-16 md:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
+          className="space-y-5 sm:space-y-6 md:space-y-8"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 rounded-xl bg-blue-500/20 border border-blue-500/30">
-                <FileText className="w-8 h-8 text-blue-500" />
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 sm:gap-6">
+            <div className="flex items-start gap-3 sm:gap-4 min-w-0 flex-1">
+              <div className="p-2 sm:p-3 rounded-xl bg-blue-500/20 border border-blue-500/30 flex-shrink-0">
+                <FileText className="w-7 h-7 sm:w-8 sm:h-8 md:w-9 md:h-9 text-blue-500" />
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-foreground">{docTitle}</h1>
-                <p className="text-muted text-sm">{t("preview_title")}</p>
-                <p className="text-muted text-xs mt-1">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground break-words">{docTitle}</h1>
+                <p className="text-muted text-xs sm:text-sm md:text-base mt-1">{t("preview_title")}</p>
+                <p className="text-muted text-xs sm:text-sm mt-1 sm:mt-2 break-words">
                   Este documento será revisado por un abogado. Aparecerá en Mis documentos en 24-48 horas una vez aprobado.
                 </p>
               </div>
@@ -146,8 +146,8 @@ export default function PreviewPage() {
           <div className="relative">
             <div className="absolute -inset-1 bg-gradient-to-b from-blue-500/10 to-transparent rounded-2xl blur-xl pointer-events-none" />
             <div className="relative bg-card border border-transparent dark:border-blue-500/20 rounded-2xl shadow-2xl overflow-hidden">
-              <div className="p-4 sm:p-8 md:p-12 lg:p-14 min-h-[320px] sm:min-h-[420px]">
-                <div className="max-w-2xl mx-auto">
+              <div className="p-4 sm:p-6 md:p-8 lg:p-10 xl:p-14 min-h-[320px] sm:min-h-[400px] md:min-h-[500px]">
+                <div className="max-w-2xl lg:max-w-3xl mx-auto">
                   {isEditing ? (
                     <textarea
                       id="preview-content"
@@ -155,7 +155,7 @@ export default function PreviewPage() {
                       autoComplete="off"
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
-                      className="w-full min-h-[360px] bg-background/80 dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 dark:placeholder:text-gray-400 border border-border rounded-xl p-6 text-foreground font-serif text-base leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 placeholder:text-muted text-justify"
+                      className="w-full min-h-[300px] sm:min-h-[360px] md:min-h-[400px] bg-background/80 dark:bg-gray-800/90 dark:border-gray-600/50 dark:text-gray-100 dark:placeholder:text-gray-400 border border-border rounded-xl p-4 sm:p-5 md:p-6 text-foreground font-serif text-sm sm:text-base md:text-lg leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 placeholder:text-muted text-justify"
                       placeholder={t("preview_placeholder")}
                       spellCheck
                       aria-label={t("preview_placeholder")}
@@ -190,7 +190,7 @@ export default function PreviewPage() {
             {t("legal_preview_legend")}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-5 md:gap-6 lg:gap-8">
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
