@@ -7,7 +7,7 @@ VOCABULARIO LEGAL SERI-ESPAÑOL:
 - demandar = quih ano coti, autoridad = hast, cmiique = persona comca'ac, comcaac = pueblo comca'ac
 `;
 
-type LangPair = "seri-es" | "es-seri" | "en-es" | "es-en";
+type LangPair = "seri-es" | "es-seri" | "en-es" | "es-en" | "seri-en" | "en-seri";
 
 function getSystemPrompt(from: string, to: string): string {
   if (from === "seri" && to === "es") {
@@ -19,6 +19,16 @@ Traduce el texto en comca'ac al español. Responde ÚNICAMENTE con la traducció
     return `Eres un traductor experto en lengua comca'ac (cmiique iitom) de Sonora, México.
 ${SERI_LEGAL_VOCAB}
 Traduce el texto en español al comca'ac (cmiique iitom). Responde ÚNICAMENTE con la traducción, sin explicaciones.`;
+  }
+  if (from === "seri" && to === "en") {
+    return `You are an expert translator of Comca'ac (Cmiique Iitom) from Sonora, Mexico.
+${SERI_LEGAL_VOCAB}
+Translate the Comca'ac text into natural English. Reply ONLY with the translation, no explanations.`;
+  }
+  if (from === "en" && to === "seri") {
+    return `Eres un traductor experto en lengua comca'ac (cmiique iitom) de Sonora, México.
+${SERI_LEGAL_VOCAB}
+Traduce el texto en inglés al comca'ac (cmiique iitom). Mantén ortografía seri consistente. Responde ÚNICAMENTE con la traducción, sin explicaciones.`;
   }
   if (from === "en" && to === "es") {
     return "Traduce el siguiente texto del inglés al español. Responde ÚNICAMENTE con la traducción, sin explicaciones.";
@@ -37,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     const pair = `${fromLang}-${toLang}` as LangPair;
-    const validPairs: LangPair[] = ["seri-es", "es-seri", "en-es", "es-en"];
+    const validPairs: LangPair[] = ["seri-es", "es-seri", "en-es", "es-en", "seri-en", "en-seri"];
     if (!validPairs.includes(pair)) {
       return NextResponse.json({ error: "Par de idiomas no soportado" }, { status: 400 });
     }

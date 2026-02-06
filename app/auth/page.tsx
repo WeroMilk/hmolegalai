@@ -183,7 +183,7 @@ function AuthPageContent() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="flex justify-center items-start min-h-screen px-3 xs:px-4 sm:px-6 pt-24 xs:pt-28 sm:pt-32 pb-10 xs:pb-12 sm:pb-20">
+      <main id="main" className="flex justify-center items-start min-h-screen px-3 xs:px-4 sm:px-6 pt-32 xs:pt-36 sm:pt-20 md:pt-24 pb-10 xs:pb-12 sm:pb-20">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

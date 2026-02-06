@@ -10,12 +10,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Loader2, CheckCircle } from "lucide-react";
 import { isSuperUser } from "@/lib/superuser";
+
 export default function AbogadoDocumentoPage() {
   const params = useParams();
   const router = useRouter();
   const { user } = useAuth();
   const { profile } = useUserProfile();
   const id = params.id as string;
+
   const [docData, setDocData] = useState<{
     content: string;
     documentType: string;
@@ -119,11 +121,7 @@ export default function AbogadoDocumentoPage() {
     <div className="min-h-screen text-foreground">
       <Navbar />
       <main className="max-w-4xl mx-auto px-4 sm:px-6 pt-20 pb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="space-y-6"
-        >
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h1 className="text-2xl font-bold text-foreground">{docData.documentType}</h1>
             {docData.source === "seri" && (
@@ -134,7 +132,9 @@ export default function AbogadoDocumentoPage() {
           </div>
 
           <div className="glass-effect p-4 rounded-xl border border-border">
-            <label htmlFor="abogado-documento-content" className="block text-sm font-medium text-muted mb-2">Contenido (editable)</label>
+            <label htmlFor="abogado-documento-content" className="block text-sm font-medium text-muted mb-2">
+              Contenido (editable)
+            </label>
             <textarea
               id="abogado-documento-content"
               name="editedContent"
@@ -152,17 +152,11 @@ export default function AbogadoDocumentoPage() {
           </p>
 
           {error && (
-            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
-              {error}
-            </div>
+            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">{error}</div>
           )}
 
           <div className="flex gap-3">
-            <Button
-              onClick={handleApprove}
-              disabled={approving}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            >
+            <Button onClick={handleApprove} disabled={approving} className="bg-blue-600 hover:bg-blue-700 text-white">
               {approving ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin mr-2 inline" />
@@ -184,3 +178,4 @@ export default function AbogadoDocumentoPage() {
     </div>
   );
 }
+

@@ -10,7 +10,7 @@ import { useUserProfile } from "@/lib/use-user-profile";
 import { isDidiUser } from "@/lib/didi";
 import { isSuperUser } from "@/lib/superuser";
 import { User, LogOut, Menu, X, Sun, Moon, Languages } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -23,7 +23,7 @@ export function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border navbar-no-frame">
       <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 xs:h-16 gap-2 min-w-0">
+        <div className="flex justify-between items-center h-14 xs:h-16 sm:h-16 gap-2 min-w-0 py-2 sm:py-0">
           <Link
             href="/"
             className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
@@ -44,7 +44,7 @@ export function Navbar() {
                     href={isSuperUser(user?.email ?? "") ? "/admin/abogados" : "/abogado/dashboard"}
                     className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors"
                   >
-                    Dashboard
+                    {t("nav_dashboard")}
                   </Link>
                 </>
               ) : (
@@ -56,11 +56,11 @@ export function Navbar() {
                     {t("nav_documents")}
                   </Link>
                   <Link href="/seri" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
-                    comca&apos;ac
+                    {t("nav_seri_link")}
                   </Link>
                   {user && isDidiUser(user.email) && (
                     <Link href="/didi" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-semibold text-muted transition-colors">
-                      DIDI
+                      {t("nav_didi")}
                     </Link>
                   )}
                   {user && (
@@ -76,7 +76,7 @@ export function Navbar() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2 pl-3 ml-1 border-l border-border shrink-0">
+            <div className="flex items-center gap-2 pl-3 ml-4 border-l border-border shrink-0">
             {user ? (
               <>
                 <button
@@ -189,17 +189,38 @@ export function Navbar() {
                 href="/traductor"
                 className="flex items-center justify-center min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-card transition-colors shrink-0"
                 aria-label="Traductor por voz"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 <Languages className="w-5 h-5" />
               </Link>
             )}
+            {/* Switch bonito para móvil */}
             <button
               type="button"
               onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
-              className="min-h-[44px] min-w-[44px] flex items-center justify-center p-2 rounded-lg border border-border text-foreground"
+              className="relative h-8 w-14 rounded-full bg-gray-300 dark:bg-gray-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:hidden"
               aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
             >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              <div
+                className={`absolute top-1 left-1 h-6 w-6 rounded-full bg-white dark:bg-gray-800 transition-transform duration-300 flex items-center justify-center ${
+                  theme === "dark" ? "translate-x-6" : "translate-x-0"
+                }`}
+              >
+                {theme === "dark" ? (
+                  <Sun className="w-4 h-4 text-yellow-500" />
+                ) : (
+                  <Moon className="w-4 h-4 text-gray-600" />
+                )}
+              </div>
+            </button>
+            {/* Botón simple para desktop */}
+            <button
+              type="button"
+              onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
+              className="hidden sm:flex h-9 w-9 items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
+              aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
+            >
+              {theme === "dark" ? <Sun className="w-6 h-6" /> : <Moon className="w-6 h-6" />}
             </button>
             <button
               type="button"
@@ -252,31 +273,31 @@ export function Navbar() {
               </div>
             )}
             <div className="py-3 px-4 border-t border-border">
-              <div className="text-sm text-muted mb-2">{t("nav_language") || "Idioma"}</div>
-              <div className="flex items-center gap-2">
+              <div className="text-sm font-medium text-foreground mb-3">{t("nav_language") || "Idioma"}</div>
+              <div className="flex items-center gap-3">
                 <button
                   type="button"
                   onClick={() => { setLocale("es"); setFlag("mx"); }}
-                  className={`flex items-center justify-center w-10 h-7 rounded transition-all border ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background border-blue-500" : "opacity-70 hover:opacity-100 border-border"}`}
+                  className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_spanish")}
                 >
-                  <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-8 h-6 rounded-sm object-cover" />
+                  <Image src="/flag-mexico.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" />
                 </button>
                 <button
                   type="button"
                   onClick={() => { setLocale("seri"); setFlag("seri"); }}
-                  className={`flex items-center justify-center w-10 h-7 rounded transition-all border ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background border-blue-500" : "opacity-70 hover:opacity-100 border-border"}`}
+                  className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_seri")}
                 >
-                  <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-8 h-6 rounded-sm object-cover" />
+                  <Image src="/flag-seri.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" />
                 </button>
                 <button
                   type="button"
                   onClick={() => { setLocale("en"); setFlag("us"); }}
-                  className={`flex items-center justify-center w-10 h-7 rounded transition-all border ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background border-blue-500" : "opacity-70 hover:opacity-100 border-border"}`}
+                  className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_english")}
                 >
-                  <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-8 h-6 rounded-sm object-cover" />
+                  <Image src="/flag-usa.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" />
                 </button>
               </div>
             </div>

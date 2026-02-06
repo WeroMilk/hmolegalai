@@ -3,14 +3,17 @@
 import { useState, useCallback, useRef } from "react";
 import { Mic, MicOff, Languages, ChevronDown, Loader2, Volume2 } from "lucide-react";
 import { useI18n } from "@/lib/i18n-context";
+import { corpusTranslate } from "@/lib/tri-translator";
 
-type LangPair = "seri-es" | "es-seri" | "en-es" | "es-en";
+type LangPair = "seri-es" | "es-seri" | "en-es" | "es-en" | "seri-en" | "en-seri";
 
 const PAIRS: { id: LangPair; label: string; labelSeri: string; from: string; to: string }[] = [
   { id: "seri-es", label: "comca'ac → Español", labelSeri: "comca'ac → cocsar iitom", from: "seri", to: "es" },
   { id: "es-seri", label: "Español → comca'ac", labelSeri: "cocsar iitom → comca'ac", from: "es", to: "seri" },
   { id: "en-es", label: "English → Español", labelSeri: "English → cocsar iitom", from: "en", to: "es" },
   { id: "es-en", label: "Español → English", labelSeri: "cocsar iitom → English", from: "es", to: "en" },
+  { id: "seri-en", label: "comca'ac → English", labelSeri: "comca'ac → English", from: "seri", to: "en" },
+  { id: "en-seri", label: "English → comca'ac", labelSeri: "English → comca'ac", from: "en", to: "seri" },
 ];
 
 function useVoiceInput(onResult: (text: string) => void) {
@@ -64,6 +67,7 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [usedCorpus, setUsedCorpus] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const currentPair = PAIRS.find((p) => p.id === pair)!;
@@ -80,7 +84,20 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
     setLoading(true);
     setError("");
     setResult("");
+    setUsedCorpus(false);
     try {
+      const corpus = corpusTranslate(
+        inputText.trim(),
+        currentPair.from as "es" | "en" | "seri",
+        currentPair.to as "es" | "en" | "seri",
+        { minScore: 0.75, limit: 3 }
+      );
+      if (corpus.best && corpus.best.score >= 0.92) {
+        setUsedCorpus(true);
+        setResult(corpus.best.toText);
+        return;
+      }
+
       const res = await fetch("/api/voice-translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -215,6 +232,11 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
                 <div className="rounded-xl bg-green-500/10 border border-green-500/30 p-3">
                   <p className="text-xs text-muted mb-1">Traducción:</p>
                   <p className="text-sm text-foreground font-medium">{result}</p>
+                  {usedCorpus && (
+                    <p className="text-[11px] text-muted mt-2">
+                      Coincidencia exacta con frases ya traducidas en la plataforma.
+                    </p>
+                  )}
                 </div>
               )}
               {error && (

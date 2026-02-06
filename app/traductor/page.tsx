@@ -9,14 +9,17 @@ import { isDidiUser } from "@/lib/didi";
 import { isSuperUser } from "@/lib/superuser";
 import { Navbar } from "@/components/navbar";
 import { ArrowLeft, Mic, MicOff, Loader2, Volume2 } from "lucide-react";
+import { corpusTranslate, type CorpusSuggestion } from "@/lib/tri-translator";
 
-type LangPair = "seri-es" | "es-seri" | "en-es" | "es-en";
+type LangPair = "seri-es" | "es-seri" | "en-es" | "es-en" | "seri-en" | "en-seri";
 
 const PAIRS: { id: LangPair; label: string; labelSeri: string; from: string; to: string }[] = [
   { id: "seri-es", label: "comca'ac → Español", labelSeri: "comca'ac → cocsar iitom", from: "seri", to: "es" },
   { id: "es-seri", label: "Español → comca'ac", labelSeri: "cocsar iitom → comca'ac", from: "es", to: "seri" },
   { id: "en-es", label: "English → Español", labelSeri: "English → cocsar iitom", from: "en", to: "es" },
   { id: "es-en", label: "Español → English", labelSeri: "cocsar iitom → English", from: "es", to: "en" },
+  { id: "seri-en", label: "comca'ac → English", labelSeri: "comca'ac → English", from: "seri", to: "en" },
+  { id: "en-seri", label: "English → comca'ac", labelSeri: "English → comca'ac", from: "en", to: "seri" },
 ];
 
 function useVoiceInput(onResult: (text: string) => void) {
@@ -131,6 +134,8 @@ export default function TraductorPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
+  const [corpusSuggestions, setCorpusSuggestions] = useState<CorpusSuggestion[]>([]);
+  const [usedCorpus, setUsedCorpus] = useState(false);
 
   const authorized =
     !!user &&
@@ -159,7 +164,22 @@ export default function TraductorPage() {
     setLoading(true);
     setError("");
     setResult("");
+    setCorpusSuggestions([]);
+    setUsedCorpus(false);
     try {
+      // 1) First: try translating from the app's verified corpus (no hallucinations).
+      const corpus = corpusTranslate(inputText.trim(), currentPair.from as "es" | "en" | "seri", currentPair.to as "es" | "en" | "seri", {
+        minScore: 0.62,
+        limit: 6,
+      });
+      if (corpus.suggestions.length > 0) setCorpusSuggestions(corpus.suggestions);
+      if (corpus.best && corpus.best.score >= 0.9) {
+        setUsedCorpus(true);
+        setResult(corpus.best.toText);
+        return;
+      }
+
+      // 2) Fallback: OpenAI translation for free-text.
       const res = await fetch("/api/voice-translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -341,11 +361,48 @@ export default function TraductorPage() {
                   </button>
                 </div>
                 <p className="text-[17px] text-foreground leading-[1.5]">{result}</p>
+                {usedCorpus && (
+                  <p className="text-[11px] text-muted mt-3">
+                    Coincidencia exacta con frases ya traducidas en la plataforma.
+                  </p>
+                )}
                 {currentPair.to === "seri" && (
                   <p className="text-[11px] text-muted mt-3">
                     La pronunciación usa voz disponible; el comca&apos;ac nativo puede diferir.
                   </p>
                 )}
+              </div>
+            )}
+
+            {!result && corpusSuggestions.length > 0 && (
+              <div className="rounded-2xl bg-[var(--card)] px-5 py-5">
+                <p className="text-[11px] text-muted uppercase tracking-widest mb-3">
+                  Sugerencias (frases ya existentes)
+                </p>
+                <div className="space-y-2">
+                  {corpusSuggestions.map((s) => (
+                    <button
+                      key={`${s.key}-${s.score}`}
+                      type="button"
+                      onClick={() => {
+                        setUsedCorpus(true);
+                        setResult(s.toText);
+                      }}
+                      className="w-full text-left rounded-xl bg-foreground/5 hover:bg-foreground/10 transition-colors px-4 py-3"
+                      title={`Key: ${s.key}`}
+                    >
+                      <div className="text-[12px] text-muted mb-1">
+                        Coincidencia: {Math.round(s.score * 100)}%
+                      </div>
+                      <div className="text-[14px] text-foreground leading-snug">
+                        {s.toText}
+                      </div>
+                    </button>
+                  ))}
+                </div>
+                <p className="text-[11px] text-muted mt-3">
+                  Si ninguna coincide con lo que necesitas, vuelve a intentar con texto más corto o más literal.
+                </p>
               </div>
             )}
             {error && (

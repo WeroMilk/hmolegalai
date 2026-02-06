@@ -41,7 +41,7 @@ export default function DocumentosPage() {
             transition={{ duration: 0.25 }}
             className="mt-24 md:mt-32"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-12 text-center leading-tight pb-2 text-foreground">
+            <h2 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl font-bold mb-4 xs:mb-6 text-center leading-tight text-foreground">
               <span className="gradient-text hover-title">{t("catalog_details_title")}</span>
             </h2>
 

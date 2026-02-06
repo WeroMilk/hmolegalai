@@ -115,15 +115,13 @@ export default function SeriPage() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-3 sm:mb-4 flex-shrink-0"
+          className="text-center mb-6 sm:mb-8 md:mb-10 flex-shrink-0"
         >
-          <div className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/20 border-2 border-blue-500/50 mb-1.5">
-            <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
-          </div>
-          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-foreground mb-1 lg:mb-2">
-            {t("seri_title")}
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 leading-tight text-foreground">
+            <span className="text-foreground">Comunidad comca&apos;ac · </span>
+            <span className="text-blue-500">Cmiique Iitom</span>
           </h1>
-          <p className="text-muted text-xs lg:text-sm max-w-2xl mx-auto">
+          <p className="text-xs xs:text-sm sm:text-lg md:text-xl text-muted mb-6 xs:mb-8 md:mb-12 max-w-3xl mx-auto px-2 xs:px-4">
             {t("seri_subtitle")}
           </p>
         </motion.div>
@@ -132,9 +130,9 @@ export default function SeriPage() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex-1 min-h-0 flex flex-col"
+            className="flex flex-col"
           >
-            <section className="glass-effect hover-box p-4 sm:p-6 lg:p-8 rounded-xl border border-blue-500/40 flex-1 min-h-0 flex flex-col">
+            <section className="glass-effect hover-box p-3 sm:p-4 md:p-5 lg:p-6 rounded-xl border border-blue-500/40 flex flex-col">
               <SeriWizardFlow
                 data={wizardData}
                 onChange={setWizardData}

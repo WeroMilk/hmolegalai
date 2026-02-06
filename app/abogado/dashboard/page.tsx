@@ -458,7 +458,7 @@ export default function AbogadoDashboardPage() {
                           </div>
                         </div>
                         {isPending && !esEjemplo && (
-                          <Link href={`/abogado/documento/${doc.id}`} className="flex-shrink-0">
+                          <Link href={`/abogado/documentos/${doc.id}`} className="flex-shrink-0">
                             <Button variant="outline" size="sm" className="border-blue-500/50 text-blue-500 hover:bg-blue-500/10">
                               Revisar
                             </Button>

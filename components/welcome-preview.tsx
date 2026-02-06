@@ -35,13 +35,23 @@ export function WelcomePreview() {
   const { setLocale } = useI18n();
   const [visible, setVisible] = useState(false);
 
-  // Mostrar cada vez que el usuario entra a la página principal
+  // Mostrar solo la primera vez en esta sesión del navegador
   useEffect(() => {
-    setVisible(pathname === "/");
+    if (pathname === "/") {
+      // Verificar si ya se mostró en esta sesión
+      const hasShownWelcome = sessionStorage.getItem("welcome-shown");
+      if (!hasShownWelcome) {
+        setVisible(true);
+      }
+    } else {
+      setVisible(false);
+    }
   }, [pathname]);
 
   const handleSelect = useCallback(
     (choice: "seri" | "mx" | "us") => {
+      // Marcar que ya se mostró el welcome en esta sesión
+      sessionStorage.setItem("welcome-shown", "true");
       setFlag(choice);
       if (choice === "seri") {
         setLocale("seri");

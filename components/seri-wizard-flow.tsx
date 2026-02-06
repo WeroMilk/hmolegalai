@@ -136,7 +136,7 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
   const fieldValue = currentStep?.field ? (data as unknown as Record<string, string>)[currentStep.field] ?? "" : "";
 
   return (
-    <div className="flex flex-col min-h-0 max-h-[70vh] lg:max-h-[75vh] overflow-hidden">
+    <div className="flex flex-col">
       <AnimatePresence mode="wait">
         {isDocStep ? (
           <motion.div
@@ -144,19 +144,21 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            className="space-y-4 min-h-0 flex-1"
+            className="space-y-2 sm:space-y-3 md:space-y-4"
           >
-            <div className="mb-4 lg:mb-6 flex flex-col gap-2">
-              <p className="text-2xl lg:text-3xl mb-1" role="img" aria-hidden>{currentStep?.emojis}</p>
-              <p className="text-base lg:text-lg font-semibold text-foreground">{getSeriText("seri_question_what_doc" as TranslationKey)}</p>
-              <p className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">{getSpanishLabel("seri_question_what_doc" as TranslationKey)}</p>
+            <div className="mb-2 sm:mb-3 md:mb-4 flex flex-col gap-1 sm:gap-1.5 md:gap-2">
+              <p className="text-xl sm:text-2xl md:text-2xl lg:text-3xl mb-0.5 sm:mb-1" role="img" aria-hidden>{currentStep?.emojis}</p>
+              <p className="text-sm sm:text-base md:text-base lg:text-lg font-semibold text-foreground">{getSeriText("seri_question_what_doc" as TranslationKey)}</p>
+              <p className="text-xs sm:text-xs md:text-xs lg:text-sm text-gray-500 dark:text-gray-400">{getSpanishLabel("seri_question_what_doc" as TranslationKey)}</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 lg:gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 sm:gap-2.5 md:gap-3 lg:gap-4">
               {LEGAL_DOCUMENTS.map((doc) => {
                 const keys = DOC_NAME_DESC_KEYS[doc.id];
                 const name = keys ? t(keys.name) : doc.name;
                 const desc = keys ? t(keys.desc) : doc.description;
                 const isSelected = data.selectedDoc?.id === doc.id;
+                // En español, usar menos líneas para evitar que se encimen, pero permitir expansión natural
+                const descLineClamp = locale === "es" ? "line-clamp-2" : "line-clamp-2 sm:line-clamp-2 md:line-clamp-3 lg:line-clamp-4";
                 return (
                   <motion.button
                     key={doc.id}
@@ -164,13 +166,13 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
                     disabled={disabled}
                     onClick={() => handleDocTap(doc)}
                     whileTap={{ scale: 0.98 }}
-                    className={`text-left px-4 py-3 lg:px-5 lg:py-4 rounded-xl border-2 transition-colors flex flex-col gap-2 min-h-[80px] lg:min-h-[100px] ${
+                    className={`text-left px-3 py-2 sm:px-3.5 sm:py-2.5 md:px-4 md:py-3 lg:px-5 lg:py-4 rounded-xl border-2 transition-colors flex flex-col gap-1.5 sm:gap-2 ${
                       isSelected ? "border-green-500/60 bg-green-500/20" : "border-blue-500/40 bg-blue-500/10 hover:bg-blue-500/20"
                     }`}
                   >
-                    <span className="text-xl lg:text-2xl flex-shrink-0">{doc.icon}</span>
-                    <span className="text-sm lg:text-base font-medium break-words leading-tight">{name}</span>
-                    <span className="text-xs lg:text-sm text-muted line-clamp-3 lg:line-clamp-4 break-words leading-relaxed">{desc}</span>
+                    <span className="text-lg sm:text-xl md:text-xl lg:text-2xl flex-shrink-0">{doc.icon}</span>
+                    <span className="text-xs sm:text-sm md:text-sm lg:text-base font-medium break-words leading-tight">{name}</span>
+                    <span className={`text-[10px] sm:text-xs md:text-xs lg:text-sm text-muted ${descLineClamp} break-words leading-relaxed`}>{desc}</span>
                   </motion.button>
                 );
               })}
@@ -182,7 +184,7 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            className="flex flex-col min-h-0 flex-1"
+            className="flex flex-col flex-shrink-0"
           >
             <div className="rounded-xl border-2 border-blue-500/40 bg-background/50 p-4 flex flex-col gap-3">
               <div className="flex items-center gap-2">
@@ -233,7 +235,7 @@ export function SeriWizardFlow({ data, onChange, disabled, onGenerate }: SeriWiz
         )}
       </AnimatePresence>
 
-      <div className="flex items-center justify-between gap-3 lg:gap-4 mt-6 lg:mt-8 pt-4 lg:pt-5 border-t border-border">
+      <div className={`flex items-center justify-between gap-3 lg:gap-4 mt-6 sm:mt-7 md:mt-8 lg:mt-10 pt-3 sm:pt-3.5 md:pt-4 lg:pt-5 border-t border-border`}>
         <button
           type="button"
           onClick={handleBack}
