@@ -215,14 +215,11 @@ export default function TraductorPage() {
     setError("");
   }, []);
 
-  const handleSpeakResult = useCallback(() => {
+  const handleSpeakResult = useCallback(async () => {
     if (!result || typeof window === "undefined") return;
-    const synth = window.speechSynthesis;
-    synth.cancel();
-    const utterance = new SpeechSynthesisUtterance(result);
-    utterance.lang = currentPair.to === "seri" ? "es-MX" : currentPair.to === "es" ? "es-MX" : "en-US";
-    utterance.rate = 0.9;
-    synth.speak(utterance);
+    
+    const { speakText } = await import("@/lib/audio-utils");
+    await speakText(result, currentPair.to as "seri" | "es" | "en");
   }, [result, currentPair.to]);
 
   if (!mounted || profileLoading) {

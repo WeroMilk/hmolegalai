@@ -230,7 +230,22 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
 
               {result && (
                 <div className="rounded-xl bg-green-500/10 border border-green-500/30 p-3">
-                  <p className="text-xs text-muted mb-1">Traducción:</p>
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <p className="text-xs text-muted">Traducción:</p>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        if (!result || typeof window === "undefined") return;
+                        const { speakText } = await import("@/lib/audio-utils");
+                        await speakText(result, currentPair.to as "seri" | "es" | "en");
+                      }}
+                      className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-green-500/20 text-green-600 hover:bg-green-500/30 transition-colors"
+                      title="Escuchar traducción"
+                      aria-label="Escuchar traducción"
+                    >
+                      <Volume2 className="w-4 h-4" />
+                    </button>
+                  </div>
                   <p className="text-sm text-foreground font-medium">{result}</p>
                   {usedCorpus && (
                     <p className="text-[11px] text-muted mt-2">

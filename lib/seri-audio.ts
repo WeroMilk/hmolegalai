@@ -1,15 +1,15 @@
 /**
  * Reproducción de audio en comca'ac (cmiique iitom).
  *
- * ESTRATEGIA:
- * 1. Pre-grabado: Si existe /audio/seri/{phraseId}.mp3, se reproduce (voz auténtica).
- * 2. Fallback: Web Speech API hablando el TEXTO SERI (no español) con lang "sei".
- *    Los navegadores no tienen voz Seri; se prueba "sei" y luego es-MX como fallback.
+ * ESTRATEGIA MEJORADA:
+ * 1. Pre-grabado: Si existe /audio/seri/{phraseId}.mp3, se reproduce (voz auténtica comca'ac).
+ * 2. TTS con OpenAI: Genera audio usando OpenAI TTS con voz "nova" optimizada para idiomas no estándar.
+ * 3. Fallback: Web Speech API hablando el TEXTO SERI con lang "es-MX" (último recurso).
  *
  * Para voces auténticas: grabar MP3 con hablantes nativos y colocar en public/audio/seri/
  * Ejemplo: public/audio/seri/sit-1.mp3 para la frase "Ziix hac".
  *
- * Fuentes: SIL, 68 Voces, INALI — no existe TTS nativo para Seri.
+ * Fuentes: SIL, 68 Voces, INALI — OpenAI TTS proporciona mejor aproximación que Web Speech API.
  */
 
 export interface SeriPhraseForAudio {
@@ -127,10 +127,34 @@ function getVoices(): Promise<SpeechSynthesisVoice[]> {
 }
 
 /**
- * Reproduce el texto Seri con Web Speech API.
+ * Genera audio usando OpenAI TTS API para mejor pronunciación comca'ac.
+ * Esta es la mejor opción cuando no hay audio pregrabado.
+ */
+async function generateOpenAITTS(seriText: string): Promise<string | null> {
+  if (typeof window === "undefined") return null;
+  
+  try {
+    const res = await fetch("/api/seri-tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: seriText }),
+    });
+    
+    if (!res.ok) return null;
+    
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Reproduce el texto Seri con Web Speech API (fallback de último recurso).
  * Intenta lang "sei" (Seri); si no hay voz, usa es-MX para aproximación fonética.
  */
-async function speakWithTTS(seriText: string): Promise<void> {
+async function speakWithWebTTS(seriText: string): Promise<void> {
   if (typeof window === "undefined") return;
   
   // Activar contexto de audio en iOS antes de usar TTS
@@ -170,15 +194,95 @@ async function speakWithTTS(seriText: string): Promise<void> {
 }
 
 /**
+ * Reproduce audio desde una URL (blob o archivo).
+ */
+async function playAudioFromURL(url: string): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+  
+  await activateAudioContext();
+  
+  try {
+    const audio = getAudio();
+    audio.src = url;
+    audio.load();
+    
+    try {
+      await audio.play();
+      return true;
+    } catch (playError) {
+      // Si falla, intentar una vez más después de un pequeño delay
+      await new Promise(resolve => setTimeout(resolve, 100));
+      try {
+        await audio.play();
+        return true;
+      } catch {
+        return false;
+      }
+    }
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Reproduce la frase en Seri (cmiique iitom).
+ * ESTRATEGIA MEJORADA:
  * 1. Intenta audio pregrabado (voz auténtica comca'ac).
- * 2. Fallback: TTS con el texto Seri (aproximación).
+ * 2. Genera audio con OpenAI TTS (mejor pronunciación comca'ac).
+ * 3. Fallback: Web Speech API (último recurso).
  */
 export async function playSeriPhrase(phrase: SeriPhraseForAudio): Promise<void> {
   if (typeof window === "undefined") return;
 
+  // 1. Intentar audio pregrabado (voz auténtica)
   const played = await playPreRecorded(phrase.id);
   if (played) return;
 
-  await speakWithTTS(phrase.seri);
+  // 2. Generar audio con OpenAI TTS (mejor pronunciación)
+  const audioURL = await generateOpenAITTS(phrase.seri);
+  if (audioURL) {
+    const played = await playAudioFromURL(audioURL);
+    if (played) {
+      // Limpiar el blob URL después de reproducir (con delay para que termine la reproducción)
+      setTimeout(() => {
+        try {
+          URL.revokeObjectURL(audioURL);
+        } catch {
+          // Ignorar errores al limpiar
+        }
+      }, 5000);
+      return;
+    }
+  }
+
+  // 3. Fallback: Web Speech API (último recurso)
+  await speakWithWebTTS(phrase.seri);
+}
+
+/**
+ * Reproduce texto comca'ac directamente (para traducciones dinámicas).
+ * Usa la misma estrategia mejorada que playSeriPhrase.
+ */
+export async function playSeriText(seriText: string): Promise<void> {
+  if (typeof window === "undefined" || !seriText.trim()) return;
+
+  // 1. Generar audio con OpenAI TTS (mejor pronunciación)
+  const audioURL = await generateOpenAITTS(seriText.trim());
+  if (audioURL) {
+    const played = await playAudioFromURL(audioURL);
+    if (played) {
+      // Limpiar el blob URL después de reproducir
+      setTimeout(() => {
+        try {
+          URL.revokeObjectURL(audioURL);
+        } catch {
+          // Ignorar errores al limpiar
+        }
+      }, 5000);
+      return;
+    }
+  }
+
+  // 2. Fallback: Web Speech API
+  await speakWithWebTTS(seriText.trim());
 }
