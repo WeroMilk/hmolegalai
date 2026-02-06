@@ -184,32 +184,6 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-2 sm:hidden">
-            <div className="flex items-center gap-0.5 p-0.5 rounded bg-background/80 border border-border">
-              <button
-                type="button"
-                onClick={() => { setLocale("es"); setFlag("mx"); }}
-                className={`flex items-center justify-center w-7 h-5 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70"}`}
-                aria-label={t("nav_aria_spanish")}
-              >
-                <Image src="/flag-mexico.png" alt="" width={20} height={15} className="w-5 h-[14px] rounded-sm object-cover" />
-              </button>
-              <button
-                type="button"
-                onClick={() => { setLocale("seri"); setFlag("seri"); }}
-                className={`flex items-center justify-center w-7 h-5 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70"}`}
-                aria-label={t("nav_aria_seri")}
-              >
-                <Image src="/flag-seri.png" alt="" width={20} height={15} className="w-5 h-[14px] rounded-sm object-cover" />
-              </button>
-              <button
-                type="button"
-                onClick={() => { setLocale("en"); setFlag("us"); }}
-                className={`flex items-center justify-center w-7 h-5 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70"}`}
-                aria-label={t("nav_aria_english")}
-              >
-                <Image src="/flag-usa.png" alt="" width={20} height={15} className="w-5 h-[14px] rounded-sm object-cover" />
-              </button>
-            </div>
             {user && (isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved) || isDidiUser(user?.email ?? "")) && (
               <Link
                 href="/traductor"
@@ -277,6 +251,35 @@ export function Navbar() {
                 {user.email}
               </div>
             )}
+            <div className="py-3 px-4 border-t border-border">
+              <div className="text-sm text-muted mb-2">{t("nav_language") || "Idioma"}</div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => { setLocale("es"); setFlag("mx"); }}
+                  className={`flex items-center justify-center w-10 h-7 rounded transition-all border ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background border-blue-500" : "opacity-70 hover:opacity-100 border-border"}`}
+                  aria-label={t("nav_aria_spanish")}
+                >
+                  <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-8 h-6 rounded-sm object-cover" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setLocale("seri"); setFlag("seri"); }}
+                  className={`flex items-center justify-center w-10 h-7 rounded transition-all border ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background border-blue-500" : "opacity-70 hover:opacity-100 border-border"}`}
+                  aria-label={t("nav_aria_seri")}
+                >
+                  <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-8 h-6 rounded-sm object-cover" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setLocale("en"); setFlag("us"); }}
+                  className={`flex items-center justify-center w-10 h-7 rounded transition-all border ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background border-blue-500" : "opacity-70 hover:opacity-100 border-border"}`}
+                  aria-label={t("nav_aria_english")}
+                >
+                  <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-8 h-6 rounded-sm object-cover" />
+                </button>
+              </div>
+            </div>
             {user ? (
               <>
                 <button
