@@ -194,14 +194,14 @@ export function Navbar() {
                 <Languages className="w-5 h-5" />
               </Link>
             )}
-            {/* Botón de tema igual que desktop */}
+            {/* Botón de tema más grande en móvil */}
             <button
               type="button"
               onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
-              className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
+              className="flex-shrink-0 w-12 h-12 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
               aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
             >
-              {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {theme === "dark" ? <Sun className="w-6 h-6 sm:w-5 sm:h-5" /> : <Moon className="w-6 h-6 sm:w-5 sm:h-5" />}
             </button>
             <button
               type="button"
@@ -258,7 +258,7 @@ export function Navbar() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => { setLocale("es"); setFlag("mx"); }}
+                  onClick={() => { setLocale("es"); setFlag("mx"); setMobileMenuOpen(false); }}
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_spanish")}
                 >
@@ -266,7 +266,7 @@ export function Navbar() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setLocale("seri"); setFlag("seri"); }}
+                  onClick={() => { setLocale("seri"); setFlag("seri"); setMobileMenuOpen(false); }}
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_seri")}
                 >
@@ -274,7 +274,7 @@ export function Navbar() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setLocale("en"); setFlag("us"); }}
+                  onClick={() => { setLocale("en"); setFlag("us"); setMobileMenuOpen(false); }}
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_english")}
                 >
