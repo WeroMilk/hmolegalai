@@ -724,7 +724,20 @@ export default function AbogadoDashboardPage() {
                   setConfigSaved(false);
                   const result = await updateAbogadoProfile(configForm);
                   setConfigSaving(false);
-                  if (result.ok) setConfigSaved(true);
+                  if (result.ok) {
+                    setConfigSaved(true);
+                    // Actualizar el formulario con los valores del perfil actualizado
+                    if (profile) {
+                      setConfigForm({
+                        nombreCompleto: profile.nombreCompleto ?? "",
+                        nombreDespacho: profile.nombreDespacho ?? "",
+                        direccionDespacho: profile.direccionDespacho ?? "",
+                        telefonoDespacho: profile.telefonoDespacho ?? "",
+                      });
+                    }
+                    // Ocultar el mensaje de guardado después de 3 segundos
+                    setTimeout(() => setConfigSaved(false), 3000);
+                  }
                 }}
                 className="grid grid-cols-1 md:grid-cols-2 gap-6"
               >

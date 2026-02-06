@@ -156,7 +156,20 @@ export default function AdminAbogadosPage() {
                 setProfileSaved(false);
                 const result = await updateAbogadoProfile(profileForm);
                 setProfileSaving(false);
-                if (result.ok) setProfileSaved(true);
+                if (result.ok) {
+                  setProfileSaved(true);
+                  // Actualizar el formulario con los valores del perfil actualizado
+                  if (profile) {
+                    setProfileForm({
+                      nombreCompleto: profile.nombreCompleto ?? "",
+                      nombreDespacho: profile.nombreDespacho ?? "",
+                      direccionDespacho: profile.direccionDespacho ?? "",
+                      telefonoDespacho: profile.telefonoDespacho ?? "",
+                    });
+                  }
+                  // Ocultar el mensaje de guardado después de 3 segundos
+                  setTimeout(() => setProfileSaved(false), 3000);
+                }
               }}
               className="p-4 pt-0 grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-border"
             >

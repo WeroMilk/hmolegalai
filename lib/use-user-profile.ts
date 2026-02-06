@@ -183,10 +183,15 @@ export function useUserProfile() {
       });
       const data = await res.json();
       if (!res.ok) return { ok: false, error: data?.error ?? "Error al guardar" };
+      // Actualizar el estado del perfil con los datos retornados del servidor
       if (data?.profile) {
-        setProfile((prev) => ({ ...prev, ...data.profile, uid: user.uid, email: user.email ?? "" } as UserProfile));
+        setProfile({
+          ...data.profile,
+          uid: user.uid,
+          email: user.email ?? "",
+        } as UserProfile);
       } else {
-        setProfile((prev) => (prev ? { ...prev, ...updates } : null));
+        // Si no viene profile en la respuesta, hacer refetch para obtener los datos actualizados
         await refetch();
       }
       return { ok: true };

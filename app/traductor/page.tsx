@@ -247,7 +247,7 @@ export default function TraductorPage() {
 
           {isSeriInput && (
             <p className="text-[13px] text-muted/90 mb-6 -mt-4">
-              Entrada por voz en comca'ac usando Whisper AI. Graba y traduciremos tu audio.
+              Entrada por voz en comca&apos;ac usando Whisper AI. Graba y traduciremos tu audio.
             </p>
           )}
 
@@ -343,7 +343,7 @@ export default function TraductorPage() {
                 <p className="text-[17px] text-foreground leading-[1.5]">{result}</p>
                 {currentPair.to === "seri" && (
                   <p className="text-[11px] text-muted mt-3">
-                    La pronunciación usa voz disponible; el comca'ac nativo puede diferir.
+                    La pronunciación usa voz disponible; el comca&apos;ac nativo puede diferir.
                   </p>
                 )}
               </div>
