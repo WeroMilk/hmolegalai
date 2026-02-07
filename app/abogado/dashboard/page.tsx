@@ -54,7 +54,7 @@ interface PendingDoc {
 export default function AbogadoDashboardPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
-  const { profile, loading: profileLoading, updateAbogadoProfile } = useUserProfile();
+  const { profile, loading: profileLoading, updateAbogadoProfile, refetch } = useUserProfile();
   const [docs, setDocs] = useState<PendingDoc[]>([]);
   const [approvedDocs, setApprovedDocs] = useState<PendingDoc[]>([]);
   const [docsLoading, setDocsLoading] = useState(true);
@@ -77,17 +77,25 @@ export default function AbogadoDashboardPage() {
 
   const isAbogado = profile?.role === "abogado" && profile?.approved;
   const isAdmin = isSuperUser(user?.email ?? null);
-  const canAccess = isAbogado && !isAdmin;
+  const canAccess = isAbogado || isAdmin;
   const abogadoId = user?.uid ?? "demo";
 
   const loadCitas = useCallback(async () => {
-    if (!user) return;
+    if (!user || typeof user.getIdToken !== "function") return;
     try {
-      const token = await user.getIdToken();
+      const token = await user.getIdToken().catch(() => null);
+      if (!token) {
+        setCitas([]);
+        return;
+      }
       const res = await fetch("/api/abogado/citas", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) {
+        // Silenciar errores 401 (no autorizado)
+        if (res.status !== 401) {
+          console.warn("Error al cargar citas:", res.status);
+        }
         setCitas([]);
         return;
       }
@@ -103,6 +111,7 @@ export default function AbogadoDashboardPage() {
       }));
       setCitas(list);
     } catch {
+      // Silenciar errores de red
       setCitas([]);
     }
   }, [user]);
@@ -159,11 +168,16 @@ export default function AbogadoDashboardPage() {
   }, [user, authLoading, router]);
 
   useEffect(() => {
-    if (isAdmin) {
+    // Permitir que los superusuarios accedan al dashboard para editar su perfil
+    if (isAdmin && profile?.role === "abogado") {
+      // No redirigir, permitir acceso
+      return;
+    }
+    if (isAdmin && (!profile || profile?.role !== "abogado")) {
       router.replace("/admin/abogados");
       return;
     }
-    if (!profileLoading && profile?.role !== "abogado") {
+    if (!profileLoading && profile?.role !== "abogado" && !isAdmin) {
       if (profile?.role === "cliente" || (!profile && user)) {
         router.replace("/documentos");
         return;
@@ -172,16 +186,30 @@ export default function AbogadoDashboardPage() {
   }, [profile, profileLoading, user, router, isAdmin]);
 
   useEffect(() => {
-    if (!user || !isAbogado) return;
+    if (!user || !isAbogado || typeof user.getIdToken !== "function") {
+      setDocsLoading(false);
+      return;
+    }
     const fetchDocs = async () => {
       try {
-        const token = await user.getIdToken();
+        const token = await user.getIdToken().catch(() => null);
+        if (!token) {
+          setDocs([]);
+          setApprovedDocs([]);
+          setDocsLoading(false);
+          return;
+        }
         const res = await fetch("/api/abogado/documentos", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) {
+          // Silenciar errores 401 (no autorizado)
+          if (res.status !== 401) {
+            console.warn("Error al cargar documentos:", res.status);
+          }
           setDocs([]);
           setApprovedDocs([]);
+          setDocsLoading(false);
           return;
         }
         const data = await res.json();
@@ -206,7 +234,7 @@ export default function AbogadoDashboardPage() {
         setDocs(pendingList);
         setApprovedDocs(approvedList);
       } catch (e) {
-        console.error("Error loading documents:", e);
+        // Silenciar errores de red o token
         setDocs([]);
         setApprovedDocs([]);
       } finally {
@@ -290,7 +318,11 @@ export default function AbogadoDashboardPage() {
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">Dashboard</h1>
             <p className="text-muted text-sm sm:text-base mt-1">
-              Hola, {profile?.nombreCompleto || user?.email?.split("@")[0] || "Abogado"}
+              Hola, {profile?.nombreCompleto ? (
+                <span className="font-medium text-foreground">{profile.nombreCompleto}</span>
+              ) : (
+                user?.email?.split("@")[0] || "Abogado"
+              )}
             </p>
           </div>
         </div>
@@ -726,15 +758,8 @@ export default function AbogadoDashboardPage() {
                   setConfigSaving(false);
                   if (result.ok) {
                     setConfigSaved(true);
-                    // Actualizar el formulario con los valores del perfil actualizado
-                    if (profile) {
-                      setConfigForm({
-                        nombreCompleto: profile.nombreCompleto ?? "",
-                        nombreDespacho: profile.nombreDespacho ?? "",
-                        direccionDespacho: profile.direccionDespacho ?? "",
-                        telefonoDespacho: profile.telefonoDespacho ?? "",
-                      });
-                    }
+                    // Refetch para obtener el perfil actualizado y actualizar el saludo
+                    await refetch();
                     // Ocultar el mensaje de guardado después de 3 segundos
                     setTimeout(() => setConfigSaved(false), 3000);
                   }

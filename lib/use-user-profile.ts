@@ -132,14 +132,42 @@ export function useUserProfile() {
     let cancelled = false;
     const fetchProfile = async () => {
       try {
-        const token = await user.getIdToken();
+        // Verificar que el usuario tenga un método getIdToken válido
+        if (!user || typeof user.getIdToken !== "function") {
+          if (!cancelled) {
+            setProfile(null);
+            setLoading(false);
+          }
+          return;
+        }
+        
+        const token = await user.getIdToken().catch(() => null);
+        if (!token || cancelled) {
+          if (!cancelled) {
+            setProfile(null);
+            setLoading(false);
+          }
+          return;
+        }
+        
         const res = await fetch("/api/user-profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (cancelled) return;
-        const data = await res.json();
-        setProfile(data?.profile ?? null);
+        
+        if (!res.ok && res.status !== 401) {
+          // Solo manejar errores que no sean 401 (no autorizado)
+          const data = await res.json().catch(() => ({}));
+          if (!cancelled) setProfile(null);
+        } else if (res.ok) {
+          const data = await res.json();
+          if (!cancelled) setProfile(data?.profile ?? null);
+        } else {
+          // Error 401: usuario no autenticado, establecer perfil como null silenciosamente
+          if (!cancelled) setProfile(null);
+        }
       } catch {
+        // Silenciar errores de red o token
         if (!cancelled) setProfile(null);
       } finally {
         if (!cancelled) setLoading(false);
@@ -151,14 +179,35 @@ export function useUserProfile() {
 
   const refetch = async () => {
     if (!user || user.uid === "demo-superuser") return;
+    if (typeof user.getIdToken !== "function") return;
+    
     setLoading(true);
     try {
-      const token = await user.getIdToken();
+      const token = await user.getIdToken().catch(() => null);
+      if (!token) {
+        setProfile(null);
+        setLoading(false);
+        return;
+      }
+      
       const res = await fetch("/api/user-profile", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const data = await res.json();
-      setProfile(data?.profile ?? null);
+      
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data?.profile ?? null);
+      } else if (res.status === 401) {
+        // Usuario no autenticado, establecer perfil como null silenciosamente
+        setProfile(null);
+      } else {
+        // Otro error, mantener perfil actual
+        const data = await res.json().catch(() => ({}));
+        if (data?.profile) setProfile(data.profile);
+      }
+    } catch {
+      // Silenciar errores de red
+      setProfile(null);
     } finally {
       setLoading(false);
     }

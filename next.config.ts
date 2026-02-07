@@ -11,6 +11,7 @@ const cspValue =
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
   "img-src 'self' data: https: blob:; " +
   "font-src 'self' https://fonts.gstatic.com data:; " +
+  "media-src 'self' blob:; " +
   "connect-src 'self' https://api.stripe.com https://*.firebaseio.com https://*.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://accounts.google.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com wss://*.firebaseio.com; " +
   "frame-src 'self' https://js.stripe.com https://*.firebaseapp.com https://*.google.com";
 
@@ -28,6 +29,14 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: [{ key: "Content-Security-Policy", value: cspValue }],
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/comca'ac",
+        destination: "/comcaac",
       },
     ];
   },

@@ -55,7 +55,7 @@ export function Navbar() {
                   <Link href="/documentos" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_documents")}>
                     {t("nav_documents")}
                   </Link>
-                  <Link href="/seri" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
+                  <Link href="/comca'ac" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
                     {t("nav_seri_link")}
                   </Link>
                   {user && isDidiUser(user.email) && (
@@ -233,7 +233,7 @@ export function Navbar() {
                 <Link href="/documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
                   {t("nav_documents")}
                 </Link>
-                <Link href="/seri" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/comca'ac" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
                   comca&apos;ac
                 </Link>
                 {user && isDidiUser(user.email) && (

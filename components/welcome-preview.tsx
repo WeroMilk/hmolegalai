@@ -55,7 +55,7 @@ export function WelcomePreview() {
       setFlag(choice);
       if (choice === "seri") {
         setLocale("seri");
-        router.push("/seri");
+        router.push("/comca'ac");
       } else if (choice === "mx") {
         setLocale("es");
       } else {

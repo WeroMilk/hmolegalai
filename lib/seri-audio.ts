@@ -20,6 +20,16 @@ export interface SeriPhraseForAudio {
 let audioInstance: HTMLAudioElement | null = null;
 let audioContextActivated = false;
 
+// Importar función para cancelación global
+let setCurrentAudio: ((audio: HTMLAudioElement | null) => void) | null = null;
+if (typeof window !== "undefined") {
+  import("./audio-utils").then((mod) => {
+    setCurrentAudio = mod.setCurrentAudio;
+  }).catch(() => {
+    // Ignorar si no está disponible
+  });
+}
+
 function getAudio(): HTMLAudioElement {
   if (typeof window === "undefined") throw new Error("window undefined");
   if (!audioInstance) {
@@ -75,27 +85,50 @@ async function playPreRecorded(phraseId: string): Promise<boolean> {
 
   try {
     const res = await fetch(url, { method: "HEAD" });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      // Archivo no existe, silenciar el error (no mostrar en consola)
+      return false;
+    }
 
     const audio = getAudio();
     audio.src = url;
     audio.load();
     
-    // En iOS, puede requerir múltiples intentos
+    // Registrar audio para cancelación global
+    if (setCurrentAudio) {
+      setCurrentAudio(audio);
+    }
+    
+    // Limpiar referencia cuando termine
+    audio.onended = () => {
+      if (setCurrentAudio) {
+        setCurrentAudio(null);
+      }
+    };
+    audio.onerror = () => {
+      if (setCurrentAudio) {
+        setCurrentAudio(null);
+      }
+    };
+    
+    // Reproducir inmediatamente sin delays innecesarios
     try {
       await audio.play();
       return true;
     } catch (playError) {
-      // Si falla, intentar una vez más después de un pequeño delay
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Si falla, intentar una vez más inmediatamente (sin delay largo)
       try {
         await audio.play();
         return true;
       } catch {
+        if (setCurrentAudio) {
+          setCurrentAudio(null);
+        }
         return false;
       }
     }
   } catch {
+    // Silenciar errores de red (archivo no existe o error de conexión)
     return false;
   }
 }
@@ -157,23 +190,37 @@ async function generateOpenAITTS(seriText: string): Promise<string | null> {
 async function speakWithWebTTS(seriText: string): Promise<void> {
   if (typeof window === "undefined") return;
   
-  // Activar contexto de audio en iOS antes de usar TTS
+  // Activar contexto de audio en iOS antes de usar TTS (optimizado)
   await activateAudioContext();
   
   try {
     const synth = window.speechSynthesis;
-    synth.cancel();
+    synth.cancel(); // Cancelar inmediatamente
 
     const utterance = new SpeechSynthesisUtterance(seriText);
     utterance.rate = 0.85;
     utterance.pitch = 1;
-    // En iOS, asegurar que el volumen esté al máximo
     utterance.volume = 1.0;
 
-    const voices = await getVoices();
-    const seiVoice = voices.find((v) => v.lang.toLowerCase().startsWith("sei"));
-    const esMXVoice =
-      voices.find((v) => v.lang === "es-MX") ?? voices.find((v) => v.lang.startsWith("es"));
+    // Obtener voces de forma más rápida
+    const voices = synth.getVoices();
+    let seiVoice: SpeechSynthesisVoice | undefined;
+    let esMXVoice: SpeechSynthesisVoice | undefined;
+    
+    if (voices.length > 0) {
+      // Voces ya disponibles, usar inmediatamente
+      seiVoice = voices.find((v) => v.lang.toLowerCase().startsWith("sei"));
+      esMXVoice = voices.find((v) => v.lang === "es-MX") ?? voices.find((v) => v.lang.startsWith("es"));
+    } else {
+      // Esperar voces pero con timeout más corto
+      const voicePromise = getVoices();
+      const timeoutPromise = new Promise<SpeechSynthesisVoice[]>((resolve) => {
+        setTimeout(() => resolve([]), 200); // Timeout corto
+      });
+      const finalVoices = await Promise.race([voicePromise, timeoutPromise]);
+      seiVoice = finalVoices.find((v) => v.lang.toLowerCase().startsWith("sei"));
+      esMXVoice = finalVoices.find((v) => v.lang === "es-MX") ?? finalVoices.find((v) => v.lang.startsWith("es"));
+    }
 
     if (seiVoice) {
       utterance.voice = seiVoice;
@@ -185,8 +232,7 @@ async function speakWithWebTTS(seriText: string): Promise<void> {
       utterance.lang = "es-MX";
     }
 
-    // En iOS, puede requerir un pequeño delay antes de hablar
-    await new Promise(resolve => setTimeout(resolve, 50));
+    // Reproducir inmediatamente sin delays innecesarios
     synth.speak(utterance);
   } catch {
     /* silenciar */
@@ -206,20 +252,43 @@ async function playAudioFromURL(url: string): Promise<boolean> {
     audio.src = url;
     audio.load();
     
+    // Registrar audio para cancelación global
+    if (setCurrentAudio) {
+      setCurrentAudio(audio);
+    }
+    
+    // Limpiar referencia cuando termine
+    audio.onended = () => {
+      if (setCurrentAudio) {
+        setCurrentAudio(null);
+      }
+    };
+    audio.onerror = () => {
+      if (setCurrentAudio) {
+        setCurrentAudio(null);
+      }
+    };
+    
+    // Reproducir inmediatamente sin delays innecesarios
     try {
       await audio.play();
       return true;
     } catch (playError) {
-      // Si falla, intentar una vez más después de un pequeño delay
-      await new Promise(resolve => setTimeout(resolve, 100));
+      // Si falla, intentar una vez más inmediatamente
       try {
         await audio.play();
         return true;
       } catch {
+        if (setCurrentAudio) {
+          setCurrentAudio(null);
+        }
         return false;
       }
     }
   } catch {
+    if (setCurrentAudio) {
+      setCurrentAudio(null);
+    }
     return false;
   }
 }

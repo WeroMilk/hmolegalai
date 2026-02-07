@@ -219,7 +219,8 @@ export default function TraductorPage() {
     if (!result || typeof window === "undefined") return;
     
     const { speakText } = await import("@/lib/audio-utils");
-    await speakText(result, currentPair.to as "seri" | "es" | "en");
+    // En el traductor, usar el idioma de destino explícitamente
+    await speakText(result, currentPair.to as "seri" | "es" | "en", true);
   }, [result, currentPair.to]);
 
   if (!mounted || profileLoading) {
@@ -255,8 +256,8 @@ export default function TraductorPage() {
       <Navbar />
       <main className="min-h-screen pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 md:px-8 lg:px-10 flex flex-col items-center justify-center">
         <div className="w-full max-w-lg md:max-w-2xl lg:max-w-3xl mx-auto">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-[-0.02em] mb-2 sm:mb-3">
-            Traductor
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 leading-tight text-foreground">
+            <span className="gradient-text hover-title">Traductor</span>
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-muted mb-8 sm:mb-10 md:mb-12">
             {"comca'ac"} · Español · English

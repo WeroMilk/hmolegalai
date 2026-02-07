@@ -136,7 +136,7 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/15 to-indigo-500/15 border border-blue-500/30 hover:border-blue-500/50 hover:from-blue-500/25 hover:to-indigo-500/25 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+        className="flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/15 to-blue-500/15 border border-blue-500/30 hover:border-blue-500/50 hover:from-blue-500/25 hover:to-blue-500/25 transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
         aria-label="Traductor por voz"
       >
         <Languages className="w-5 h-5 text-blue-500" />
@@ -153,7 +153,7 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
             className="absolute right-0 top-full mt-2 z-50 w-[320px] sm:w-[360px] rounded-2xl shadow-2xl border border-border bg-background/95 backdrop-blur-xl overflow-hidden"
             style={{ boxShadow: "0 20px 50px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.05)" }}
           >
-            <div className="p-4 border-b border-border bg-gradient-to-r from-blue-500/10 to-indigo-500/10">
+            <div className="p-4 border-b border-border bg-gradient-to-r from-blue-500/10 to-blue-500/10">
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-9 h-9 rounded-xl bg-blue-500/20 flex items-center justify-center">
                   <Languages className="w-5 h-5 text-blue-500" />
@@ -237,7 +237,8 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
                       onClick={async () => {
                         if (!result || typeof window === "undefined") return;
                         const { speakText } = await import("@/lib/audio-utils");
-                        await speakText(result, currentPair.to as "seri" | "es" | "en");
+                        // En el traductor, usar el idioma de destino explícitamente
+                        await speakText(result, currentPair.to as "seri" | "es" | "en", true);
                       }}
                       className="shrink-0 w-8 h-8 rounded-lg flex items-center justify-center bg-green-500/20 text-green-600 hover:bg-green-500/30 transition-colors"
                       title="Escuchar traducción"

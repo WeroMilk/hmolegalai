@@ -2,6 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import { FieldValue } from "firebase-admin/firestore";
 import { adminDb } from "@/lib/auth-server";
 import { buildSpanishPromptFromAmparoData } from "@/lib/seri-amparo-steps";
+import { DEMO_ABOGADO_EMAIL } from "@/lib/demo-users";
+
+/** Busca el UID del abogado con email abogado@avatar.com */
+async function getDefaultAbogadoId(): Promise<string | null> {
+  if (!adminDb) return null;
+  try {
+    const snapshot = await adminDb
+      .collection("users")
+      .where("email", "==", DEMO_ABOGADO_EMAIL)
+      .where("role", "==", "abogado")
+      .limit(1)
+      .get();
+    
+    if (!snapshot.empty) {
+      return snapshot.docs[0].id;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 const NOTA_AMPARO = `DOCUMENTO DE AMPARO: El presente documento ha sido generado como borrador para juicio de amparo conforme a la Ley de Amparo, Reglamentaria de los Artículos 103 y 107 de la Constitución Política de los Estados Unidos Mexicanos. Requiere revisión, firma y sello de un abogado autorizado antes de su presentación ante la autoridad competente. No constituye asesoría legal ni garantía de resultado.`;
 
@@ -97,6 +118,12 @@ Crea un documento legal completo, formal y con validez jurídica en México.`,
     }
 
     // Guardar en Firestore con status pending_abogado para flujo Seri
+    // Si no hay abogadoId seleccionado, asignar automáticamente a abogado@avatar.com
+    let finalAbogadoId = typeof abogadoId === "string" && abogadoId.trim() ? abogadoId.trim() : null;
+    if (!finalAbogadoId) {
+      finalAbogadoId = await getDefaultAbogadoId();
+    }
+    
     const docRef = adminDb
       ? await adminDb.collection("documents").add({
           userId: "seri-anon",
@@ -105,7 +132,7 @@ Crea un documento legal completo, formal y con validez jurídica en México.`,
           content,
           userInputs: { seriPrompt: finalPrompt, source: "seri", amparoData: amparoData ?? null, quejosoData: quejosoData ?? null, resumenSpanish: resumenSpanish ?? null },
           sessionId: `seri-${Date.now()}`,
-          abogadoId: typeof abogadoId === "string" && abogadoId.trim() ? abogadoId.trim() : null,
+          abogadoId: finalAbogadoId,
           status: "pending_abogado",
           source: "seri",
           createdAt: FieldValue.serverTimestamp(),

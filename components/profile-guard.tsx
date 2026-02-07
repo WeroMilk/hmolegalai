@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { useUserProfile } from "@/lib/use-user-profile";
 
 function skipProfileCheck(pathname: string): boolean {
-  if (pathname === "/" || pathname === "/seri") return true;
+  if (pathname === "/" || pathname === "/seri" || pathname === "/comca'ac" || pathname === "/comcaac") return true;
   if (pathname.startsWith("/auth")) return true;
   return false;
 }

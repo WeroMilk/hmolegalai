@@ -3,6 +3,27 @@ import { generateLegalDocument, generateFallbackDocument } from "@/lib/openai";
 import { getDocumentById } from "@/lib/documents";
 import { FieldValue } from "firebase-admin/firestore";
 import { verifyIdToken, adminDb } from "@/lib/auth-server";
+import { DEMO_ABOGADO_EMAIL } from "@/lib/demo-users";
+
+/** Busca el UID del abogado con email abogado@avatar.com */
+async function getDefaultAbogadoId(): Promise<string | null> {
+  if (!adminDb) return null;
+  try {
+    const snapshot = await adminDb
+      .collection("users")
+      .where("email", "==", DEMO_ABOGADO_EMAIL)
+      .where("role", "==", "abogado")
+      .limit(1)
+      .get();
+    
+    if (!snapshot.empty) {
+      return snapshot.docs[0].id;
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,6 +81,12 @@ export async function POST(request: NextRequest) {
     // Guardar en Firestore: todos los documentos pasan por abogado (status pending_abogado)
     if (adminDb) {
       try {
+        // Si no hay abogadoId seleccionado, asignar automáticamente a abogado@avatar.com
+        let finalAbogadoId = typeof abogadoId === "string" && abogadoId.trim() ? abogadoId.trim() : null;
+        if (!finalAbogadoId) {
+          finalAbogadoId = await getDefaultAbogadoId();
+        }
+        
         await adminDb.collection("documents").add({
           userId: user.uid,
           documentId,
@@ -68,7 +95,7 @@ export async function POST(request: NextRequest) {
           userInputs,
           sessionId,
           saveToAccount: saveToAccount === true,
-          abogadoId: typeof abogadoId === "string" && abogadoId.trim() ? abogadoId.trim() : null,
+          abogadoId: finalAbogadoId,
           createdAt: FieldValue.serverTimestamp(),
           status: "pending_abogado",
         });
