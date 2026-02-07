@@ -4,7 +4,9 @@
  * ESTRATEGIA MEJORADA:
  * 1. Pre-grabado: Si existe /audio/seri/{phraseId}.mp3, se reproduce (voz auténtica comca'ac).
  * 2. TTS con OpenAI: Genera audio usando OpenAI TTS con voz "nova" optimizada para idiomas no estándar.
- * 3. Fallback: Web Speech API hablando el TEXTO SERI con lang "es-MX" (último recurso).
+ * 3. Fallback: Web Speech API respetando el flag seleccionado:
+ *    - Flag "us" → usa en-US
+ *    - Flag "mx" o "seri" → usa es-MX (aproximación fonética para comca'ac)
  *
  * Para voces auténticas: grabar MP3 con hablantes nativos y colocar en public/audio/seri/
  * Ejemplo: public/audio/seri/sit-1.mp3 para la frase "Ziix hac".
@@ -184,8 +186,26 @@ async function generateOpenAITTS(seriText: string): Promise<string | null> {
 }
 
 /**
+ * Obtiene el idioma basado en el flag seleccionado para usar como fallback.
+ */
+function getFallbackLanguageFromFlag(): "es-MX" | "en-US" {
+  if (typeof window === "undefined") return "es-MX";
+  
+  try {
+    const flag = localStorage.getItem("avatar_flag_choice") as "seri" | "mx" | "us" | null;
+    if (flag === "us") return "en-US";
+    // Para "seri" y "mx", usar español como aproximación para comca'ac
+    return "es-MX";
+  } catch {
+    return "es-MX";
+  }
+}
+
+/**
  * Reproduce el texto Seri con Web Speech API (fallback de último recurso).
- * Intenta lang "sei" (Seri); si no hay voz, usa es-MX para aproximación fonética.
+ * Intenta lang "sei" (Seri); si no hay voz, respeta el flag seleccionado:
+ * - Flag "us" → usa en-US
+ * - Flag "mx" o "seri" → usa es-MX (aproximación fonética para comca'ac)
  */
 async function speakWithWebTTS(seriText: string): Promise<void> {
   if (typeof window === "undefined") return;
@@ -202,15 +222,26 @@ async function speakWithWebTTS(seriText: string): Promise<void> {
     utterance.pitch = 1;
     utterance.volume = 1.0;
 
+    // Obtener el idioma de fallback según el flag seleccionado
+    const fallbackLang = getFallbackLanguageFromFlag();
+    
     // Obtener voces de forma más rápida
     const voices = synth.getVoices();
     let seiVoice: SpeechSynthesisVoice | undefined;
-    let esMXVoice: SpeechSynthesisVoice | undefined;
+    let fallbackVoice: SpeechSynthesisVoice | undefined;
     
     if (voices.length > 0) {
       // Voces ya disponibles, usar inmediatamente
       seiVoice = voices.find((v) => v.lang.toLowerCase().startsWith("sei"));
-      esMXVoice = voices.find((v) => v.lang === "es-MX") ?? voices.find((v) => v.lang.startsWith("es"));
+      if (fallbackLang === "en-US") {
+        fallbackVoice = voices.find((v) => v.lang === "en-US") ?? 
+                       voices.find((v) => v.lang === "en-GB") ?? 
+                       voices.find((v) => v.lang.startsWith("en"));
+      } else {
+        fallbackVoice = voices.find((v) => v.lang === "es-MX") ?? 
+                       voices.find((v) => v.lang === "es-ES") ?? 
+                       voices.find((v) => v.lang.startsWith("es"));
+      }
     } else {
       // Esperar voces pero con timeout más corto
       const voicePromise = getVoices();
@@ -219,17 +250,25 @@ async function speakWithWebTTS(seriText: string): Promise<void> {
       });
       const finalVoices = await Promise.race([voicePromise, timeoutPromise]);
       seiVoice = finalVoices.find((v) => v.lang.toLowerCase().startsWith("sei"));
-      esMXVoice = finalVoices.find((v) => v.lang === "es-MX") ?? finalVoices.find((v) => v.lang.startsWith("es"));
+      if (fallbackLang === "en-US") {
+        fallbackVoice = finalVoices.find((v) => v.lang === "en-US") ?? 
+                       finalVoices.find((v) => v.lang === "en-GB") ?? 
+                       finalVoices.find((v) => v.lang.startsWith("en"));
+      } else {
+        fallbackVoice = finalVoices.find((v) => v.lang === "es-MX") ?? 
+                       finalVoices.find((v) => v.lang === "es-ES") ?? 
+                       finalVoices.find((v) => v.lang.startsWith("es"));
+      }
     }
 
     if (seiVoice) {
       utterance.voice = seiVoice;
       utterance.lang = "sei";
-    } else if (esMXVoice) {
-      utterance.voice = esMXVoice;
-      utterance.lang = "es-MX";
+    } else if (fallbackVoice) {
+      utterance.voice = fallbackVoice;
+      utterance.lang = fallbackLang;
     } else {
-      utterance.lang = "es-MX";
+      utterance.lang = fallbackLang;
     }
 
     // Reproducir inmediatamente sin delays innecesarios
