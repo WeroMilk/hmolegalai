@@ -600,9 +600,12 @@ export async function POST(request: NextRequest) {
       };
       
       if (commonTranslations[normalizedInput]) {
-        const translation = commonTranslations[normalizedInput][toLang];
-        if (translation) {
-          result = translation;
+        // En este contexto, toLang solo puede ser "es" o "en" (no "seri")
+        if (toLang === "es" || toLang === "en") {
+          const translation = commonTranslations[normalizedInput][toLang];
+          if (translation) {
+            result = translation;
+          }
         }
       }
     }
