@@ -169,11 +169,18 @@ export default function TraductorPage() {
     try {
       // 1) First: try translating from the app's verified corpus (no hallucinations).
       const corpus = corpusTranslate(inputText.trim(), currentPair.from as "es" | "en" | "seri", currentPair.to as "es" | "en" | "seri", {
-        minScore: 0.62,
-        limit: 6,
+        minScore: 0.75, // Aumentado para mejor precisión
+        limit: 8, // Aumentado para más opciones
       });
       if (corpus.suggestions.length > 0) setCorpusSuggestions(corpus.suggestions);
-      if (corpus.best && corpus.best.score >= 0.9) {
+      // Usar corpus si el score es muy alto (0.95+) o si es exacto (1.0)
+      if (corpus.best && (corpus.best.score >= 0.95 || corpus.best.score === 1.0)) {
+        setUsedCorpus(true);
+        setResult(corpus.best.toText);
+        return;
+      }
+      // Si hay una buena coincidencia (0.85-0.94) y es una palabra corta común, también usar corpus
+      if (corpus.best && corpus.best.score >= 0.85 && inputText.trim().length <= 10) {
         setUsedCorpus(true);
         setResult(corpus.best.toText);
         return;
@@ -191,7 +198,15 @@ export default function TraductorPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al traducir");
-      setResult(data.result || data.spanish || data.seri || data.english || "");
+      
+      // Limpiar y normalizar resultado de OpenAI
+      let translation = data.result || data.spanish || data.seri || data.english || "";
+      translation = translation
+        .replace(/^["']|["']$/g, "") // Remover comillas
+        .replace(/^[\.\s]+|[\.\s]+$/g, "") // Remover puntos y espacios al inicio/final
+        .trim();
+      
+      setResult(translation);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al traducir");
     } finally {

@@ -23,6 +23,7 @@ function FlagImage({ src, alt }: { src: string; alt: string }) {
         width={FLAG_SIZE}
         height={FLAG_SIZE / FLAG_ASPECT}
         className="w-full h-full object-cover"
+        unoptimized
       />
     </div>
   );

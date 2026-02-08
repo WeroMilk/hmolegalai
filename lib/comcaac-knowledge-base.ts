@@ -1900,6 +1900,16 @@ export const GENERAL_VOCABULARY: ComcaacWord[] = [
   
   // Expresiones de cortesía
   {
+    seri: "hant",
+    spanish: "hola",
+    english: "hello",
+    category: "interjection",
+    pronunciation: "/hant/",
+    examples: ["Hant", "Hola", "Hant hac", "Hola (yo saludo)"],
+    notes: "Saludo común. PRIORIDAD: Cuando 'Hant' aparece solo o como saludo, traducir como 'hola'. También puede significar 'aquí', 'tierra', 'pie', 'dónde', 'inicio' según contexto, pero 'hola' es el significado primario para saludos.",
+    culturalContext: "Saludo más común en comca'ac. Se usa al encontrarse con alguien.",
+  },
+  {
     seri: "tahejöc",
     spanish: "de nada",
     english: "you're welcome",

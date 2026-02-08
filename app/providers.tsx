@@ -8,6 +8,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 import { DidiThemeEffect } from "@/components/didi-theme-effect";
 import { WelcomePreview } from "@/components/welcome-preview";
 import { ProfileGuard } from "@/components/profile-guard";
+import { SuppressConsoleErrors } from "@/lib/suppress-console-errors";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <I18nProvider>
         <FlagProvider>
           <AuthProvider>
+            <SuppressConsoleErrors />
             <ProfileGuard>
               <ScrollToTop />
               <DidiThemeEffect />

@@ -96,7 +96,7 @@ export function Navbar() {
                       className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_spanish")}
                     >
-                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                     <button
                       type="button"
@@ -104,7 +104,7 @@ export function Navbar() {
                       className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_seri")}
                     >
-                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                     <button
                       type="button"
@@ -112,7 +112,7 @@ export function Navbar() {
                       className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_english")}
                     >
-                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                   </div>
                   {user && (isSuperUser(user.email ?? "") || (profile?.role === "abogado" && profile?.approved) || isDidiUser(user.email ?? "")) && (
@@ -150,7 +150,7 @@ export function Navbar() {
                       className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_spanish")}
                     >
-                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                     <button
                       type="button"
@@ -158,7 +158,7 @@ export function Navbar() {
                       className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_seri")}
                     >
-                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                     <button
                       type="button"
@@ -166,7 +166,7 @@ export function Navbar() {
                       className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
                       aria-label={t("nav_aria_english")}
                     >
-                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" />
+                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                   </div>
                   <button
@@ -262,7 +262,7 @@ export function Navbar() {
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_spanish")}
                 >
-                  <Image src="/flag-mexico.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" />
+                  <Image src="/flag-mexico.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" style={{ width: "auto", height: "auto" }} />
                 </button>
                 <button
                   type="button"
@@ -270,7 +270,7 @@ export function Navbar() {
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_seri")}
                 >
-                  <Image src="/flag-seri.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" />
+                  <Image src="/flag-seri.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" style={{ width: "auto", height: "auto" }} />
                 </button>
                 <button
                   type="button"
@@ -278,7 +278,7 @@ export function Navbar() {
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_english")}
                 >
-                  <Image src="/flag-usa.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" />
+                  <Image src="/flag-usa.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" style={{ width: "auto", height: "auto" }} />
                 </button>
               </div>
             </div>

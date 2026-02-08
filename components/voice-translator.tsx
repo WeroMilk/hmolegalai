@@ -86,13 +86,43 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
     setResult("");
     setUsedCorpus(false);
     try {
+      // Normalizar el texto de entrada para mejor matching
+      const normalizedInput = inputText.trim()
+        .replace(/[.,;:!?¿¡]/g, "") // Remover puntuación
+        .replace(/\s+/g, " ") // Normalizar espacios
+        .toLowerCase()
+        .trim();
+      
       const corpus = corpusTranslate(
-        inputText.trim(),
+        normalizedInput,
         currentPair.from as "es" | "en" | "seri",
         currentPair.to as "es" | "en" | "seri",
-        { minScore: 0.75, limit: 3 }
+        { minScore: 0.65, limit: 10 } // Reducir minScore y aumentar limit para mejor matching
       );
-      if (corpus.best && corpus.best.score >= 0.92) {
+      
+      // Usar corpus si el score es muy alto (0.90+) o si es exacto (1.0)
+      if (corpus.best && (corpus.best.score >= 0.90 || corpus.best.score === 1.0)) {
+        setUsedCorpus(true);
+        setResult(corpus.best.toText);
+        return;
+      }
+      
+      // Si hay una buena coincidencia (0.75-0.89) y contiene palabras clave importantes, usar corpus
+      if (corpus.best && corpus.best.score >= 0.75) {
+        // Para frases legales o de validación, usar corpus incluso con score más bajo
+        const legalKeywords = ["demandar", "persona", "nombre", "te falta", "decirme", "quien", "quih ano coti", "haxt", "ziix hac"];
+        const hasLegalKeywords = legalKeywords.some(keyword => 
+          normalizedInput.includes(keyword.toLowerCase())
+        );
+        if (hasLegalKeywords) {
+          setUsedCorpus(true);
+          setResult(corpus.best.toText);
+          return;
+        }
+      }
+      
+      // Si hay una buena coincidencia (0.80-0.89) y es una frase corta común, también usar corpus
+      if (corpus.best && corpus.best.score >= 0.80 && inputText.trim().length <= 15) {
         setUsedCorpus(true);
         setResult(corpus.best.toText);
         return;
@@ -109,7 +139,50 @@ export function VoiceTranslator({ className = "" }: VoiceTranslatorProps) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Error al traducir");
-      setResult(data.result || data.spanish || data.seri || data.english || "");
+      
+      // Limpiar y normalizar resultado de OpenAI
+      let translation = data.result || data.spanish || data.seri || data.english || "";
+      translation = translation
+        .replace(/^["']|["']$/g, "") // Remover comillas
+        .replace(/^[\.\s]+|[\.\s]+$/g, "") // Remover puntos y espacios al inicio/final
+        .replace(/\s+/g, " ") // Normalizar espacios múltiples
+        .trim();
+      
+      // Detectar y eliminar repeticiones obvias (palabras o frases repetidas)
+      const words = translation.split(/\s+/);
+      const cleanedWords: string[] = [];
+      let lastWord = "";
+      let lastTwoWords = "";
+      for (let i = 0; i < words.length; i++) {
+        const word = words[i];
+        const twoWords = i > 0 ? `${words[i-1]} ${word}` : word;
+        
+        // Evitar repeticiones inmediatas de palabras o frases de 2 palabras
+        if (word !== lastWord && twoWords !== lastTwoWords) {
+          cleanedWords.push(word);
+          lastWord = word;
+          lastTwoWords = twoWords;
+        } else if (word === lastWord && i < words.length - 1) {
+          // Si es la misma palabra pero hay más palabras después, podría ser válido
+          // Solo evitar si es una repetición obvia (misma palabra 3+ veces seguidas)
+          const nextWord = words[i + 1];
+          if (nextWord !== word) {
+            cleanedWords.push(word);
+            lastWord = word;
+            lastTwoWords = twoWords;
+          }
+        }
+      }
+      
+      translation = cleanedWords.join(" ").trim();
+      
+      // Si después de limpiar está vacío o es muy corto, usar el resultado original
+      if (!translation || translation.length < 2) {
+        translation = data.result || data.spanish || data.seri || data.english || "";
+        translation = translation.replace(/^["']|["']$/g, "").trim();
+      }
+      
+      setResult(translation);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al traducir");
     } finally {

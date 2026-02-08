@@ -59,18 +59,42 @@ export function useUserProfile() {
       let cancelled = false;
       const fetchProfile = async () => {
         try {
-          const token = await user.getIdToken(true);
+          if (typeof user.getIdToken !== "function") {
+            if (!cancelled) {
+              setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
+              setLoading(false);
+            }
+            return;
+          }
+          const token = await user.getIdToken(true).catch(() => null);
+          if (!token || cancelled) {
+            if (!cancelled) {
+              setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
+              setLoading(false);
+            }
+            return;
+          }
           const res = await fetch("/api/user-profile", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (cancelled) return;
-          const data = await res.json();
-          if (data?.profile?.role) {
-            setProfile(data.profile);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.profile?.role) {
+              setProfile(data.profile);
+            } else {
+              setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
+            }
+          } else if (res.status !== 401) {
+            // Solo manejar errores que no sean 401
+            const data = await res.json().catch(() => ({}));
+            if (!cancelled) setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
           } else {
-            setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
+            // Error 401: usar perfil por defecto silenciosamente
+            if (!cancelled) setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
           }
         } catch {
+          // Silenciar errores de red
           if (!cancelled) setProfile({ ...DIDI_PROFILE, uid: user.uid, email: user.email ?? DIDI_PROFILE.email });
         } finally {
           if (!cancelled) setLoading(false);
@@ -84,18 +108,42 @@ export function useUserProfile() {
       let cancelled = false;
       const fetchProfile = async () => {
         try {
-          const token = await user.getIdToken(true);
+          if (typeof user.getIdToken !== "function") {
+            if (!cancelled) {
+              setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
+              setLoading(false);
+            }
+            return;
+          }
+          const token = await user.getIdToken(true).catch(() => null);
+          if (!token || cancelled) {
+            if (!cancelled) {
+              setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
+              setLoading(false);
+            }
+            return;
+          }
           const res = await fetch("/api/user-profile", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (cancelled) return;
-          const data = await res.json();
-          if (data?.profile?.role) {
-            setProfile(data.profile);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.profile?.role) {
+              setProfile(data.profile);
+            } else {
+              setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
+            }
+          } else if (res.status !== 401) {
+            // Solo manejar errores que no sean 401
+            const data = await res.json().catch(() => ({}));
+            if (!cancelled) setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
           } else {
-            setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
+            // Error 401: usar perfil por defecto silenciosamente
+            if (!cancelled) setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
           }
         } catch {
+          // Silenciar errores de red
           if (!cancelled) setProfile({ ...DEMO_ABOGADO_PROFILE, uid: user.uid, email: user.email ?? DEMO_ABOGADO_PROFILE.email });
         } finally {
           if (!cancelled) setLoading(false);
@@ -109,18 +157,42 @@ export function useUserProfile() {
       let cancelled = false;
       const fetchProfile = async () => {
         try {
-          const token = await user.getIdToken(true);
+          if (typeof user.getIdToken !== "function") {
+            if (!cancelled) {
+              setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
+              setLoading(false);
+            }
+            return;
+          }
+          const token = await user.getIdToken(true).catch(() => null);
+          if (!token || cancelled) {
+            if (!cancelled) {
+              setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
+              setLoading(false);
+            }
+            return;
+          }
           const res = await fetch("/api/user-profile", {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (cancelled) return;
-          const data = await res.json();
-          if (data?.profile?.role) {
-            setProfile(data.profile);
+          if (res.ok) {
+            const data = await res.json();
+            if (data?.profile?.role) {
+              setProfile(data.profile);
+            } else {
+              setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
+            }
+          } else if (res.status !== 401) {
+            // Solo manejar errores que no sean 401
+            const data = await res.json().catch(() => ({}));
+            if (!cancelled) setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
           } else {
-            setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
+            // Error 401: usar perfil por defecto silenciosamente
+            if (!cancelled) setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
           }
         } catch {
+          // Silenciar errores de red
           if (!cancelled) setProfile({ ...DEMO_ADMIN_PROFILE, uid: user.uid, email: user.email ?? DEMO_ADMIN_PROFILE.email });
         } finally {
           if (!cancelled) setLoading(false);
