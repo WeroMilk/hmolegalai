@@ -403,8 +403,11 @@ export async function POST(request: NextRequest) {
           for (const { pattern, translations } of validationPatterns) {
             if (pattern.test(cleanedText)) {
               // toLang debería ser "es" o "en" en este contexto (traduciendo de seri a es/en)
-              const targetLang = (toLang === "es" || toLang === "en") ? toLang : "es";
-              result = translations[targetLang] || translations.es;
+              if (toLang === "es" || toLang === "en") {
+                result = translations[toLang] || translations.es;
+              } else {
+                result = translations.es;
+              }
               matched = true;
               break;
             }
