@@ -3,7 +3,7 @@
  * Ejecutar con: npx tsx scripts/test-translator.ts
  */
 
-import { runAllTranslationTests, testPolysemicWords, testBidirectionalConsistency } from "../lib/translation-tests";
+import { runAllTranslationTests, testPolysemicWords, testBidirectionalConsistency } from "./translation-tests";
 
 async function main() {
   console.log("═══════════════════════════════════════════════════════");

@@ -3,9 +3,9 @@
  * Prueba todas las direcciones y casos edge
  */
 
-import { corpusTranslate } from "./tri-translator";
-import { validateBidirectionalTranslation, detectPolysemicContext, getPolysemicTranslation } from "./translation-validation";
-import type { Locale } from "./translations";
+import { corpusTranslate } from "../lib/tri-translator";
+import { validateBidirectionalTranslation, detectPolysemicContext, getPolysemicTranslation } from "../lib/translation-validation";
+import type { Locale } from "../lib/translations";
 
 type TriLang = Locale;
 
