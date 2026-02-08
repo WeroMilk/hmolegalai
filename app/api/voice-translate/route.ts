@@ -404,7 +404,8 @@ export async function POST(request: NextRequest) {
             if (pattern.test(cleanedText)) {
               // toLang debería ser "es" o "en" en este contexto (traduciendo de seri a es/en)
               if (toLang === "es" || toLang === "en") {
-                result = translations[toLang] || translations.es;
+                const targetLang: "es" | "en" = toLang;
+                result = translations[targetLang] || translations.es;
               } else {
                 result = translations.es;
               }
@@ -438,7 +439,7 @@ export async function POST(request: NextRequest) {
         .trim();
       
       // PRIMERO: Verificar preguntas comunes sobre identidad ANTES de cualquier otra lógica
-      const identityQuestionPatterns = {
+      const identityQuestionPatterns: Record<string, RegExp[]> = {
         es: [
           /^quien eres\??$/i,
           /^quien sos\??$/i,
@@ -449,7 +450,7 @@ export async function POST(request: NextRequest) {
         ],
       };
       
-      const patterns = identityQuestionPatterns[fromLang] || [];
+      const patterns = (fromLang === "es" || fromLang === "en") ? identityQuestionPatterns[fromLang] || [] : [];
       const isIdentityQuestion = patterns.some(pattern => pattern.test(text.trim()));
       
       if (isIdentityQuestion) {
@@ -469,7 +470,7 @@ export async function POST(request: NextRequest) {
       }
       
       // Otras preguntas sobre nombres (pero NO "quien eres")
-      const nameQuestionPatterns = {
+      const nameQuestionPatterns: Record<string, RegExp[]> = {
         es: [
           /^como se llama tu patron\??$/i,
           /^como se llama tu jefe\??$/i,
@@ -483,7 +484,7 @@ export async function POST(request: NextRequest) {
         ],
       };
       
-      const namePatterns = nameQuestionPatterns[fromLang] || [];
+      const namePatterns = (fromLang === "es" || fromLang === "en") ? nameQuestionPatterns[fromLang] || [] : [];
       const isNameQuestion = namePatterns.some(pattern => pattern.test(text.trim()));
       
       if (isNameQuestion) {
@@ -531,7 +532,7 @@ export async function POST(request: NextRequest) {
         // Validación especial SOLO para mensajes de validación de campos
         // DEBE contener palabras clave de validación explícitas (te falta, te faltó, you need to tell me, etc.)
         // NO debe activarse para preguntas normales como "QUIEN ERES?"
-        const validationKeywords = {
+        const validationKeywords: Record<string, string[]> = {
           es: [
             "te falta decirme",
             "te faltó mencionar",
@@ -554,7 +555,7 @@ export async function POST(request: NextRequest) {
           ],
         };
         
-        const keywords = validationKeywords[fromLang] || [];
+        const keywords = (fromLang === "es" || fromLang === "en") ? validationKeywords[fromLang] || [] : [];
         // CRÍTICO: Solo activar si contiene palabras clave de validación EXPLÍCITAS
         const hasValidationKeywords = keywords.some(keyword => 
           normalizedInput.includes(keyword.toLowerCase()) || text.toLowerCase().includes(keyword.toLowerCase())

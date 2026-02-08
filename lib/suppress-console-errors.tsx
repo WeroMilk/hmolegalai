@@ -360,13 +360,27 @@ export function SuppressConsoleErrors() {
 
     // Interceptar errores globales no capturados - MÁS AGRESIVO
     const handleError = (event: ErrorEvent) => {
+      const target = event.target;
+      let src = "";
+      let href = "";
+      let srcset = "";
+      
+      if (target instanceof HTMLImageElement) {
+        src = target.src || "";
+        srcset = target.srcset || "";
+      } else if (target instanceof HTMLScriptElement) {
+        src = target.src || "";
+      } else if (target instanceof HTMLLinkElement) {
+        href = target.href || "";
+      }
+      
       const message = 
         (event.message || "") + " " + 
         (event.filename || "") + " " + 
         (event.error?.message || "") + " " +
-        ((event.target as HTMLImageElement | HTMLScriptElement | HTMLLinkElement)?.src || "") + " " +
-        ((event.target as HTMLLinkElement)?.href || "") + " " +
-        ((event.target as HTMLImageElement)?.srcset || "");
+        src + " " +
+        href + " " +
+        srcset;
       
       // También verificar el stack trace completo
       const stackTrace = (event.error?.stack || "") + " " + (event.filename || "") + ":" + (event.lineno || "") + ":" + (event.colno || "");
