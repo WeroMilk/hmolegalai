@@ -41,13 +41,18 @@ const nextConfig: NextConfig = {
     ];
   },
   // Mitiga ChunkLoadError (timeout al cargar chunks en dev)
-  webpack: (config, { dev }) => {
+  webpack: (config, { dev, isServer }) => {
     if (dev) {
       config.watchOptions = {
         ...config.watchOptions,
         poll: 1000, // Revisar cambios cada 1s (útil en Windows)
       };
     }
+    // Excluir scripts de pruebas del build
+    config.resolve = config.resolve || {};
+    config.resolve.alias = {
+      ...config.resolve.alias,
+    };
     return config;
   },
 };
