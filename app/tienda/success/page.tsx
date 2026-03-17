@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 import confetti from "canvas-confetti";
+import { useCart } from "@/lib/cart-context";
 
 function runConfetti() {
   const duration = 2500;
@@ -35,12 +36,17 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const confettiRun = useRef(false);
+  const { clearCart } = useCart();
 
   useEffect(() => {
     if (confettiRun.current) return;
     confettiRun.current = true;
     runConfetti();
   }, []);
+
+  useEffect(() => {
+    if (sessionId) clearCart();
+  }, [sessionId, clearCart]);
 
   return (
     <main className="max-w-xl mx-auto px-4 pt-28 pb-16 text-center">

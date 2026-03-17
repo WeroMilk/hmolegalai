@@ -15,7 +15,7 @@ function formatPrice(centavos: number): string {
 }
 
 export default function CarritoPage() {
-  const { items, removeItem, updateQuantity, totalItems, totalPriceCentavos, clearCart } = useCart();
+  const { items, removeItem, updateQuantity, totalItems, totalPriceCentavos } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,7 +40,6 @@ export default function CarritoPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Error al crear la sesión de pago");
       if (data?.url) {
-        clearCart();
         window.location.href = data.url;
         return;
       }

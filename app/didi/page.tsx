@@ -313,7 +313,7 @@ export default function DidiPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main id="main" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <main id="main" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -343,9 +343,9 @@ export default function DidiPage() {
             <h2 className="text-xl font-semibold text-foreground mb-6">
               Datos del paciente
             </h2>
-            {/* Móvil: una columna. Desktop (md+): dos columnas como Solicitar plan */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 md:items-start">
-              <div className="space-y-6 min-w-0">
+            {/* Móvil: una columna. Desktop (lg+): dos columnas en horizontal como Solicitar plan */}
+            <div className="flex flex-col lg:flex-row lg:gap-10 lg:items-start">
+              <div className="flex-1 space-y-6 min-w-0">
                 <div>
                   <label htmlFor="didi-nombreLnh" className="block text-sm font-medium text-foreground mb-2">
                     Nombre del nutriólogo (LNH)
@@ -468,7 +468,7 @@ export default function DidiPage() {
                   </div>
                 </div>
               </div>
-              <div className="space-y-6 min-w-0">
+              <div className="flex-1 space-y-6 min-w-0 lg:mt-0 mt-6">
                 <div>
                   <label htmlFor="didi-actividadFisica" className="block text-sm font-medium text-foreground mb-2">
                     Actividad física *

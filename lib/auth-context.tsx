@@ -104,6 +104,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await signInWithEmailAndPassword(auth, email.trim(), password);
+      setUser(auth.currentUser);
+      setLoading(false);
     } catch (signInErr: any) {
       const code = signInErr?.code || "";
       const userNotFound = code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/wrong-password";
@@ -113,6 +115,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (userNotFound && demoMatch) {
         await createUserWithEmailAndPassword(auth, demoMatch.email.trim(), demoMatch.password);
         await signInWithEmailAndPassword(auth, demoMatch.email.trim(), demoMatch.password);
+        setUser(auth.currentUser);
+        setLoading(false);
       } else {
         throw new Error(getFriendlyAuthMessage(code, signInErr?.message || "Error al iniciar sesión."));
       }

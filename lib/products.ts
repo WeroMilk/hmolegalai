@@ -23,7 +23,8 @@ function p(
   price: number,
   family: Product["family"],
   description: string,
-  whyRecommend: string = defaultWhy
+  whyRecommend: string = defaultWhy,
+  image: string = "/logo.png"
 ): Product {
   const slug = id.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   const sub = Math.round(price * 0.9);
@@ -33,7 +34,7 @@ function p(
     name,
     nameEn,
     description,
-    image: "/logo.png",
+    image,
     priceOneTime: price,
     priceSubscription: sub,
     whyRecommend,
@@ -53,12 +54,11 @@ export const PRODUCT_FAMILIES: {
   { id: "detox", name: "Familia Detox", nameEn: "Familia Detox", image: "/tienda/familias/detox.png" },
   { id: "nutrir", name: "Nutrir a la familia", nameEn: "Nutrir a la familia", image: "/tienda/familias/nutrir.png" },
   { id: "restaurar", name: "Restaurar a la familia", nameEn: "Restaurar a la familia", image: "/tienda/familias/restaurar.png" },
-  { id: "vital", name: "Vital Health", nameEn: "Vital Health" },
   { id: "plan", name: "Plan dieta", nameEn: "Diet plan" },
 ];
 
 export const PRODUCTS: Product[] = [
-  // Familia Awaken (7 productos)
+  // Familia Awaken (7 productos) – imágenes en /tienda/productos/ en el orden enviado
   p(
     "v-lovkafe",
     "V-LOVKAFE",
@@ -66,7 +66,8 @@ export const PRODUCTS: Product[] = [
     67500,
     "awaken",
     "Café con Tongkat Ali y Shilajit para vitalidad, resistencia y equilibrio hormonal.",
-    "Promueve la energía natural y el equilibrio hormonal; favorece el estado de ánimo, la libido y la resistencia; fomenta la resistencia al estrés y la durabilidad. Ideal para quienes buscan vitalidad y apoyo hormonal."
+    "Promueve la energía natural y el equilibrio hormonal; favorece el estado de ánimo, la libido y la resistencia; fomenta la resistencia al estrés y la durabilidad. Ideal para quienes buscan vitalidad y apoyo hormonal.",
+    "/tienda/productos/v-lovkafe.png"
   ),
   p(
     "v-neurokafe",
@@ -75,7 +76,8 @@ export const PRODUCTS: Product[] = [
     67500,
     "awaken",
     "Café adaptogénico con ganoderma, nootrópicos y probióticos para concentración y armonía intestino-cerebro.",
-    "Favorece la claridad mental y el estado de ánimo; promueve el equilibrio del eje intestino-cerebro con probióticos; aumenta la energía y la productividad sin sobreestimulación. Para niebla cerebral, concentración y café funcional que alimenta mente y cuerpo."
+    "Favorece la claridad mental y el estado de ánimo; promueve el equilibrio del eje intestino-cerebro con probióticos; aumenta la energía y la productividad sin sobreestimulación. Para niebla cerebral, concentración y café funcional que alimenta mente y cuerpo.",
+    "/tienda/productos/v-neurokafe.png"
   ),
   p(
     "v-thermokafe",
@@ -84,7 +86,8 @@ export const PRODUCTS: Product[] = [
     67500,
     "awaken",
     "Café termogénico con guaraná y hierbas para activar el metabolismo, digestión y quema de grasa natural.",
-    "Favorece un ritmo metabólico saludable y la termogénesis; favorece la digestión y la regulación natural del apetito; favorece el mantenimiento de la energía y el metabolismo de las grasas. Para control de peso y estímulo metabólico matutino."
+    "Favorece un ritmo metabólico saludable y la termogénesis; favorece la digestión y la regulación natural del apetito; favorece el mantenimiento de la energía y el metabolismo de las grasas. Para control de peso y estímulo metabólico matutino.",
+    "/tienda/productos/v-thermokafe.png"
   ),
   p(
     "v-nitro",
@@ -93,7 +96,8 @@ export const PRODUCTS: Product[] = [
     90000,
     "awaken",
     "Vasodilatadores naturales (remolacha, espinaca roja) para óxido nítrico, circulación, resistencia y recuperación.",
-    "Apoya la oxigenación y el flujo sanguíneo para energía y resistencia; promueve la absorción de nutrientes y la salud mitocondrial; fomenta la resistencia, la recuperación y el rendimiento. Para atletas, personas activas o quienes buscan mejor circulación y energía celular."
+    "Apoya la oxigenación y el flujo sanguíneo para energía y resistencia; promueve la absorción de nutrientes y la salud mitocondrial; fomenta la resistencia, la recuperación y el rendimiento. Para atletas, personas activas o quienes buscan mejor circulación y energía celular.",
+    "/tienda/productos/v-nitro.png"
   ),
   p(
     "v-nrgy",
@@ -102,7 +106,8 @@ export const PRODUCTS: Product[] = [
     60000,
     "awaken",
     "Fórmula de energía limpia con nootrópicos, adaptógenos y nutrientes para concentración y claridad mental.",
-    "Aumenta la concentración mental, la claridad y la motivación; aporta energía natural sin nerviosismo ni agotamiento; favorece el estado de ánimo y el equilibrio emocional en situaciones de estrés. Para fatiga, niebla cerebral o falta de motivación."
+    "Aumenta la concentración mental, la claridad y la motivación; aporta energía natural sin nerviosismo ni agotamiento; favorece el estado de ánimo y el equilibrio emocional en situaciones de estrés. Para fatiga, niebla cerebral o falta de motivación.",
+    "/tienda/productos/v-nrgy.png"
   ),
   p(
     "vitarly-l",
@@ -111,7 +116,8 @@ export const PRODUCTS: Product[] = [
     56000,
     "awaken",
     "L-Arginina, zinc, CoQ10, cromo y cafeína para energía, rendimiento físico y vitalidad.",
-    "Combate la fatiga y mejora la concentración; potencia la energía y vitalidad diarias; beneficios para rendimiento físico y bienestar. Diseñado para estilos de vida acelerados y deportistas."
+    "Combate la fatiga y mejora la concentración; potencia la energía y vitalidad diarias; beneficios para rendimiento físico y bienestar. Diseñado para estilos de vida acelerados y deportistas.",
+    "/tienda/productos/vitarly-l.png"
   ),
   p(
     "v-ketokafe-bhb",
@@ -120,7 +126,8 @@ export const PRODUCTS: Product[] = [
     94000,
     "awaken",
     "Café con cetonas exógenas BHB para apoyo a la cetosis y quema de grasas.",
-    "Innovadora mezcla de cetonas exógenas e ingredientes naturales para alcanzar un estado de cetosis y óptima quema de grasas. Café negro tostado con betahidroxibutirato de magnesio, calcio y sodio."
+    "Innovadora mezcla de cetonas exógenas e ingredientes naturales para alcanzar un estado de cetosis y óptima quema de grasas. Café negro tostado con betahidroxibutirato de magnesio, calcio y sodio.",
+    "/tienda/productos/v-ketokafe-bhb.png"
   ),
   // Familia Detox
   p("v-glucalose", "V-GLUCALOSE", "V-GLUCALOSE", 52500, "detox", "Soporte metabólico y glucosa.", defaultWhy),

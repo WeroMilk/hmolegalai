@@ -55,20 +55,22 @@ function AuthPageContent() {
     setLoading(true);
     try {
       await signIn(email, password);
-      const currentUser = auth?.currentUser ?? null;
-      const token = currentUser ? await currentUser.getIdToken() : null;
-      if (token && (isDidiUser(email) || isSuperUser(email))) {
-        await fetch("/api/user-profile", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ role: "cliente" }),
-        });
-      }
       const target = returnTo && returnTo.startsWith("/") ? returnTo : "/admin";
       router.replace(target);
+      // Actualizar perfil en segundo plano (no bloquear la redirección)
+      const currentUser = auth?.currentUser ?? null;
+      if (currentUser && (isDidiUser(email) || isSuperUser(email))) {
+        currentUser.getIdToken().then((token) => {
+          fetch("/api/user-profile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ role: "cliente" }),
+          }).catch(() => {});
+        });
+      }
     } catch (err: unknown) {
       setError(friendlyAuthError(err instanceof Error ? err.message : "", t("auth_error")));
     } finally {
