@@ -46,17 +46,12 @@ export async function POST(request: NextRequest) {
           } catch {
             // keep default userMessage
           }
-          return NextResponse.json(
-            { error: userMessage },
-            { status: 502 }
-          );
+          // Devolvemos 200 para que no aparezca "Failed to load resource: 502" en consola
+          return NextResponse.json({ ok: false, error: userMessage });
         }
       } catch (e) {
         console.error("Error sending contact email:", e);
-        return NextResponse.json(
-          { error: "Error al enviar el mensaje. Intenta de nuevo." },
-          { status: 500 }
-        );
+        return NextResponse.json({ ok: false, error: "Error al enviar el mensaje. Intenta de nuevo." });
       }
     } else {
       return NextResponse.json(

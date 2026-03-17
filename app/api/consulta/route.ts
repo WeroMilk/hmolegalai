@@ -10,6 +10,20 @@ function sanitize(str: string, maxLen: number): string {
   return str.trim().slice(0, maxLen);
 }
 
+/** Firestore no acepta undefined; este helper deja solo valores serializables. */
+function firestoreSafe<T extends Record<string, unknown>>(obj: T): T {
+  const out = {} as T;
+  for (const [k, v] of Object.entries(obj)) {
+    if (v === undefined) continue;
+    if (v !== null && typeof v === "object" && !Array.isArray(v) && !(v instanceof Date)) {
+      (out as Record<string, unknown>)[k] = firestoreSafe(v as Record<string, unknown>);
+    } else {
+      (out as Record<string, unknown>)[k] = v;
+    }
+  }
+  return out;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
@@ -84,7 +98,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const ref = await adminDb.collection("consultas").add(consulta);
+    const doc = firestoreSafe(consulta);
+    const ref = await adminDb.collection("consultas").add(doc);
 
     // Notificación por email al admin (didi@dietas.com). También ve las consultas en /admin.
     const nutritionistEmail = process.env.NUTRITIONIST_EMAIL?.trim() || "didi@dietas.com";
@@ -126,14 +141,15 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ id: ref.id, ok: true });
   } catch (error) {
-    console.error("Error saving consulta:", error);
-    const msg = error instanceof Error ? error.message : String(error);
-    const isFirebase = /firebase|permission|unavailable|deadline/i.test(msg);
+    const err = error instanceof Error ? error : new Error(String(error));
+    console.error("Error saving consulta:", err.message, err.stack);
+    const msg = err.message;
+    const isFirebase = /firebase|permission|unavailable|deadline|not found|invalid|credential/i.test(msg);
     return NextResponse.json(
       {
         error: isFirebase
-          ? "Error al conectar con la base de datos. Revisa las variables de Firebase en .env.local o Vercel."
-          : "Error al guardar la consulta. Intenta de nuevo.",
+          ? "Error al conectar con Firestore. Revisa .env.local (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, NEXT_PUBLIC_FIREBASE_PROJECT_ID) y que la cuenta de servicio tenga permisos en Firestore."
+          : "Error al guardar la consulta. Intenta de nuevo. (Revisa la consola del servidor para más detalle.)",
       },
       { status: 500 }
     );
