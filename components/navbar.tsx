@@ -2,30 +2,63 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
 import { isDidiUser } from "@/lib/didi";
 import { LogOut, Menu, X, Sun, Moon } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
+
+const LOGO_CLICKS_NEEDED = 3;
+const LOGO_CLICK_RESET_MS = 1500;
 
 export function Navbar() {
+  const router = useRouter();
   const { user, logout } = useAuth();
   const { theme, toggleThemeWithEffect } = useTheme();
   const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [logoClickCount, setLogoClickCount] = useState(0);
+  const logoClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
+    if (user) return;
+    e.preventDefault();
+    const next = logoClickCount + 1;
+    if (logoClickTimeoutRef.current) clearTimeout(logoClickTimeoutRef.current);
+    if (next >= LOGO_CLICKS_NEEDED) {
+      setLogoClickCount(0);
+      router.push("/auth");
+      return;
+    }
+    setLogoClickCount(next);
+    logoClickTimeoutRef.current = setTimeout(() => setLogoClickCount(0), LOGO_CLICK_RESET_MS);
+  };
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border navbar-no-frame">
       <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 xs:h-16 sm:h-16 gap-2 min-w-0 py-2 sm:py-0">
-          <Link
-            href="/"
-            className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
-          >
-            <Image src="/logo.png" alt="VitalHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
-            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitalHealth</div>
-          </Link>
+          {user ? (
+            <Link
+              href="/"
+              className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
+            >
+              <Image src="/logo.png" alt="VitalHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
+              <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitalHealth</div>
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={handleLogoClick}
+              className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0 bg-transparent border-none p-0 text-left"
+              aria-label="VitalHealth"
+            >
+              <Image src="/logo.png" alt="VitalHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
+              <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitalHealth</div>
+            </button>
+          )}
 
           <div className="hidden sm:flex items-center shrink-0 min-w-0">
             <div className="flex items-center gap-1.5 md:gap-2 lg:gap-3">
@@ -76,22 +109,14 @@ export function Navbar() {
                   </button>
                 </>
               ) : (
-                <>
-                  <Link
-                    href="/auth"
-                    className="hover-button btn-primary i18n-nav-link min-w-[9.5rem] text-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg glow-border text-white font-medium border-2 border-transparent"
-                  >
-                    {t("nav_admin")}
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
-                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
-                    aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
-                  >
-                    {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                  </button>
-                </>
+                <button
+                  type="button"
+                  onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
+                  className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
+                  aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
+                >
+                  {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
               )}
             </div>
           </div>
@@ -153,15 +178,7 @@ export function Navbar() {
               >
                 {t("nav_sign_out")}
               </button>
-            ) : (
-              <Link
-                href="/auth"
-                className="hover-button btn-primary block px-4 py-3 min-h-[48px] flex items-center justify-center bg-teal-600 hover:bg-teal-700 rounded-lg text-center text-white font-medium mt-2"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {t("nav_admin")}
-              </Link>
-            )}
+            ) : null}
           </div>
         )}
       </div>

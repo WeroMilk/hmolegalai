@@ -50,7 +50,7 @@ export default function FamiliaPage() {
         </Link>
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{family.name}</h1>
         <p className="text-muted mb-8">{products.length} productos</p>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product: Product, i: number) => (
             <motion.article
               key={product.id}
@@ -66,7 +66,7 @@ export default function FamiliaPage() {
                     alt={product.name}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    sizes="(max-width: 1024px) 50vw, 25vw"
                   />
                 </div>
                 <div className="p-4">
