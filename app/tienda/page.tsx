@@ -40,10 +40,10 @@ export default function TiendaPage() {
           </p>
         </motion.section>
 
-        {/* Grid 2x2 de familias: imagen arriba, título, cantidad, botón verde */}
+        {/* Familias: 1 col móvil, 2 cols tablet, 4 en horizontal en desktop */}
         <section className="mb-12">
           <h2 className="sr-only">Familias de productos</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-6 lg:gap-4">
             {familiasPortada.map((fam, index) => {
               const count = getProductsByFamily(fam.id).length;
               if (count === 0) return null;
@@ -64,7 +64,7 @@ export default function TiendaPage() {
                           alt={fam.name}
                           fill
                           className="object-contain p-2 transition-transform duration-300 group-hover:scale-[1.02]"
-                          sizes="(max-width: 640px) 100vw, 50vw"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                           priority={index < 2}
                         />
                       ) : (
