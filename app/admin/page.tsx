@@ -32,6 +32,16 @@ type Consulta = {
   createdAt?: string | null;
 };
 
+type ShippingAddress = {
+  name?: string;
+  line1?: string;
+  line2?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  country?: string;
+};
+
 type Order = {
   id: string;
   stripeSessionId?: string;
@@ -40,6 +50,7 @@ type Order = {
   items?: unknown;
   createdAt?: string | null;
   paidAt?: string | null;
+  shippingAddress?: ShippingAddress | null;
 };
 
 export default function AdminPage() {
@@ -297,6 +308,24 @@ export default function AdminPage() {
                       Pagado: {o.paidAt ? new Date(o.paidAt).toLocaleString("es-MX") : "-"}
                     </span>
                   </div>
+                  {o.shippingAddress && (
+                    <div className="text-sm mb-4 p-3 rounded-xl bg-muted/30 border border-border/50">
+                      <p className="font-medium text-foreground mb-1.5 flex items-center gap-1.5">
+                        <Truck className="w-4 h-4 text-teal-500/70" />
+                        Envío
+                      </p>
+                      <p className="text-foreground">{o.shippingAddress.name}</p>
+                      <p className="text-muted">
+                        {[o.shippingAddress.line1, o.shippingAddress.line2].filter(Boolean).join(", ")}
+                      </p>
+                      <p className="text-muted">
+                        {[o.shippingAddress.city, o.shippingAddress.state, o.shippingAddress.postal_code]
+                          .filter(Boolean)
+                          .join(", ")}
+                        {o.shippingAddress.country ? `, ${o.shippingAddress.country}` : ""}
+                      </p>
+                    </div>
+                  )}
                   {o.status === "paid" && (
                     <Button
                       size="sm"

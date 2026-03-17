@@ -28,10 +28,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
     if (event.type === "checkout.session.completed" && event.data?.object) {
-      const session = event.data.object as { id?: string; metadata?: { type?: string } };
+      const session = event.data.object as {
+        id?: string;
+        metadata?: { type?: string };
+        customer_details?: { address?: { city?: string; country?: string; line1?: string; line2?: string; postal_code?: string; state?: string }; name?: string };
+        shipping_details?: { address?: { city?: string; country?: string; line1?: string; line2?: string; postal_code?: string; state?: string }; name?: string };
+      };
       if (session.metadata?.type === "tienda" && adminDb && session.id) {
+        const shipping = session.shipping_details?.address || session.customer_details?.address;
+        const shippingName = session.shipping_details?.name || session.customer_details?.name;
+        const shippingAddress = shipping
+          ? {
+              line1: shipping.line1 ?? "",
+              line2: shipping.line2 ?? "",
+              city: shipping.city ?? "",
+              state: shipping.state ?? "",
+              postal_code: shipping.postal_code ?? "",
+              country: shipping.country ?? "",
+              name: shippingName ?? "",
+            }
+          : null;
         await adminDb.collection("orders").doc(session.id).set(
-          { status: "paid", paidAt: new Date() },
+          { status: "paid", paidAt: new Date(), shippingAddress: shippingAddress ?? null },
           { merge: true }
         );
       }

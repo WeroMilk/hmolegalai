@@ -121,6 +121,9 @@ export async function POST(request: NextRequest) {
         mode: isSubscription ? "subscription" : "payment",
         success_url: successUrl,
         cancel_url: cancelUrl,
+        shipping_address_collection: {
+          allowed_countries: ["MX"],
+        },
         metadata: {
           type: "tienda",
           userId: (userId || "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 500),

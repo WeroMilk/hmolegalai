@@ -45,13 +45,15 @@ export default function FamiliaPage() {
     <div className="min-h-screen text-foreground bg-[#fafafa] dark:bg-background">
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-12">
-        <Link
-          href="/tienda"
-          className="inline-flex items-center gap-2 text-sm text-muted hover:text-teal-600 mb-6 px-3 py-2 rounded-full border border-border hover:border-teal-500/30 hover:bg-teal-500/5 transition-colors w-fit"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Volver a la tienda
-        </Link>
+        <div className="sticky top-14 sm:top-16 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 pt-2 pb-3 mb-4 bg-[#fafafa] dark:bg-background border-b border-gray-200/50 dark:border-border">
+          <Link
+            href="/tienda"
+            className="inline-flex items-center gap-2 text-sm font-medium text-foreground bg-white dark:bg-card border border-border hover:border-teal-500 hover:bg-teal-500/5 hover:text-teal-600 dark:hover:text-teal-400 mb-6 px-4 py-2.5 rounded-full shadow-sm transition-colors w-fit"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Volver a la tienda
+          </Link>
+        </div>
 
         {familyWithImage?.image ? (
           <div className="relative rounded-2xl overflow-hidden aspect-[21/9] min-h-[180px] max-h-[280px] mb-8 bg-gray-100 dark:bg-white/5">
