@@ -17,7 +17,10 @@ export function Hero() {
           transition={{ duration: 0.25 }}
         >
           <h1 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 xs:mb-4 md:mb-6 leading-tight">
-            <span className="block text-foreground hover-title mb-2">{t("home_hero_title1")}</span>
+            <span className="block hover-title mb-2">
+              <span className="text-foreground">{t("home_hero_title1")}</span>
+              <span className="text-teal-600 dark:text-teal-400">{t("home_hero_title1_name")}</span>
+            </span>
             {t("home_hero_title2") ? (
               <span className="block gradient-text hover-title">{t("home_hero_title2")}</span>
             ) : null}

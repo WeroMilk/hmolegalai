@@ -69,7 +69,8 @@ const _base = {
     auth_password_min: "La contraseña debe tener al menos 6 caracteres",
 
     // Home
-    home_hero_title1: "Tu dieta personalizada por L.N.H. Diana Gallardo",
+    home_hero_title1: "Tu dieta personalizada por ",
+    home_hero_title1_name: "L.N.H. Diana Gallardo",
     home_hero_title2: "",
     home_hero_subtitle: "Diseña tu plan de alimentación a la medida y te recomienda suplementos VitalHealth. Respuesta en menos de 24\u00A0h. Pago seguro con Stripe.",
     home_shipping: "Envíos a toda la República Mexicana.",
@@ -644,7 +645,8 @@ const _base = {
     auth_invalid_email: "Enter a valid email",
     auth_password_min: "Password must be at least 6 characters",
 
-    home_hero_title1: "Your personalized diet by L.N.H. Diana Gallardo",
+    home_hero_title1: "Your personalized diet by ",
+    home_hero_title1_name: "L.N.H. Diana Gallardo",
     home_hero_title2: "",
     home_hero_subtitle: "Custom meal plan design and VitalHealth supplement recommendations. Response in under 24 hours. Secure payment with Stripe.",
     home_shipping: "Shipping to all of Mexico.",

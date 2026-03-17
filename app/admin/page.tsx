@@ -87,7 +87,11 @@ export default function AdminPage() {
         if (res.ok) {
           const data = await res.json();
           setConsultas(data.consultas ?? []);
+        } else {
+          setConsultas([]);
         }
+      } catch {
+        setConsultas([]);
       } finally {
         setLoadingConsultas(false);
       }
@@ -101,7 +105,11 @@ export default function AdminPage() {
         if (res.ok) {
           const data = await res.json();
           setOrders(data.orders ?? []);
+        } else {
+          setOrders([]);
         }
+      } catch {
+        setOrders([]);
       } finally {
         setLoadingOrders(false);
       }
