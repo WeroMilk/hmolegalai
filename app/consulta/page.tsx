@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useCart } from "@/lib/cart-context";
 import { useAuth } from "@/lib/auth-context";
 import { PLAN_DIETA_IDS, type PlanDietaKey } from "@/lib/products";
 import { motion } from "framer-motion";
@@ -40,7 +39,6 @@ const HABITOS_ESTRES = ["Bajo", "Moderado", "Alto", "Muy alto"];
 export default function ConsultaPage() {
   const router = useRouter();
   const { user } = useAuth();
-  const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
@@ -122,48 +120,6 @@ export default function ConsultaPage() {
         return;
       }
       throw new Error("No se recibió URL de pago");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al procesar");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (!form.nombre.trim() || !form.telefono.trim() || !form.email.trim()) {
-      setError("Completa nombre, teléfono y email para continuar.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-    try {
-      const consultaPayload = {
-        nombre: form.nombre.trim(),
-        edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
-        telefono: form.telefono.trim(),
-        email: form.email.trim(),
-        objetivoPrincipal: form.objetivoPrincipal || null,
-        metaPeso: form.metaPeso || null,
-        tipoDieta: form.tipoDieta || null,
-        condicionesMedicas: form.condicionesMedicas.trim() || null,
-        habitosAlimentacion: habitos.alimentacion,
-        habitosEjercicio: habitos.ejercicio,
-        habitosSueno: habitos.sueno,
-        habitosEstres: habitos.estres,
-        importanciaSuplementos: form.importanciaSuplementos,
-      };
-      const resConsulta = await fetch("/api/consulta", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(consultaPayload),
-      });
-      const dataConsulta = await resConsulta.json().catch(() => ({}));
-      if (!resConsulta.ok) throw new Error(dataConsulta?.error || "Error al guardar la solicitud");
-      const consultaId = dataConsulta?.id;
-
-      addItem({ productId: PLAN_DIETA_IDS[planDieta], quantity: 1, isSubscription: false, consultaId });
-      router.push("/tienda/carrito");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al procesar");
     } finally {
@@ -426,18 +382,9 @@ export default function ConsultaPage() {
               {error}
             </div>
           )}
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6">
             <Button type="submit" disabled={loading} className="bg-teal-600 hover:bg-teal-700">
               {loading ? "Procesando..." : "Pagar y enviar solicitud"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              disabled={loading}
-              onClick={handleAddToCart}
-              className="border-teal-500 text-teal-600 hover:bg-teal-500/10"
-            >
-              Enviar solicitud y añadir al carrito
             </Button>
           </div>
         </motion.form>
