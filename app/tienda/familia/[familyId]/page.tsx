@@ -6,8 +6,9 @@ import { useParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { PRODUCT_FAMILIES, getProductsByFamily } from "@/lib/products";
 import type { Product } from "@/lib/products";
+import { useCart } from "@/lib/cart-context";
 import { motion } from "framer-motion";
-import { ShoppingBag, ArrowLeft } from "lucide-react";
+import { ShoppingBag, ArrowLeft, ShoppingCart } from "lucide-react";
 
 function formatPrice(centavos: number): string {
   return `$ ${(centavos / 100).toLocaleString("es-MX")}`;
@@ -18,6 +19,7 @@ export default function FamiliaPage() {
   const familyId = typeof params.familyId === "string" ? params.familyId : "";
   const family = PRODUCT_FAMILIES.find((f) => f.id === familyId);
   const products = family ? getProductsByFamily(family.id) : [];
+  const { addItem } = useCart();
 
   if (!family || products.length === 0) {
     return (
@@ -101,12 +103,28 @@ export default function FamiliaPage() {
                   <p className="text-lg font-bold text-teal-600 dark:text-teal-400 mt-2">
                     {formatPrice(product.priceOneTime)}
                   </p>
-                  <span className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-teal-600 dark:text-teal-400">
-                    <ShoppingBag className="w-4 h-4" />
-                    Ver producto
-                  </span>
                 </div>
               </Link>
+              <div className="px-4 pb-4 flex gap-2">
+                <Link
+                  href={`/tienda/${product.slug}`}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  Ver producto
+                </Link>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    addItem({ productId: product.id, quantity: 1, isSubscription: false });
+                  }}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Añadir al carrito
+                </button>
+              </div>
             </motion.article>
           ))}
         </div>

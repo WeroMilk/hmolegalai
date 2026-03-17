@@ -6,13 +6,33 @@ async function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key || key === "") return null;
   const { default: Stripe } = await import("stripe");
-  return new Stripe(key, { apiVersion: "2025-02-24.acacia" });
+  return new Stripe(key);
 }
 
 export async function POST(request: NextRequest) {
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
-    const { items, successUrl: bodySuccessUrl, cancelUrl: bodyCancelUrl, documentId, price, saveToAccount, idToken: bodyToken } = body;
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Cuerpo de la petición inválido (JSON esperado)." },
+      { status: 400 }
+    );
+  }
+  if (!body || typeof body !== "object") {
+    return NextResponse.json(
+      { error: "Cuerpo de la petición inválido." },
+      { status: 400 }
+    );
+  }
+  try {
+    const items = Array.isArray(body.items) ? body.items : [];
+    const bodySuccessUrl = typeof body.successUrl === "string" ? body.successUrl : undefined;
+    const bodyCancelUrl = typeof body.cancelUrl === "string" ? body.cancelUrl : undefined;
+    const documentId = body.documentId;
+    const price = typeof body.price === "number" ? body.price : undefined;
+    const saveToAccount = !!body.saveToAccount;
+    const bodyToken = body.idToken;
 
     const origin = request.headers.get("origin") || "";
     let userId: string | undefined;
@@ -28,8 +48,7 @@ export async function POST(request: NextRequest) {
           const decoded = await verifyIdToken(token);
           userId = decoded.uid;
         } catch {
-          // guest checkout allowed when using items (tienda)
-          if (!items?.length) {
+          if (!items.length) {
             return NextResponse.json({ error: "Debes iniciar sesión para realizar el pago." }, { status: 401 });
           }
         }
@@ -41,19 +60,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Stripe no configurado. Configura STRIPE_SECRET_KEY en Vercel." }, { status: 500 });
     }
 
-    if (items?.length) {
+    if (items.length > 0) {
       const successUrl = bodySuccessUrl || `${origin}/tienda/success?session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = bodyCancelUrl || `${origin}/tienda`;
-      const isSubscription = items.some((i: { isSubscription?: boolean }) => i.isSubscription);
-      const lineItems: { price_data: any; quantity: number }[] = [];
+      const isSubscription = items.some((i: unknown) => typeof i === "object" && i !== null && "isSubscription" in i && (i as { isSubscription?: boolean }).isSubscription);
+      const lineItems: { price_data: { currency: string; product_data: { name: string; description: string; images?: string[] }; unit_amount: number; recurring?: { interval: string } }; quantity: number }[] = [];
 
       for (const item of items) {
-        const product = getProductById(item.productId);
+        const productId = typeof item === "object" && item !== null && "productId" in item ? String((item as { productId: unknown }).productId) : "";
+        const product = productId ? getProductById(productId) : undefined;
         if (!product) {
-          return NextResponse.json({ error: `Producto no encontrado: ${item.productId}` }, { status: 400 });
+          return NextResponse.json({ error: `Producto no encontrado: ${productId}` }, { status: 400 });
         }
-        const qty = Math.min(10, Math.max(1, Number(item.quantity) || 1));
-        if (isSubscription && item.isSubscription) {
+        const rawQty = typeof item === "object" && item !== null && "quantity" in item ? (item as { quantity?: unknown }).quantity : 1;
+        const qty = Math.min(10, Math.max(1, Number(rawQty) || 1));
+        const itemIsSubscription = typeof item === "object" && item !== null && "isSubscription" in item && (item as { isSubscription?: boolean }).isSubscription;
+        if (isSubscription && itemIsSubscription) {
           lineItems.push({
             price_data: {
               currency: "mxn",
@@ -97,13 +119,18 @@ export async function POST(request: NextRequest) {
       });
 
       if (adminDb && session.id) {
-        await adminDb.collection("orders").doc(session.id).set({
-          stripeSessionId: session.id,
-          status: "pending",
-          userId: userId || null,
-          items,
-          createdAt: new Date(),
-        });
+        try {
+          await adminDb.collection("orders").doc(session.id).set({
+            stripeSessionId: session.id,
+            status: "pending",
+            userId: userId || null,
+            items,
+            createdAt: new Date(),
+          });
+        } catch (dbErr) {
+          console.error("Error guardando orden en Firestore:", dbErr);
+          // No fallar el checkout si solo falla el guardado en DB
+        }
       }
 
       return NextResponse.json({ sessionId: session.id, url: session.url });
@@ -149,8 +176,12 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Error al crear la sesión de pago";
     console.error("Error creating checkout session:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json(
+      { error: message.includes("Stripe") ? message : "Error al procesar el pago. Revisa los datos e intenta de nuevo." },
+      { status: 500 }
+    );
   }
 }

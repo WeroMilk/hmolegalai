@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { PRODUCT_FAMILIES, getProductsByFamily } from "@/lib/products";
 import { motion } from "framer-motion";
-import { Truck, ChevronRight, Package } from "lucide-react";
+import { Truck, Package } from "lucide-react";
 
 /** Solo las 4 familias con imagen para la portada principal. */
 const FAMILIAS_PORTADA: (typeof PRODUCT_FAMILIES)[0]["id"][] = ["awaken", "detox", "nutrir", "restaurar"];
@@ -40,56 +40,52 @@ export default function TiendaPage() {
           </p>
         </motion.section>
 
-        {/* Grid 2x2 de familias con imagen */}
+        {/* Grid 2x2 de familias: imagen arriba, título, cantidad, botón verde */}
         <section className="mb-12">
           <h2 className="sr-only">Familias de productos</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8">
             {familiasPortada.map((fam, index) => {
               const count = getProductsByFamily(fam.id).length;
               if (count === 0) return null;
               const hasImage = !!fam.image;
               return (
-                <motion.div
+                <motion.article
                   key={fam.id}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: index * 0.06 }}
+                  className="rounded-2xl bg-white dark:bg-card border border-gray-200 dark:border-border shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col text-center"
                 >
-                  <Link
-                    href={`/tienda/familia/${fam.id}`}
-                    className="group block rounded-2xl overflow-hidden bg-white dark:bg-card border border-border shadow-sm hover:shadow-xl hover:border-teal-500/40 transition-all duration-300"
-                  >
-                    <div className="relative aspect-[4/3] sm:aspect-[5/3] bg-gray-100 dark:bg-white/5 overflow-hidden">
+                  <Link href={`/tienda/familia/${fam.id}`} className="group flex flex-col flex-1">
+                    <div className="relative aspect-[4/3] bg-gray-50 dark:bg-white/5 flex items-center justify-center p-4 sm:p-6">
                       {hasImage ? (
                         <Image
                           src={fam.image!}
                           alt={fam.name}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                          className="object-contain p-2 transition-transform duration-300 group-hover:scale-[1.02]"
                           sizes="(max-width: 640px) 100vw, 50vw"
                           priority={index < 2}
                         />
                       ) : (
-                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-teal-500/20 to-emerald-500/20">
-                          <Package className="w-16 h-16 text-teal-500/60" />
+                        <div className="flex items-center justify-center w-full h-full bg-gradient-to-br from-teal-500/10 to-emerald-500/10">
+                          <Package className="w-20 h-20 text-teal-500/50" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-                        <h3 className="font-bold text-lg sm:text-xl text-white drop-shadow-md">
-                          {fam.name}
-                        </h3>
-                        <p className="text-sm text-white/90 mt-0.5">
-                          {count} producto{count !== 1 ? "s" : ""}
-                        </p>
-                        <span className="inline-flex items-center gap-1.5 mt-2 text-sm font-medium text-teal-200 group-hover:text-white transition-colors">
-                          Ver productos
-                          <ChevronRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-                        </span>
-                      </div>
+                    </div>
+                    <div className="p-5 sm:p-6 flex flex-col flex-1">
+                      <h3 className="font-bold text-lg sm:text-xl text-foreground">
+                        {fam.name}
+                      </h3>
+                      <p className="text-sm text-muted mt-1">
+                        {count} producto{count !== 1 ? "s" : ""}
+                      </p>
+                      <span className="mt-5 inline-flex items-center justify-center w-full py-3 px-5 rounded-xl text-white font-semibold bg-gradient-to-b from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-sm">
+                        Comprar ahora
+                      </span>
                     </div>
                   </Link>
-                </motion.div>
+                </motion.article>
               );
             })}
           </div>

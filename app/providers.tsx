@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthProvider } from "@/lib/auth-context";
+import { CartProvider } from "@/lib/cart-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { I18nProvider } from "@/lib/i18n-context";
 import { FlagProvider } from "@/lib/flag-context";
@@ -15,12 +16,14 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <I18nProvider>
         <FlagProvider>
           <AuthProvider>
+            <CartProvider>
             <SuppressConsoleErrors />
             <ProfileGuard>
               <ScrollToTop />
               <DidiThemeEffect />
               {children}
             </ProfileGuard>
+            </CartProvider>
           </AuthProvider>
         </FlagProvider>
       </I18nProvider>

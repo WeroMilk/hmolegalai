@@ -57,6 +57,8 @@ export default function RootLayout({
   return (
     <html lang="es" className="light theme-transition" suppressHydrationWarning>
       <head>
+        {/* Script inline desactivado para evitar SyntaxError "missing ) after argument list" */}
+        {false && (
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -501,6 +503,7 @@ export default function RootLayout({
             `,
           }}
         />
+        )}
       </head>
       <body className="antialiased bg-background text-foreground min-h-screen overflow-x-hidden overflow-y-auto">
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">

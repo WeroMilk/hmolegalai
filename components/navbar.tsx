@@ -4,10 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
+import { useCart } from "@/lib/cart-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
 import { isDidiUser } from "@/lib/didi";
-import { LogOut, Menu, X, Sun, Moon } from "lucide-react";
+import { LogOut, Menu, X, Sun, Moon, ShoppingCart } from "lucide-react";
 import { useState, useRef } from "react";
 
 const LOGO_CLICKS_NEEDED = 3;
@@ -16,6 +17,7 @@ const LOGO_CLICK_RESET_MS = 500;
 export function Navbar() {
   const router = useRouter();
   const { user, logout } = useAuth();
+  const { totalItems } = useCart();
   const { theme, toggleThemeWithEffect } = useTheme();
   const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -85,6 +87,18 @@ export function Navbar() {
               )}
             </div>
             <div className="flex items-center gap-2 pl-3 ml-4 border-l border-border shrink-0">
+              <Link
+                href="/tienda/carrito"
+                className="relative flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
+                aria-label="Carrito"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {totalItems > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[1.25rem] h-5 px-1 flex items-center justify-center rounded-full bg-teal-500 text-white text-xs font-bold">
+                    {totalItems > 99 ? "99+" : totalItems}
+                  </span>
+                )}
+              </Link>
               {user ? (
                 <>
                   <button
@@ -119,6 +133,18 @@ export function Navbar() {
           </div>
 
           <div className="flex items-center gap-2 sm:hidden">
+            <Link
+              href="/tienda/carrito"
+              className="relative flex-shrink-0 w-12 h-12 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
+              aria-label="Carrito"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 min-w-[1.25rem] h-5 px-1 flex items-center justify-center rounded-full bg-teal-500 text-white text-xs font-bold">
+                  {totalItems > 99 ? "99+" : totalItems}
+                </span>
+              )}
+            </Link>
             <button
               type="button"
               onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
@@ -148,6 +174,9 @@ export function Navbar() {
             </Link>
             <Link href="/tienda" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
               {t("nav_tienda")}
+            </Link>
+            <Link href="/tienda/carrito" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+              Carrito {totalItems > 0 ? `(${totalItems})` : ""}
             </Link>
             {user && isDidiUser(user.email) && (
               <>

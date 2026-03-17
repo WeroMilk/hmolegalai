@@ -6,9 +6,10 @@ import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { getProductBySlug } from "@/lib/products";
+import { useCart } from "@/lib/cart-context";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ShoppingCart } from "lucide-react";
 
 function formatPrice(centavos: number): string {
   return `$${(centavos / 100).toLocaleString("es-MX")} MXN`;
@@ -19,8 +20,10 @@ export default function ProductPage() {
   const router = useRouter();
   const slug = typeof params.slug === "string" ? params.slug : "";
   const product = getProductBySlug(slug);
+  const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [added, setAdded] = useState(false);
 
   const handleBuy = async () => {
     if (!product) return;
@@ -103,7 +106,19 @@ export default function ProductPage() {
               <div className="mt-4">
                 <p className="font-semibold text-lg">{formatPrice(product.priceOneTime)}</p>
               </div>
-              <div className="mt-6">
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button
+                  onClick={() => {
+                    addItem({ productId: product.id, quantity: 1, isSubscription: false });
+                    setAdded(true);
+                    setTimeout(() => setAdded(false), 2000);
+                  }}
+                  variant="outline"
+                  className="border-teal-500 text-teal-600 hover:bg-teal-500/10"
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  {added ? "Añadido al carrito" : "Añadir al carrito"}
+                </Button>
                 <Button
                   onClick={handleBuy}
                   disabled={loading}
