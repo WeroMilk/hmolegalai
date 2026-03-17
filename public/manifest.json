@@ -1,11 +1,11 @@
 {
-  "name": "VitaHealth",
-  "short_name": "VitaHealth",
-  "description": "Planes de alimentación personalizados y suplementos VitaHealth. Nutrición y bienestar.",
+  "name": "VitalHealth | Didi Gallardo",
+  "short_name": "VitalHealth",
+  "description": "Planes de alimentación personalizados y suplementos VitalHealth. Nutrición y bienestar.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "background_color": "#f0fdfa",
+  "theme_color": "#14b8a6",
   "orientation": "portrait-primary",
   "icons": [
     {

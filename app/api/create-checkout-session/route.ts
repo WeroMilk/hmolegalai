@@ -91,8 +91,8 @@ export async function POST(request: NextRequest) {
         cancel_url: cancelUrl,
         metadata: {
           type: "tienda",
-          userId: userId || "",
-          items: JSON.stringify(items),
+          userId: (userId || "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 500),
+          items: JSON.stringify(items).slice(0, 500),
         },
       });
 
@@ -142,9 +142,9 @@ export async function POST(request: NextRequest) {
       success_url: successUrl,
       cancel_url: `${origin}/documentos/${documentId}`,
       metadata: {
-        documentId,
+        documentId: String(documentId).replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 500),
         saveToAccount: saveToAccount ? "1" : "0",
-        userId,
+        userId: (userId || "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 500),
       },
     });
 

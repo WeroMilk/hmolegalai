@@ -24,13 +24,13 @@ const config: Config = {
         border: "var(--border)",
         card: "var(--card)",
         primary: {
-          DEFAULT: "#3b82f6",
-          dark: "#2563eb",
-          light: "#60a5fa",
+          DEFAULT: "#14b8a6",
+          dark: "#0d9488",
+          light: "#5eead4",
         },
         accent: {
-          DEFAULT: "#0ea5e9",
-          dark: "#0284c7",
+          DEFAULT: "#2dd4bf",
+          dark: "#14b8a6",
         },
       },
       animation: {
@@ -48,8 +48,8 @@ const config: Config = {
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
         glow: {
-          "0%": { boxShadow: "0 0 5px rgba(59, 130, 246, 0.5)" },
-          "100%": { boxShadow: "0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.4)" },
+          "0%": { boxShadow: "0 0 5px rgba(20, 184, 166, 0.5)" },
+          "100%": { boxShadow: "0 0 20px rgba(20, 184, 166, 0.5), 0 0 30px rgba(20, 184, 166, 0.3)" },
         },
       },
     },

@@ -10,11 +10,12 @@ let adminDb: Firestore | undefined;
 if (!getApps().length) {
   const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
-  if (privateKey && process.env.FIREBASE_CLIENT_EMAIL && process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+  const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim();
+  if (privateKey && process.env.FIREBASE_CLIENT_EMAIL && projectId) {
     app = initializeApp({
       credential: cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        projectId,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL.trim(),
         privateKey: privateKey,
       }),
     });

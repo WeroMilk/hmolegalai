@@ -70,8 +70,9 @@ const _base = {
 
     // Home
     home_hero_title1: "Nutrición personalizada",
-    home_hero_title2: "y suplementos VitaHealth",
+    home_hero_title2: "y suplementos VitalHealth",
     home_hero_subtitle: "Planes de alimentación a tu medida y suplementos de alta calidad. Nutrióloga titulada. Salud integral y bienestar.",
+    home_shipping: "Envíos nacionales a toda la República Mexicana.",
     home_how_it_works: "¿Cómo funciona?",
     home_see_documents: "Ver suplementos",
     home_fast: "Personalizado",
@@ -92,7 +93,7 @@ const _base = {
     feat_pay_desc: "Stripe. Compra única o suscripción con 10% de descuento",
     feat_form: "Consulta personalizada",
     feat_form_desc: "Objetivos, hábitos y condiciones. Respuesta en 48 h hábiles",
-    feat_download: "Suplementos VitaHealth",
+    feat_download: "Suplementos VitalHealth",
     feat_download_desc: "VITALAGE y más. Recomendados por tu nutrióloga",
 
     // Documents catalog page
@@ -217,7 +218,8 @@ const _base = {
 
     // Footer
     footer_location: "Hermosillo, Sonora. México.",
-    footer_copyright: "© {{year}} VitaHealth.",
+    footer_shipping: "Envíos nacionales a toda la República Mexicana.",
+    footer_copyright: "© {{year}} VitalHealth.",
     footer_copyright_suffix: "",
 
     // Document names & descriptions (for catalog - by id)
@@ -280,7 +282,7 @@ const _base = {
     // About / Quiénes somos (landing section)
     about_title: "Quiénes somos",
     about_subtitle: "Nutrióloga titulada",
-    about_who: "L.N.H. Diana Gallardo. Nutrición humana y planes de alimentación personalizados. Suplementos VitaHealth VITALAGE con respaldo profesional. Servicio en línea y seguimiento por WhatsApp. Hermosillo, Sonora.",
+    about_who: "L.N.H. Diana Gallardo. Nutrición humana y planes de alimentación personalizados. Suplementos VitalHealth VITALAGE con respaldo profesional. Servicio en línea y seguimiento por WhatsApp. Hermosillo, Sonora.",
     about_trust_title: "Confianza",
     about_trust_short: "Cédula profesional. Planes basados en SMAE y NOM-043. Sin dietas genéricas.",
     about_payment_title: "Pago",
@@ -643,8 +645,9 @@ const _base = {
     auth_password_min: "Password must be at least 6 characters",
 
     home_hero_title1: "Personalized nutrition",
-    home_hero_title2: "and VitaHealth supplements",
+    home_hero_title2: "and VitalHealth supplements",
     home_hero_subtitle: "Custom meal plans and high-quality supplements. Licensed nutritionist. Health and wellness.",
+    home_shipping: "National shipping to all of Mexico.",
     home_how_it_works: "How it works",
     home_see_documents: "View supplements",
     home_fast: "Personalized",
@@ -666,7 +669,7 @@ const _base = {
     feat_pay_desc: "Stripe. One-time or subscription with 10% off",
     feat_form: "Personal consultation",
     feat_form_desc: "Goals, habits and conditions. Response within 48 business hours",
-    feat_download: "VitaHealth supplements",
+    feat_download: "VitalHealth supplements",
     feat_download_desc: "VITALAGE and more. Recommended by your nutritionist",
 
     catalog_title: "Document Catalog",
@@ -783,7 +786,8 @@ const _base = {
     mis_docs_date_unavailable: "Date unavailable",
 
     footer_location: "Hermosillo, Sonora. Mexico.",
-    footer_copyright: "© {{year}} VitaHealth.",
+    footer_shipping: "National shipping to all of Mexico.",
+    footer_copyright: "© {{year}} VitalHealth.",
     footer_copyright_suffix: "",
 
     doc_contrato_arrendamiento_name: "Lease Agreement",
@@ -842,7 +846,7 @@ const _base = {
 
     about_title: "About us",
     about_subtitle: "Licensed nutritionist",
-    about_who: "L.N.H. Diana Gallardo. Human nutrition and personalized meal plans. VitaHealth VITALAGE supplements with professional backing. Online service and follow-up via WhatsApp. Hermosillo, Sonora.",
+    about_who: "L.N.H. Diana Gallardo. Human nutrition and personalized meal plans. VitalHealth VITALAGE supplements with professional backing. Online service and follow-up via WhatsApp. Hermosillo, Sonora.",
     about_trust_title: "Trust",
     about_trust_short: "Professional license. Plans based on SMAE and NOM-043. No generic diets.",
     about_payment_title: "Payment",

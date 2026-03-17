@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
             Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
           },
           body: JSON.stringify({
-            from: "VitaHealth <onboarding@resend.dev>",
+            from: "VitalHealth <onboarding@resend.dev>",
             to: [nutritionistEmail],
             subject: `Nueva consulta: ${nombreS}`,
             text: [

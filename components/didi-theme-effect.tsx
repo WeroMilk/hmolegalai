@@ -3,16 +3,18 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
-/** Añade/quita clase didi-theme en body cuando la ruta es /didi para que todo lo azul se vuelva morado. */
+/** Añade clase didi-theme en body para /didi y /consulta (verde menta unificado). */
 export function DidiThemeEffect() {
   const pathname = usePathname();
-  const isDidi = pathname?.startsWith("/didi") ?? false;
 
   useEffect(() => {
-    if (isDidi) document.body.classList.add("didi-theme");
-    else document.body.classList.remove("didi-theme");
+    if (pathname?.startsWith("/didi") || pathname?.startsWith("/consulta")) {
+      document.body.classList.add("didi-theme");
+    } else {
+      document.body.classList.remove("didi-theme");
+    }
     return () => document.body.classList.remove("didi-theme");
-  }, [isDidi]);
+  }, [pathname]);
 
   return null;
 }

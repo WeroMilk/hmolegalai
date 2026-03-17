@@ -41,6 +41,10 @@ export function Hero() {
             </Link>
           </div>
 
+          <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-8 xs:mb-12">
+            {t("home_shipping")}
+          </p>
+
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 xs:gap-12 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-28 xs:mt-32 sm:mt-20 md:mt-16">
             <motion.div
               initial={{ opacity: 0, y: 16 }}

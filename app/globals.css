@@ -14,7 +14,7 @@
   --background: #0a0a0a;
   --foreground: #fafafa;
   --muted: rgba(255, 255, 255, 0.7);
-  --border: rgba(59, 130, 246, 0.2);
+  --border: rgba(20, 184, 166, 0.25);
   --card: rgba(0, 0, 0, 0.4);
 }
 
@@ -101,7 +101,7 @@ input[type="number"] {
   }
   
   .gradient-text {
-    @apply bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-teal-400 via-teal-500 to-emerald-500 bg-clip-text text-transparent;
     line-height: 1.2;
     padding-bottom: 0.1em;
     display: inline-block;
@@ -113,15 +113,15 @@ input[type="number"] {
     -webkit-backdrop-filter: blur(16px);
     border: 1px solid var(--border);
   }
-  /* Light: marcos azules por defecto; al hover → color actual (border del tema) */
+  /* Light: marcos verde menta por defecto; al hover → color actual (border del tema) */
   .light .glass-effect.hover-box {
     margin: 2px;
-    border-color: rgba(59, 130, 246, 0.5);
+    border-color: rgba(20, 184, 166, 0.5);
   }
   .light .glass-effect.hover-box:hover {
     border-color: var(--border);
   }
-  /* Dark: marcos blancos por defecto; al hover → azul */
+  /* Dark: marcos blancos por defecto; al hover → verde menta */
   .dark .glass-effect {
     border-color: rgba(255, 255, 255, 0.4);
   }
@@ -135,7 +135,7 @@ input[type="number"] {
     border-color: rgba(255, 255, 255, 0.45);
   }
   .dark .glass-effect.hover-box:hover {
-    border-color: rgba(59, 130, 246, 0.55);
+    border-color: rgba(20, 184, 166, 0.55);
   }
 
   /* Box sin movimiento al hover: solo sombra azul (ej. login) */
@@ -158,7 +158,7 @@ input[type="number"] {
   }
   .hover-box:hover {
     @apply transform -translate-y-2;
-    box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 20px 40px rgba(20, 184, 166, 0.2);
   }
   .light .hover-box:hover {
     background: rgba(255, 255, 255, 0.95);
@@ -166,7 +166,7 @@ input[type="number"] {
   }
   .dark .hover-box:hover {
     background: rgba(0, 0, 0, 0.6);
-    border-color: rgba(59, 130, 246, 0.55);
+    border-color: rgba(20, 184, 166, 0.55);
   }
 
   /* Stripe Elements: contenedor del formulario de pago */
@@ -211,13 +211,13 @@ input[type="number"] {
   }
   .hover-button:hover {
     @apply transform scale-105;
-    box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 0 28px rgba(20, 184, 166, 0.45), 0 0 40px rgba(20, 184, 166, 0.25);
   }
   .hover-button.btn-primary:hover {
-    box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 0 28px rgba(20, 184, 166, 0.45), 0 0 40px rgba(20, 184, 166, 0.25);
   }
   .hover-button.btn-white-glow:hover {
-    box-shadow: 0 0 28px rgba(59, 130, 246, 0.55), 0 0 40px rgba(59, 130, 246, 0.35);
+    box-shadow: 0 0 28px rgba(20, 184, 166, 0.45), 0 0 40px rgba(20, 184, 166, 0.25);
   }
   .hover-button:active {
     @apply transform scale-95;
@@ -228,10 +228,10 @@ input[type="number"] {
     display: inline-block;
     white-space: nowrap;
   }
-  /* Header: hover azul en light y dark (desktop y móvil) */
+  /* Header: hover verde menta en light y dark (desktop y móvil) */
   .navbar-link-hover:hover,
   .dark .navbar-link-hover:hover {
-    color: rgb(59 130 246) !important; /* blue-500, visible en ambos temas */
+    color: rgb(20 184 166) !important; /* teal-500, visible en ambos temas */
   }
   .i18n-stable-btn {
     min-width: 10rem;
@@ -239,103 +239,127 @@ input[type="number"] {
   }
 }
 
-/* ========== Tema DIDI: solo en /didi todo lo azul se vuelve morado ========== */
+/* ========== Tema DIDI: verde menta (igual que el resto del sitio) ========== */
 body.didi-theme {
-  --didi-purple-200: 233 213 255;
-  --didi-purple-950: 59 7 100;
-  --didi-purple-500: 168 85 247;
-  --didi-purple-600: 147 51 234;
-  --didi-purple-400: 192 132 252;
+  --didi-mint-200: 204 251 241;
+  --didi-mint-950: 19 78 74;
+  --didi-mint-500: 20 184 166;
+  --didi-mint-600: 13 148 136;
+  --didi-mint-400: 45 212 191;
 }
-body.didi-theme .to-blue-200\/25 {
-  --tw-gradient-to: rgb(var(--didi-purple-200) / 0.25);
+body.didi-theme .to-blue-200\/25,
+body.didi-theme .to-teal-200\/25 {
+  --tw-gradient-to: rgb(204 251 241 / 0.25);
 }
 html.dark body.didi-theme .to-blue-950\/20,
-.dark body.didi-theme .to-blue-950\/20 {
-  --tw-gradient-to: rgb(var(--didi-purple-950) / 0.2);
+.dark body.didi-theme .to-blue-950\/20,
+html.dark body.didi-theme .to-teal-950\/20,
+.dark body.didi-theme .to-teal-950\/20 {
+  --tw-gradient-to: rgb(19 78 74 / 0.2);
 }
-body.didi-theme .bg-blue-500\/20 {
-  background-color: rgb(var(--didi-purple-500) / 0.2);
+body.didi-theme .bg-blue-500\/20,
+body.didi-theme .bg-teal-500\/20 {
+  background-color: rgb(20 184 166 / 0.2);
 }
-body.didi-theme .bg-blue-600\/20 {
-  background-color: rgb(var(--didi-purple-600) / 0.2);
+body.didi-theme .bg-blue-600\/20,
+body.didi-theme .bg-teal-600\/20 {
+  background-color: rgb(13 148 136 / 0.2);
 }
 body.didi-theme [class*="circle_at_50%"] {
-  background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.1), transparent 50%) !important;
+  background: radial-gradient(circle at 50% 50%, rgba(94, 234, 212, 0.12), transparent 50%) !important;
 }
 body.didi-theme .gradient-text {
-  @apply bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 bg-clip-text text-transparent;
+  @apply bg-gradient-to-r from-teal-400 via-teal-500 to-emerald-500 bg-clip-text text-transparent;
 }
 body.didi-theme .text-blue-500,
 body.didi-theme .text-blue-400,
-body.didi-theme .text-blue-600 {
-  color: rgb(168 85 247);
+body.didi-theme .text-blue-600,
+body.didi-theme .text-teal-500,
+body.didi-theme .text-teal-400,
+body.didi-theme .text-teal-600 {
+  color: rgb(20 184 166);
 }
 body.didi-theme .bg-blue-500,
 body.didi-theme .bg-blue-600,
-body.didi-theme .bg-blue-700 {
-  background-color: rgb(147 51 234);
+body.didi-theme .bg-blue-700,
+body.didi-theme .bg-teal-500,
+body.didi-theme .bg-teal-600,
+body.didi-theme .bg-teal-700 {
+  background-color: rgb(20 184 166);
 }
 body.didi-theme .bg-blue-600\/20,
 body.didi-theme .bg-blue-500\/10,
-body.didi-theme .bg-blue-500\/5 {
-  background-color: rgb(168 85 247 / 0.2);
+body.didi-theme .bg-blue-500\/5,
+body.didi-theme .bg-teal-600\/20,
+body.didi-theme .bg-teal-500\/10 {
+  background-color: rgb(20 184 166 / 0.2);
 }
 body.didi-theme .border-blue-500,
 body.didi-theme .border-blue-500\/40,
-body.didi-theme .border-blue-500\/50 {
-  border-color: rgb(168 85 247 / 0.5);
+body.didi-theme .border-blue-500\/50,
+body.didi-theme .border-teal-500,
+body.didi-theme .border-teal-500\/40,
+body.didi-theme .border-teal-500\/50 {
+  border-color: rgb(20 184 166 / 0.5);
 }
 body.didi-theme .focus\:border-blue-500:focus,
 body.didi-theme .focus\:ring-blue-500:focus,
 body.didi-theme .focus-within\:border-blue-500:focus-within,
-body.didi-theme .focus-within\:ring-blue-500:focus-within {
-  border-color: rgb(168 85 247);
-  --tw-ring-color: rgb(168 85 247 / 0.5);
+body.didi-theme .focus-within\:ring-blue-500:focus-within,
+body.didi-theme .focus\:border-teal-500:focus,
+body.didi-theme .focus\:ring-teal-500:focus,
+body.didi-theme .focus-within\:border-teal-500:focus-within,
+body.didi-theme .focus-within\:ring-teal-500:focus-within {
+  border-color: rgb(20 184 166);
+  --tw-ring-color: rgb(20 184 166 / 0.5);
 }
 body.didi-theme .hover\:text-blue-400:hover,
-body.didi-theme .hover\:text-blue-500:hover {
-  color: rgb(192 132 252);
+body.didi-theme .hover\:text-blue-500:hover,
+body.didi-theme .hover\:text-teal-400:hover,
+body.didi-theme .hover\:text-teal-500:hover {
+  color: rgb(45 212 191);
 }
-body.didi-theme .hover\:bg-blue-700:hover {
-  background-color: rgb(126 34 206);
+body.didi-theme .hover\:bg-blue-700:hover,
+body.didi-theme .hover\:bg-teal-700:hover {
+  background-color: rgb(13 148 136);
 }
-body.didi-theme .hover\:border-blue-500\/50:hover {
-  border-color: rgb(168 85 247 / 0.5);
+body.didi-theme .hover\:border-blue-500\/50:hover,
+body.didi-theme .hover\:border-teal-500\/50:hover {
+  border-color: rgb(20 184 166 / 0.5);
 }
 body.didi-theme .dark .glass-effect.hover-box:hover,
 body.didi-theme.dark .glass-effect.hover-box:hover {
-  border-color: rgba(168, 85, 247, 0.55);
+  border-color: rgba(20, 184, 166, 0.55);
 }
 body.didi-theme .light .glass-effect.hover-box {
-  border-color: rgba(168, 85, 247, 0.5);
+  border-color: rgba(20, 184, 166, 0.5);
 }
 body.didi-theme .hover-box:hover {
-  box-shadow: 0 20px 40px rgba(168, 85, 247, 0.2);
+  box-shadow: 0 20px 40px rgba(20, 184, 166, 0.2);
 }
 body.didi-theme .hover-button:hover,
 body.didi-theme .hover-button.btn-primary:hover {
-  box-shadow: 0 0 28px rgba(168, 85, 247, 0.55), 0 0 40px rgba(168, 85, 247, 0.35);
+  box-shadow: 0 0 28px rgba(20, 184, 166, 0.45), 0 0 40px rgba(20, 184, 166, 0.25);
 }
 body.didi-theme .border-border {
-  border-color: rgba(168, 85, 247, 0.2);
+  border-color: rgba(20, 184, 166, 0.2);
 }
 
-/* Dark mode: listas desplegables (select) en morado, texto blanco */
+/* Dark mode: listas desplegables (select) en verde menta, texto blanco */
 .dark select,
 html.dark select {
-  background-color: rgba(88, 28, 135, 0.95);
+  background-color: rgba(19, 78, 74, 0.95);
   color: #fafafa;
-  border-color: rgba(168, 85, 247, 0.4);
+  border-color: rgba(20, 184, 166, 0.4);
 }
 .dark select option,
 html.dark select option {
-  background-color: rgb(59, 7, 100);
+  background-color: rgb(19, 78, 74);
   color: #fafafa;
 }
 .dark select:focus,
 html.dark select:focus {
-  border-color: rgba(168, 85, 247, 0.6);
+  border-color: rgba(20, 184, 166, 0.6);
   outline: none;
 }
 
@@ -374,10 +398,10 @@ html.dark select:focus {
   flex: 1;
   max-width: 80px;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(37, 99, 235, 0.4));
+  background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.5));
 }
 .didi-plan-content h1::after {
-  background: linear-gradient(90deg, rgba(37, 99, 235, 0.4), transparent);
+  background: linear-gradient(90deg, rgba(20, 184, 166, 0.5), transparent);
 }
 .didi-plan-content h2 {
   font-size: 1rem;
@@ -425,7 +449,7 @@ html.dark select:focus {
   content: "•";
   position: absolute;
   left: 0;
-  color: #2563eb;
+  color: #14b8a6;
   font-weight: bold;
 }
 .didi-plan-content table {
@@ -479,58 +503,58 @@ html.dark select:focus {
   border-top: 1px solid #e2e8f0;
 }
 .dark .didi-plan-content { color: #e2e8f0; }
-.dark .didi-plan-content h1 { color: #93c5fd; }
+.dark .didi-plan-content h1 { color: #5eead4; }
 .dark .didi-plan-content h1::before,
-.dark .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.35)); height: 1px; }
-.dark .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(96, 165, 250, 0.35), transparent); }
+.dark .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(94, 234, 212, 0.4)); height: 1px; }
+.dark .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(94, 234, 212, 0.4), transparent); }
 .dark .didi-plan-content h2 { color: #cbd5e1; border-bottom-color: rgba(255,255,255,0.12); }
 .dark .didi-plan-content p,
 .dark .didi-plan-content ul li { color: #94a3b8; }
-.dark .didi-plan-content strong { color: #93c5fd; }
-.dark .didi-plan-content th { background: #1e3a5f !important; border-color: #1e3a5f; }
+.dark .didi-plan-content strong { color: #5eead4; }
+.dark .didi-plan-content th { background: #0f766e !important; border-color: #0f766e; }
 .dark .didi-plan-content td { border-color: #334155; color: #cbd5e1; }
 .dark .didi-plan-content tr:nth-child(even) td { background: #1e293b; }
-.dark .didi-plan-content td:first-child { color: #93c5fd; background: #0f172a !important; }
+.dark .didi-plan-content td:first-child { color: #5eead4; background: #0f172a !important; }
 .dark .didi-plan-content p:last-of-type { color: #94a3b8; border-color: #334155; }
 
-/* Plan DIDI: tema morado en /didi */
-body.didi-theme .didi-plan-content h2 { border-color: rgba(124, 58, 237, 0.25); }
-body.didi-theme .didi-plan-content strong { color: #5b21b6; }
-body.didi-theme .didi-plan-content h1 { color: #5b21b6; }
+/* Plan DIDI: tema verde menta en /didi */
+body.didi-theme .didi-plan-content h2 { border-color: rgba(20, 184, 166, 0.3); }
+body.didi-theme .didi-plan-content strong { color: #0d9488; }
+body.didi-theme .didi-plan-content h1 { color: #0d9488; }
 body.didi-theme .didi-plan-content h1::before,
-body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)); height: 1px; }
-body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(124, 58, 237, 0.4), transparent); }
-body.didi-theme .didi-plan-content ul li::before { color: #7c3aed; }
-body.didi-theme .didi-plan-content th { background: #5b21b6 !important; border-color: #5b21b6; }
-body.didi-theme .didi-plan-content th:first-child { background: #6d28d9 !important; }
+body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.5)); height: 1px; }
+body.didi-theme .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(20, 184, 166, 0.5), transparent); }
+body.didi-theme .didi-plan-content ul li::before { color: #14b8a6; }
+body.didi-theme .didi-plan-content th { background: #0d9488 !important; border-color: #0d9488; }
+body.didi-theme .didi-plan-content th:first-child { background: #0f766e !important; }
 
-/* Footer "Avatar Legal AI" en morado solo en DIDI */
-body.didi-theme .footer-brand { color: #7c3aed !important; }
-body.didi-theme .footer-brand:hover { color: #8b5cf6 !important; }
-body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
+/* Footer VitalHealth en verde menta en DIDI */
+body.didi-theme .footer-brand { color: #14b8a6 !important; }
+body.didi-theme .footer-brand:hover { color: #2dd4bf !important; }
+body.didi-theme .didi-plan-content td:first-child { color: #14b8a6; }
 
-/* DIDI: forzar borde morado en el box del formulario de prellenado (nunca azul) */
+/* DIDI: forzar borde verde menta en el box del formulario */
 .didi-form-section.glass-effect.hover-box {
-  border-color: rgba(168, 85, 247, 0.4) !important;
+  border-color: rgba(20, 184, 166, 0.4) !important;
 }
 .didi-form-section.glass-effect.hover-box:hover {
-  border-color: rgba(168, 85, 247, 0.55) !important;
+  border-color: rgba(20, 184, 166, 0.55) !important;
 }
 
-/* DIDI: forzar borde morado en el box de la vista previa (nunca azul) */
+/* DIDI: forzar borde verde menta en el box de la vista previa */
 .didi-preview-section.glass-effect.hover-box,
 .didi-preview-section .glass-effect.hover-box {
-  border-color: rgba(168, 85, 247, 0.4) !important;
+  border-color: rgba(20, 184, 166, 0.4) !important;
 }
 .didi-preview-section.glass-effect.hover-box:hover,
 .didi-preview-section .glass-effect.hover-box:hover {
-  border-color: rgba(168, 85, 247, 0.55) !important;
+  border-color: rgba(20, 184, 166, 0.55) !important;
 }
 .didi-preview-section .didi-preview-pdf-style {
-  border-color: rgba(168, 85, 247, 0.3) !important;
+  border-color: rgba(20, 184, 166, 0.3) !important;
 }
 .didi-preview-section .didi-preview-pdf-style:hover {
-  border-color: rgba(168, 85, 247, 0.5) !important;
+  border-color: rgba(20, 184, 166, 0.5) !important;
 }
 
 /* Vista previa del plan: SIEMPRE fondo blanco y letras negras (anula dark mode y prose) */
@@ -561,13 +585,13 @@ body.didi-theme .didi-plan-content td:first-child { color: #7c3aed; }
 }
 .didi-preview-pdf-style .didi-plan-content h1 { color: #1e3a5f !important; }
 .didi-preview-pdf-style .didi-plan-content h1::before,
-.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.4)) !important; }
-.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(124, 58, 237, 0.4), transparent) !important; }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.5)) !important; }
+.didi-preview-pdf-style .didi-plan-content h1::after { background: linear-gradient(90deg, rgba(20, 184, 166, 0.5), transparent) !important; }
 .didi-preview-pdf-style .didi-plan-content h2 { color: #334155 !important; border-bottom-color: rgba(0, 0, 0, 0.08) !important; }
 .didi-preview-pdf-style .didi-plan-content p,
 .didi-preview-pdf-style .didi-plan-content ul li { color: #475569 !important; }
 .didi-preview-pdf-style .didi-plan-content strong { color: #1e3a5f !important; }
-.didi-preview-pdf-style .didi-plan-content ul li::before { color: #7c3aed !important; }
+.didi-preview-pdf-style .didi-plan-content ul li::before { color: #14b8a6 !important; }
 .didi-preview-pdf-style .didi-plan-content th { background: #1e3a5f !important; color: white !important; border-color: #1e3a5f !important; }
 .didi-preview-pdf-style .didi-plan-content td { border-color: #e2e8f0 !important; color: #334155 !important; }
 .didi-preview-pdf-style .didi-plan-content tr:nth-child(even) td { background: #f8fafc !important; }

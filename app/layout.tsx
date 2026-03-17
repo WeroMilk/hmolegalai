@@ -8,9 +8,9 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://didi-vitahealth.verc
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "VitaHealth | Nutrición y Suplementos",
-  description: "Planes de alimentación personalizados y suplementos VitaHealth VITALAGE. Nutrióloga titulada. Salud integral y bienestar.",
-  keywords: "nutrición, dieta personalizada, suplementos, VitaHealth, VITALAGE, colágeno, NAD, nutrióloga",
+  title: "VitalHealth | Didi Gallardo",
+  description: "Planes de alimentación personalizados y suplementos VitalHealth VITALAGE. Nutrióloga titulada. Salud integral y bienestar.",
+  keywords: "nutrición, dieta personalizada, suplementos, VitalHealth, VITALAGE, colágeno, NAD, nutrióloga, Didi Gallardo",
   icons: {
     icon: [
       { url: `${siteUrl}/favicon.ico`, sizes: "48x48", type: "image/x-icon" },
@@ -23,8 +23,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_MX",
     url: siteUrl,
-    siteName: "VitaHealth",
-    images: [{ url: `${siteUrl}/logo.png`, width: 512, height: 512, alt: "VitaHealth" }],
+    siteName: "VitalHealth | Didi Gallardo",
+    images: [{ url: `${siteUrl}/logo.png`, width: 512, height: 512, alt: "VitalHealth" }],
   },
   twitter: {
     card: "summary",
@@ -34,10 +34,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "VitaHealth",
+    title: "VitalHealth | Didi Gallardo",
   },
   other: {
-    "theme-color": "#0d9488",
+    "theme-color": "#5eead4",
   },
 };
 
@@ -504,10 +504,10 @@ export default function RootLayout({
       </head>
       <body className="antialiased bg-background text-foreground min-h-screen overflow-x-hidden overflow-y-auto">
         <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-blue-200/25 dark:to-blue-950/20" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)]" />
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse [animation-delay:1000ms]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background to-teal-200/25 dark:to-teal-950/20" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(94,234,212,0.12),transparent_50%)]" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-teal-400/20 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-teal-500/20 rounded-full blur-3xl animate-pulse [animation-delay:1000ms]" />
         </div>
         <div className="relative z-10">
           <Providers>

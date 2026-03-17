@@ -27,8 +27,8 @@ export function Navbar() {
             href="/"
             className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
           >
-            <Image src="/logo.png" alt="VitaHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
-            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitaHealth</div>
+            <Image src="/logo.png" alt="VitalHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
+            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitalHealth</div>
           </Link>
 
           <div className="hidden sm:flex items-center shrink-0 min-w-0">
