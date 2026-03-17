@@ -76,14 +76,14 @@ export default function TiendaPage() {
                         </div>
                       )}
                     </div>
-                    <div className="p-5 sm:p-6 flex flex-col flex-1">
-                      <h3 className="font-bold text-lg sm:text-xl text-foreground">
+                    <div className="p-5 sm:p-6 flex flex-col flex-1 min-h-0">
+                      <h3 className="font-bold text-lg sm:text-xl text-foreground shrink-0">
                         {fam.name}
                       </h3>
-                      <p className="text-sm text-muted mt-1">
+                      <p className="text-sm text-muted mt-1 flex-1 min-h-0">
                         {fam.shortDescription ?? fam.description ?? `${count} producto${count !== 1 ? "s" : ""}`}
                       </p>
-                      <span className="mt-5 inline-flex items-center justify-center w-full py-3 px-5 rounded-xl text-white font-semibold bg-gradient-to-b from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-sm">
+                      <span className="mt-4 shrink-0 inline-flex items-center justify-center w-full py-3 px-5 rounded-xl text-white font-semibold bg-gradient-to-b from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-sm">
                         Comprar ahora
                       </span>
                     </div>

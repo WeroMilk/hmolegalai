@@ -34,9 +34,20 @@ export async function POST(request: NextRequest) {
         });
         if (!res.ok) {
           const errText = await res.text();
-          console.error("Resend contact email failed:", errText);
+          console.error("Resend contact email failed:", res.status, errText);
+          let userMessage = "No se pudo enviar el correo. Intenta de nuevo más tarde.";
+          try {
+            const errJson = JSON.parse(errText);
+            if (errJson?.message && typeof errJson.message === "string") {
+              if (errJson.message.includes("domain") || errJson.message.includes("from")) {
+                userMessage = "Configuración de correo en revisión. Escribe directamente a lnhdianagallardo@gmail.com.";
+              }
+            }
+          } catch {
+            // keep default userMessage
+          }
           return NextResponse.json(
-            { error: "No se pudo enviar el correo. Intenta de nuevo más tarde." },
+            { error: userMessage },
             { status: 502 }
           );
         }

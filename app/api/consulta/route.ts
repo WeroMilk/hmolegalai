@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
         : parseInt(String(importanciaSuplementos ?? "0"), 10);
     const importanciaNum = Number.isNaN(importancia) ? 0 : Math.min(10, Math.max(0, importancia));
 
-    const consulta = {
+    const consulta: Record<string, unknown> = {
       nombre: nombreS,
       edad: edadN,
       telefono: telefonoS,
@@ -79,13 +79,14 @@ export async function POST(request: NextRequest) {
 
     if (!adminDb) {
       return NextResponse.json(
-        { error: "Base de datos no configurada. Revisa las variables de entorno de Firebase." },
+        { error: "Base de datos no configurada. Revisa las variables de entorno de Firebase (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, NEXT_PUBLIC_FIREBASE_PROJECT_ID)." },
         { status: 503 }
       );
     }
 
     const ref = await adminDb.collection("consultas").add(consulta);
 
+    // Notificación por email al admin (didi@dietas.com). También ve las consultas en /admin.
     const nutritionistEmail = process.env.NUTRITIONIST_EMAIL?.trim() || "didi@dietas.com";
     if (process.env.RESEND_API_KEY?.trim()) {
       try {
@@ -126,6 +127,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ id: ref.id, ok: true });
   } catch (error) {
     console.error("Error saving consulta:", error);
-    return NextResponse.json({ error: "Error al guardar la consulta." }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    const isFirebase = /firebase|permission|unavailable|deadline/i.test(msg);
+    return NextResponse.json(
+      {
+        error: isFirebase
+          ? "Error al conectar con la base de datos. Revisa las variables de Firebase en .env.local o Vercel."
+          : "Error al guardar la consulta. Intenta de nuevo.",
+      },
+      { status: 500 }
+    );
   }
 }

@@ -109,8 +109,19 @@ export default function ContactoPage() {
               </div>
             </div>
             {error && (
-              <div className="mt-4 p-3 bg-red-500/15 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm">
-                {error}
+              <div className="mt-4 space-y-2">
+                <div className="p-3 bg-red-500/15 border border-red-500/30 rounded-lg text-red-600 dark:text-red-400 text-sm">
+                  {error}
+                </div>
+                <p className="text-sm text-muted">
+                  O escribe directamente a{" "}
+                  <a
+                    href="mailto:lnhdianagallardo@gmail.com"
+                    className="text-teal-600 dark:text-teal-400 hover:underline font-medium"
+                  >
+                    lnhdianagallardo@gmail.com
+                  </a>
+                </p>
               </div>
             )}
             <Button
