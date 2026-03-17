@@ -6,7 +6,6 @@ import { I18nProvider } from "@/lib/i18n-context";
 import { FlagProvider } from "@/lib/flag-context";
 import { ScrollToTop } from "@/components/scroll-to-top";
 import { DidiThemeEffect } from "@/components/didi-theme-effect";
-import { WelcomePreview } from "@/components/welcome-preview";
 import { ProfileGuard } from "@/components/profile-guard";
 import { SuppressConsoleErrors } from "@/lib/suppress-console-errors";
 
@@ -20,7 +19,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
             <ProfileGuard>
               <ScrollToTop />
               <DidiThemeEffect />
-              <WelcomePreview />
               {children}
             </ProfileGuard>
           </AuthProvider>

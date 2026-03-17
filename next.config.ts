@@ -32,14 +32,6 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: "/comca'ac",
-        destination: "/comcaac",
-      },
-    ];
-  },
   // Mitiga ChunkLoadError (timeout al cargar chunks en dev)
   webpack: (config, { dev, isServer }) => {
     if (dev) {

@@ -1,22 +1,26 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /documents/{documentId} {
-      // El cliente (userId) puede leer y escribir sus documentos
-      // El abogado asignado (abogadoId) puede leer los documentos que le llegaron
-      allow read: if request.auth != null && (
-        request.auth.uid == resource.data.userId ||
-        request.auth.uid == resource.data.abogadoId
-      );
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && request.auth.uid == resource.data.userId;
-    }
+    // Perfil de usuario (nutrióloga y clientes)
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
-    match /abogado_citas/{citaId} {
-      allow read, update, delete: if request.auth != null && resource.data.abogadoId == request.auth.uid;
-      allow create: if request.auth != null && request.resource.data.abogadoId == request.auth.uid;
+    // Consultas del formulario: solo el backend (Admin SDK) crea; nutrióloga/admin lee
+    match /consultas/{consultaId} {
+      allow read: if request.auth != null;
+      allow create: if false;
+      allow update, delete: if request.auth != null;
+    }
+    // Órdenes de la tienda: creación desde API; lectura/actualización por admin
+    match /orders/{orderId} {
+      allow read: if request.auth != null;
+      allow create: if true;
+      allow update, delete: if request.auth != null;
+    }
+    // Productos (stock, etc.): solo backend o admin
+    match /products/{productId} {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
   }
 }

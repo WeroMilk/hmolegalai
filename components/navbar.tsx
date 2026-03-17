@@ -8,9 +8,8 @@ import { useI18n } from "@/lib/i18n-context";
 import { useFlag } from "@/lib/flag-context";
 import { useUserProfile } from "@/lib/use-user-profile";
 import { isDidiUser } from "@/lib/didi";
-import { isSuperUser } from "@/lib/superuser";
-import { User, LogOut, Menu, X, Sun, Moon, Languages } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+import { User, LogOut, Menu, X, Sun, Moon } from "lucide-react";
+import { useState } from "react";
 
 export function Navbar() {
   const { user, logout } = useAuth();
@@ -28,46 +27,29 @@ export function Navbar() {
             href="/"
             className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
           >
-            <Image src="/logo.png" alt="Avatar Legal AI" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
-            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">AVATAR</div>
-            <span className="text-xs xs:text-sm text-blue-500 font-medium hidden xs:inline shrink-0">{t("nav_legal_ai")}</span>
+            <Image src="/logo.png" alt="VitaHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
+            <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitaHealth</div>
           </Link>
 
           <div className="hidden sm:flex items-center shrink-0 min-w-0">
             <div className="flex items-center gap-1.5 md:gap-2 lg:gap-3">
-              {(isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved)) ? (
+              <Link href="/" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors" title={t("nav_home")}>
+                {t("nav_home")}
+              </Link>
+              <Link href="/consulta" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap">
+                {t("nav_consulta")}
+              </Link>
+              <Link href="/tienda" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
+                {t("nav_tienda")}
+              </Link>
+              {user && isDidiUser(user.email) && (
                 <>
-                  <Link href="/documentos" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_documents")}>
-                    {t("nav_documents")}
+                  <Link href="/didi" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-semibold text-muted transition-colors">
+                    {t("nav_didi")}
                   </Link>
-                  <Link
-                    href={isSuperUser(user?.email ?? "") ? "/admin/abogados" : "/abogado/dashboard"}
-                    className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors"
-                  >
-                    {t("nav_dashboard")}
+                  <Link href="/admin" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
+                    {t("nav_admin")}
                   </Link>
-                </>
-              ) : (
-                <>
-                  <Link href="/" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors" title={t("nav_home")}>
-                    {t("nav_home")}
-                  </Link>
-                  <Link href="/documentos" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_documents")}>
-                    {t("nav_documents")}
-                  </Link>
-                  <Link href="/comca'ac" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
-                    {t("nav_seri_link")}
-                  </Link>
-                  {user && isDidiUser(user.email) && (
-                    <Link href="/didi" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-semibold text-muted transition-colors">
-                      {t("nav_didi")}
-                    </Link>
-                  )}
-                  {user && (
-                    <Link href="/mis-documentos" className="i18n-nav-link navbar-link-hover shrink-0 max-w-[8rem] truncate px-1.5 py-2 text-sm font-medium text-muted transition-colors whitespace-nowrap" title={t("nav_my_documents")}>
-                      {t("nav_my_documents")}
-                    </Link>
-                  )}
                 </>
               )}
               {user && (
@@ -77,9 +59,9 @@ export function Navbar() {
               )}
             </div>
             <div className="flex items-center gap-2 pl-3 ml-4 border-l border-border shrink-0">
-            {user ? (
-              <>
-                <button
+              {user ? (
+                <>
+                  <button
                     type="button"
                     onClick={logout}
                     dir="ltr"
@@ -88,7 +70,6 @@ export function Navbar() {
                     <LogOut className="w-4 h-4" aria-hidden />
                     <span className="whitespace-nowrap">{t("nav_sign_out")}</span>
                   </button>
-                <div className="flex items-center gap-2 flex-shrink-0 justify-end">
                   <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
                     <button
                       type="button"
@@ -97,68 +78,6 @@ export function Navbar() {
                       aria-label={t("nav_aria_spanish")}
                     >
                       <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("seri"); setFlag("seri"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_seri")}
-                    >
-                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("en"); setFlag("us"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_english")}
-                    >
-                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                  </div>
-                  {user && (isSuperUser(user.email ?? "") || (profile?.role === "abogado" && profile?.approved) || isDidiUser(user.email ?? "")) && (
-                    <Link
-                      href="/traductor"
-                      className="flex items-center justify-center w-10 h-10 rounded-lg border border-border text-foreground hover:bg-card transition-colors shrink-0"
-                      aria-label="Traductor por voz"
-                    >
-                      <Languages className="w-5 h-5" />
-                    </Link>
-                  )}
-                  <button
-                    type="button"
-                    onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
-                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
-                    aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
-                  >
-                    {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <Link
-                  href="/auth"
-                  className="hover-button btn-primary i18n-nav-link min-w-[9.5rem] text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg glow-border text-white font-medium border-2 border-transparent"
-                >
-                  {t("nav_sign_in")}
-                </Link>
-                <div className="flex items-center gap-2 w-[10rem] flex-shrink-0 justify-end">
-                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("es"); setFlag("mx"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_spanish")}
-                    >
-                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("seri"); setFlag("seri"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_seri")}
-                    >
-                      <Image src="/flag-seri.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
                     </button>
                     <button
                       type="button"
@@ -177,24 +96,47 @@ export function Navbar() {
                   >
                     {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                   </button>
-                </div>
-              </>
-            )}
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/auth"
+                    className="hover-button btn-primary i18n-nav-link min-w-[9.5rem] text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg glow-border text-white font-medium border-2 border-transparent"
+                  >
+                    {t("nav_sign_in")}
+                  </Link>
+                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
+                    <button
+                      type="button"
+                      onClick={() => { setLocale("es"); setFlag("mx"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
+                      aria-label={t("nav_aria_spanish")}
+                    >
+                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setLocale("en"); setFlag("us"); }}
+                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
+                      aria-label={t("nav_aria_english")}
+                    >
+                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
+                    className="flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-lg border border-border text-foreground hover:bg-card transition-colors"
+                    aria-label={theme === "dark" ? t("nav_aria_light") : t("nav_aria_dark")}
+                  >
+                    {theme === "dark" ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
           <div className="flex items-center gap-2 sm:hidden">
-            {user && (isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved) || isDidiUser(user?.email ?? "")) && (
-              <Link
-                href="/traductor"
-                className="flex items-center justify-center min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-card transition-colors shrink-0"
-                aria-label="Traductor por voz"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <Languages className="w-5 h-5" />
-              </Link>
-            )}
-            {/* Botón de tema más grande en móvil */}
             <button
               type="button"
               onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
@@ -216,36 +158,23 @@ export function Navbar() {
 
         {mobileMenuOpen && (
           <div className="sm:hidden py-4 space-y-1 border-t border-border">
-            {(isSuperUser(user?.email ?? "") || (profile?.role === "abogado" && profile?.approved)) ? (
+            <Link href="/" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+              {t("nav_home")}
+            </Link>
+            <Link href="/consulta" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+              {t("nav_consulta")}
+            </Link>
+            <Link href="/tienda" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+              {t("nav_tienda")}
+            </Link>
+            {user && isDidiUser(user.email) && (
               <>
-                <Link href="/documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  {t("nav_documents")}
+                <Link href="/didi" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors font-semibold" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav_didi")}
                 </Link>
-                <Link href={isSuperUser(user?.email ?? "") ? "/admin/abogados" : "/abogado/dashboard"} className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  Dashboard
+                <Link href="/admin" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav_admin")}
                 </Link>
-              </>
-            ) : (
-              <>
-                <Link href="/" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  {t("nav_home")}
-                </Link>
-                <Link href="/documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  {t("nav_documents")}
-                </Link>
-                <Link href="/comca'ac" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                  comca&apos;ac
-                </Link>
-                {user && isDidiUser(user.email) && (
-                  <Link href="/didi" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors font-semibold" onClick={() => setMobileMenuOpen(false)}>
-                    DIDI
-                  </Link>
-                )}
-                {user && (
-                  <Link href="/mis-documentos" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-                    {t("nav_my_documents")}
-                  </Link>
-                )}
               </>
             )}
             {user && (
@@ -266,14 +195,6 @@ export function Navbar() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => { setLocale("seri"); setFlag("seri"); setMobileMenuOpen(false); }}
-                  className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "seri" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
-                  aria-label={t("nav_aria_seri")}
-                >
-                  <Image src="/flag-seri.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" style={{ width: "auto", height: "auto" }} />
-                </button>
-                <button
-                  type="button"
                   onClick={() => { setLocale("en"); setFlag("us"); setMobileMenuOpen(false); }}
                   className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
                   aria-label={t("nav_aria_english")}
@@ -283,18 +204,16 @@ export function Navbar() {
               </div>
             </div>
             {user ? (
-              <>
-                <button
-                  type="button"
-                  onClick={() => {
-                    logout();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full text-left py-3 px-4 min-h-[44px] flex items-center text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg active:bg-red-500/20 transition-colors"
-                >
-                  {t("nav_sign_out")}
-                </button>
-              </>
+              <button
+                type="button"
+                onClick={() => {
+                  logout();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full text-left py-3 px-4 min-h-[44px] flex items-center text-red-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg active:bg-red-500/20 transition-colors"
+              >
+                {t("nav_sign_out")}
+              </button>
             ) : (
               <Link
                 href="/auth"

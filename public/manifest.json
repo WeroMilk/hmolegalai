@@ -1,7 +1,7 @@
 {
-  "name": "Avatar Legal AI",
-  "short_name": "Avatar Legal AI",
-  "description": "Genera documentos legales profesionales con inteligencia artificial",
+  "name": "VitaHealth",
+  "short_name": "VitaHealth",
+  "description": "Planes de alimentación personalizados y suplementos VitaHealth. Nutrición y bienestar.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

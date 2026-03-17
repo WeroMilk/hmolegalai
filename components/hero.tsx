@@ -28,14 +28,14 @@ export function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-2 xs:gap-3 sm:gap-4 justify-center items-center mb-8 xs:mb-12 md:mb-16 px-2 xs:px-4">
             <Link
-              href="/como-funciona"
-              className="hover-button w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2.5 xs:py-3 sm:py-3.5 bg-white hover:bg-white/95 border border-border dark:border-transparent rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-blue-600 hover:text-blue-700 shadow-sm flex items-center justify-center"
+              href="/consulta"
+              className="hover-button btn-primary w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2.5 xs:py-3 sm:py-3.5 bg-teal-600 hover:bg-teal-700 rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-white border-2 border-transparent flex items-center justify-center"
             >
-              {t("home_how_it_works")}
+              {t("nav_consulta")}
             </Link>
             <Link
-              href="/documentos"
-              className="hover-button btn-primary w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2 xs:py-2.5 sm:py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm xs:text-base sm:text-lg font-semibold border-2 border-transparent text-center text-white flex items-center justify-center"
+              href="/tienda"
+              className="hover-button w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2 xs:py-2.5 sm:py-3 bg-white hover:bg-white/95 border border-border dark:border-transparent rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-teal-600 hover:text-teal-700 shadow-sm flex items-center justify-center"
             >
               {t("home_see_documents")}
             </Link>
@@ -48,7 +48,7 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
               className="group flex flex-col items-center text-center -mt-4 sm:mt-0"
             >
-              <div className="mb-5 text-foreground/50 group-hover:text-blue-500/80 transition-colors duration-300">
+              <div className="mb-5 text-foreground/50 group-hover:text-teal-500/80 transition-colors duration-300">
                 <Zap className="w-7 h-7 stroke-[1.5]" strokeWidth={1.5} />
               </div>
               <h3 className="text-base font-medium text-foreground tracking-tight mb-2">{t("home_fast")}</h3>
@@ -61,7 +61,7 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
               className="group flex flex-col items-center text-center sm:border-x border-black/30 dark:border-white/30 sm:px-8 md:px-12"
             >
-              <div className="mb-5 text-foreground/50 group-hover:text-blue-500/80 transition-colors duration-300">
+              <div className="mb-5 text-foreground/50 group-hover:text-teal-500/80 transition-colors duration-300">
                 <Shield className="w-7 h-7" strokeWidth={1.5} />
               </div>
               <h3 className="text-base font-medium text-foreground tracking-tight mb-2">{t("home_secure")}</h3>
@@ -74,7 +74,7 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="group flex flex-col items-center text-center mt-4 sm:mt-0"
             >
-              <div className="mb-5 text-foreground/50 group-hover:text-blue-500/80 transition-colors duration-300">
+              <div className="mb-5 text-foreground/50 group-hover:text-teal-500/80 transition-colors duration-300">
                 <Sparkles className="w-7 h-7" strokeWidth={1.5} />
               </div>
               <h3 className="text-base font-medium text-foreground tracking-tight mb-2">{t("home_smart")}</h3>

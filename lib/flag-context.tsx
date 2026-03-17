@@ -2,9 +2,9 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-export type FlagChoice = "seri" | "mx" | "us" | null;
+export type FlagChoice = "mx" | "us" | null;
 
-const FLAG_STORAGE = "avatar_flag_choice";
+const FLAG_STORAGE = "vitahealth_flag";
 
 interface FlagContextType {
   flag: FlagChoice;
@@ -22,7 +22,7 @@ export function FlagProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem(FLAG_STORAGE) as FlagChoice | null;
-    if (stored === "seri" || stored === "mx" || stored === "us") {
+    if (stored === "mx" || stored === "us") {
       setFlagState(stored);
     }
   }, []);

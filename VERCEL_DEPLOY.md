@@ -52,6 +52,20 @@ Para habilitar **inicio de sesión con Google** en producción:
 | `NEXT_PUBLIC_FIREBASE_APP_ID` | (tu appId) | Production, Preview |
 | `NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID` | (opcional, para Analytics) | Production, Preview |
 
+**Proyecto actual (avatarlegalai-cce7a)** — Valores para copiar en Vercel:
+
+| Variable | Valor |
+|----------|-------|
+| `NEXT_PUBLIC_FIREBASE_ENABLED` | `true` |
+| `NEXT_PUBLIC_FIREBASE_API_KEY` | `AIzaSyAGIEr2ik4XZOD7s26yfKDZhic6DMTgjz8` |
+| `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN` | `avatarlegalai-cce7a.firebaseapp.com` |
+| `NEXT_PUBLIC_FIREBASE_PROJECT_ID` | `avatarlegalai-cce7a` |
+| `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET` | `avatarlegalai-cce7a.firebasestorage.app` |
+| `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` | `492493150601` |
+| `NEXT_PUBLIC_FIREBASE_APP_ID` | `1:492493150601:web:8ceadd1b5228bd66c56958` |
+
+Tras cambiar de proyecto Firebase, genera una **nueva cuenta de servicio** en [Firebase Console](https://console.firebase.google.com/) → proyecto **avatarlegalai-cce7a** → Configuración → Cuentas de servicio → Generar nueva clave privada, y actualiza en Vercel `FIREBASE_CLIENT_EMAIL` y `FIREBASE_PRIVATE_KEY` con ese JSON.
+
 ---
 
 ## 4. Checklist producción (avatarlegalai.com.mx)

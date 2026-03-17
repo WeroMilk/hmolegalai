@@ -71,13 +71,8 @@ function AuthPageContent() {
       return;
     }
 
-    if (!isLogin && !role) {
-      setError("Selecciona si eres Cliente o Abogado. Esta elección no podrá cambiarse.");
-      return;
-    }
-    if (!isLogin && role === "abogado" && !nombreCompleto.trim()) {
-      setError("Ingresa tu nombre completo.");
-      return;
+    if (!isLogin) {
+      // Sign up: role is always cliente
     }
 
     setLoading(true);
@@ -94,7 +89,7 @@ function AuthPageContent() {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              role: isDidiUser(email) ? "cliente" : "abogado",
+              role: "cliente",
               ...(isSuperUser(email) && {
                 nombreCompleto: "Lic. Roberto Mendoza García",
                 nombreDespacho: "Bufete Jurídico Mendoza & Asociados",
@@ -104,7 +99,7 @@ function AuthPageContent() {
             }),
           });
         }
-        const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
+        const target = returnTo && returnTo.startsWith("/") ? returnTo : "/";
         router.replace(target);
       } else {
         await signUp(email, password);
@@ -118,11 +113,8 @@ function AuthPageContent() {
               Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-              role,
-              nombreCompleto: role === "abogado" ? nombreCompleto.trim() : undefined,
-              nombreDespacho: role === "abogado" ? nombreDespacho.trim() || undefined : undefined,
-              direccionDespacho: role === "abogado" ? direccionDespacho.trim() || undefined : undefined,
-              telefonoDespacho: role === "abogado" ? telefonoDespacho.trim() || undefined : undefined,
+              role: "cliente",
+              nombreCompleto: nombreCompleto.trim() || undefined,
             }),
           });
           if (!profileRes.ok) {
@@ -130,7 +122,7 @@ function AuthPageContent() {
             throw new Error(data?.error || "Error al guardar perfil");
           }
         }
-        const target = role === "abogado" ? "/abogado/dashboard" : (returnTo && returnTo.startsWith("/") ? returnTo : "/documentos");
+        const target = returnTo && returnTo.startsWith("/") ? returnTo : "/";
         router.push(target);
       }
     } catch (err: any) {
@@ -156,7 +148,7 @@ function AuthPageContent() {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            role: isDidiUser(userEmail) ? "cliente" : "abogado",
+            role: "cliente",
             ...(isSuperUser(userEmail) && {
               nombreCompleto: "Lic. Roberto Mendoza García",
               nombreDespacho: "Bufete Jurídico Mendoza & Asociados",
@@ -166,7 +158,7 @@ function AuthPageContent() {
           }),
         });
       }
-      const target = returnTo && returnTo.startsWith("/") ? returnTo : "/documentos";
+      const target = returnTo && returnTo.startsWith("/") ? returnTo : "/";
       router.replace(target);
     } catch (err: any) {
       setError(friendlyAuthError(err.message || "", t("auth_error_google")));

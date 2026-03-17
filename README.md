@@ -1,71 +1,56 @@
-# Avatar Legal AI - Generador de Documentos Legales con IA
+# VitaHealth — Nutrición y Suplementos
 
-Plataforma moderna y futurista para generar documentos legales utilizando inteligencia artificial.
+Sitio web para nutrióloga: planes de alimentación personalizados (formulario de consulta + DIDI con OpenAI) y tienda de suplementos VitaHealth (Stripe). Next.js 15, Firebase, Stripe.
 
-> Repo: [WeroMilk/hmolegalai](https://github.com/WeroMilk/hmolegalai) · Última actualización: fix Vercel build + Node engine.
+## Stack
 
-## 🚀 Tecnologías
+- **Next.js 15** (App Router), **React 19**, **TypeScript**
+- **Firebase** (Auth, Firestore)
+- **Stripe** (Checkout: compra única y suscripción)
+- **OpenAI** (generación de planes nutricionales)
+- **Tailwind CSS**, **Framer Motion**
 
-- **Next.js 15** - Framework React con App Router
-- **React 19** - Biblioteca UI
-- **TypeScript** - Type safety
-- **Firebase** - Backend (Firestore, Auth, Storage)
-- **OpenAI** - Generación de documentos con IA
-- **Stripe** - Sistema de pagos
-- **Tailwind CSS** - Estilos modernos
-- **Framer Motion** - Animaciones fluidas
-
-## 📦 Instalación
+## Instalación
 
 ```bash
 npm install
 ```
 
-## 🔧 Configuración
+## Configuración
 
-1. Crea un archivo `.env.local` con las siguientes variables:
+1. Copia `.env.example` a `.env.local`.
+2. Completa las variables con tus valores (sin commitear `.env.local` ni claves reales al repositorio).
 
-```env
-NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_auth_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_storage_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=tu_stripe_key
-STRIPE_SECRET_KEY=tu_stripe_secret
-OPENAI_API_KEY=tu_openai_key
-```
+Variables principales:
 
-2. Ejecuta el servidor de desarrollo:
+- **Firebase:** `NEXT_PUBLIC_FIREBASE_*` y `FIREBASE_CLIENT_EMAIL` / `FIREBASE_PRIVATE_KEY` (Admin).
+- **Stripe:** `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, y opcionalmente `STRIPE_WEBHOOK_SECRET` para el webhook.
+- **OpenAI:** `OPENAI_API_KEY` (para DIDI).
+- **Opcional:** `NUTRITIONIST_EMAIL`, `RESEND_API_KEY` (notificación por email al recibir consulta); `NEXT_PUBLIC_WHATSAPP_NUMBER`, `NEXT_PUBLIC_WHATSAPP_MESSAGE` (botón flotante WhatsApp).
+
+3. Ejecuta:
 
 ```bash
 npm run dev
 ```
 
-## 📤 Subir a GitHub
+## Seguridad
 
-Repositorio: **[WeroMilk/hmolegalai](https://github.com/WeroMilk/hmolegalai)**
+- **No subas** `.env`, `.env.local` ni archivos con claves reales a GitHub.
+- En Vercel (o tu hosting), configura las variables de entorno en el panel del proyecto.
+- El `.env.example` contiene solo placeholders; úsalo como referencia, no con datos sensibles.
+- Firestore y APIs de admin están protegidos por verificación de token (nutrióloga DIDI).
 
-En la carpeta del proyecto, ejecuta en PowerShell:
+## Rutas principales
 
-```powershell
-.\push-to-github.ps1
-```
+- `/` — Landing
+- `/consulta` — Formulario de solicitud de plan (público)
+- `/tienda` — Catálogo de suplementos
+- `/tienda/[slug]` — Ficha de producto y checkout
+- `/didi` — Herramienta interna de la nutrióloga (generar planes con OpenAI)
+- `/admin` — Panel para ver consultas y órdenes (solo nutrióloga)
+- `/auth` — Inicio de sesión
 
-(Requiere [Git](https://git-scm.com/download/win) instalado. Si no usas SSH con GitHub, edita `push-to-github.ps1` y cambia `$repoUrl` por `$httpsUrl`.)
+## Deploy (Vercel)
 
-O manualmente:
-
-```bash
-git init
-git add .
-git commit -m "Initial commit: Avatar Legal AI"
-git remote add origin https://github.com/WeroMilk/hmolegalai.git
-git branch -M main
-git push -u origin main
-```
-
-## 🚢 Deploy
-
-El proyecto está configurado para deploy automático en Vercel conectado a GitHub.
+Conecta el repositorio a Vercel y configura las variables de entorno. Para el webhook de Stripe, usa la URL `https://tu-dominio.com/api/webhooks/stripe` y el signing secret en `STRIPE_WEBHOOK_SECRET`.

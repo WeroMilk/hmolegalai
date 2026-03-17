@@ -172,7 +172,7 @@ export default function DidiPage() {
       return;
     }
     if (!isDidiUser(user.email)) {
-      router.replace("/documentos");
+      router.replace("/");
       return;
     }
   }, [user, authLoading, router]);

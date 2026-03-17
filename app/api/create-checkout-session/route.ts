@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyIdToken } from "@/lib/auth-server";
+import { verifyIdToken, adminDb } from "@/lib/auth-server";
+import { getProductById } from "@/lib/products";
 
-/** Inicializa Stripe solo en runtime (dynamic import) para no fallar el build cuando faltan env vars. */
 async function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key || key === "") return null;
@@ -12,61 +12,114 @@ async function getStripe() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { documentId, price, saveToAccount, idToken: bodyToken } = body;
+    const { items, successUrl: bodySuccessUrl, cancelUrl: bodyCancelUrl, documentId, price, saveToAccount, idToken: bodyToken } = body;
 
-    const authHeader = request.headers.get("authorization");
-    const headerToken = authHeader?.replace("Bearer ", "").trim();
-    const token = headerToken || (typeof bodyToken === "string" ? bodyToken.trim() : "");
-    const isDemoSuperuser = token === "demo-superuser";
+    const origin = request.headers.get("origin") || "";
     let userId: string | undefined;
 
-    if (token) {
-      if (isDemoSuperuser) {
+    if (bodyToken || request.headers.get("authorization")) {
+      const authHeader = request.headers.get("authorization");
+      const headerToken = authHeader?.replace("Bearer ", "").trim();
+      const token = headerToken || (typeof bodyToken === "string" ? bodyToken.trim() : "");
+      if (token === "demo-superuser") {
         userId = "demo-superuser";
-      } else {
+      } else if (token) {
         try {
           const decoded = await verifyIdToken(token);
           userId = decoded.uid;
-        } catch (err: any) {
-          const msg = err?.message ?? "";
-          console.error("Checkout auth failed:", msg, err);
-          if (msg.includes("no está configurado") || msg.includes("not configured")) {
-            return NextResponse.json(
-              { error: "Error del servidor: Firebase Admin no configurado. Revisa las variables de entorno en Vercel (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL)." },
-              { status: 503 }
-            );
+        } catch {
+          // guest checkout allowed when using items (tienda)
+          if (!items?.length) {
+            return NextResponse.json({ error: "Debes iniciar sesión para realizar el pago." }, { status: 401 });
           }
-          return NextResponse.json(
-            { error: "Debes iniciar sesión para realizar el pago." },
-            { status: 401 }
-          );
         }
       }
     }
 
-    if (!userId) {
-      return NextResponse.json(
-        { error: "Debes iniciar sesión para realizar el pago." },
-        { status: 401 }
-      );
-    }
-
     const stripe = await getStripe();
     if (!stripe) {
-      return NextResponse.json(
-        { error: "Stripe no configurado. Configura STRIPE_SECRET_KEY en Vercel." },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "Stripe no configurado. Configura STRIPE_SECRET_KEY en Vercel." }, { status: 500 });
+    }
+
+    if (items?.length) {
+      const successUrl = bodySuccessUrl || `${origin}/tienda/success?session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = bodyCancelUrl || `${origin}/tienda`;
+      const isSubscription = items.some((i: { isSubscription?: boolean }) => i.isSubscription);
+      const lineItems: { price_data: any; quantity: number }[] = [];
+
+      for (const item of items) {
+        const product = getProductById(item.productId);
+        if (!product) {
+          return NextResponse.json({ error: `Producto no encontrado: ${item.productId}` }, { status: 400 });
+        }
+        const qty = Math.min(10, Math.max(1, Number(item.quantity) || 1));
+        if (isSubscription && item.isSubscription) {
+          lineItems.push({
+            price_data: {
+              currency: "mxn",
+              product_data: {
+                name: product.name,
+                description: product.description,
+                images: product.image ? [product.image.startsWith("http") ? product.image : `${origin}${product.image}`] : undefined,
+              },
+              unit_amount: product.priceSubscription,
+              recurring: { interval: "month" },
+            },
+            quantity: qty,
+          });
+        } else {
+          lineItems.push({
+            price_data: {
+              currency: "mxn",
+              product_data: {
+                name: product.name,
+                description: product.description,
+                images: product.image ? [product.image.startsWith("http") ? product.image : `${origin}${product.image}`] : undefined,
+              },
+              unit_amount: product.priceOneTime,
+            },
+            quantity: qty,
+          });
+        }
+      }
+
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        line_items: lineItems,
+        mode: isSubscription ? "subscription" : "payment",
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          type: "tienda",
+          userId: userId || "",
+          items: JSON.stringify(items),
+        },
+      });
+
+      if (adminDb && session.id) {
+        await adminDb.collection("orders").doc(session.id).set({
+          stripeSessionId: session.id,
+          status: "pending",
+          userId: userId || null,
+          items,
+          createdAt: new Date(),
+        });
+      }
+
+      return NextResponse.json({ sessionId: session.id, url: session.url });
     }
 
     if (!documentId || typeof price !== "number" || price < 1) {
       return NextResponse.json(
-        { error: "documentId y price requeridos (price en centavos)" },
+        { error: "Envía items (productId, quantity, isSubscription) o documentId y price." },
         { status: 400 }
       );
     }
 
-    const origin = request.headers.get("origin") || "";
+    if (!userId) {
+      return NextResponse.json({ error: "Debes iniciar sesión para realizar el pago." }, { status: 401 });
+    }
+
     const successBase = `${origin}/documentos/${documentId}/success?session_id={CHECKOUT_SESSION_ID}`;
     const successUrl = saveToAccount ? `${successBase}&save=1` : successBase;
 
@@ -78,11 +131,9 @@ export async function POST(request: NextRequest) {
             currency: "mxn",
             product_data: {
               name: `Documento Legal: ${documentId}`,
-              description: saveToAccount
-                ? "Generación de documento legal con IA + guardado permanente en Mi cuenta"
-                : "Generación de documento legal con IA",
+              description: saveToAccount ? "Generación de documento legal con IA + guardado en Mi cuenta" : "Generación de documento legal con IA",
             },
-            unit_amount: price, // cliente envía centavos
+            unit_amount: price,
           },
           quantity: 1,
         },
@@ -100,9 +151,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error: any) {
     console.error("Error creating checkout session:", error);
-    return NextResponse.json(
-      { error: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

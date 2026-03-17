@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { type Locale, type TranslationKey, t as translate } from "./translations";
 
-const LANG_STORAGE = "avatar_lang";
+const LANG_STORAGE = "vitahealth_lang";
 
 interface I18nContextType {
   locale: Locale;
@@ -21,7 +21,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     setMounted(true);
     if (typeof window === "undefined") return;
     const stored = localStorage.getItem(LANG_STORAGE) as Locale | null;
-    if (stored === "es" || stored === "en" || stored === "seri") setLocaleState(stored);
+    if (stored === "es" || stored === "en") setLocaleState(stored);
   }, []);
 
   useEffect(() => {

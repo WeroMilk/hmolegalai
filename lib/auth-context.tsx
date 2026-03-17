@@ -17,7 +17,7 @@ import { auth } from "./firebase";
 import { SUPERUSER_EMAIL, SUPERUSER_PASSWORD } from "./superuser";
 import { DEMO_AUTO_CREATE } from "./demo-users";
 
-const DEMO_USER_STORAGE = "avatar_demo_superuser";
+const DEMO_USER_STORAGE = "vitahealth_demo_superuser";
 
 /** Mensajes amigables para errores de Firebase Auth (evitar "auth/invalid-credential" etc.) */
 function getFriendlyAuthMessage(code: string, fallback: string): string {

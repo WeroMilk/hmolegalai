@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Footer } from "@/components/footer";
+import { WhatsAppFloat } from "@/components/whatsapp-float";
 
-const siteUrl = "https://www.avatarlegalai.com.mx";
+const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://didi-vitahealth.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Avatar Legal AI",
-  description: "Avatar Legal AI — Genera documentos legales profesionales utilizando inteligencia artificial",
-  keywords: "documentos legales, IA, inteligencia artificial, contratos, documentos, Avatar Legal AI",
+  title: "VitaHealth | Nutrición y Suplementos",
+  description: "Planes de alimentación personalizados y suplementos VitaHealth VITALAGE. Nutrióloga titulada. Salud integral y bienestar.",
+  keywords: "nutrición, dieta personalizada, suplementos, VitaHealth, VITALAGE, colágeno, NAD, nutrióloga",
   icons: {
     icon: [
       { url: `${siteUrl}/favicon.ico`, sizes: "48x48", type: "image/x-icon" },
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_MX",
     url: siteUrl,
-    siteName: "Avatar Legal AI",
-    images: [{ url: `${siteUrl}/logo.png`, width: 512, height: 512, alt: "Avatar Legal AI" }],
+    siteName: "VitaHealth",
+    images: [{ url: `${siteUrl}/logo.png`, width: 512, height: 512, alt: "VitaHealth" }],
   },
   twitter: {
     card: "summary",
@@ -33,10 +34,10 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "Avatar Legal AI",
+    title: "VitaHealth",
   },
   other: {
-    "theme-color": "#2563eb",
+    "theme-color": "#0d9488",
   },
 };
 
@@ -512,6 +513,7 @@ export default function RootLayout({
           <Providers>
             {children}
             <Footer />
+            <WhatsAppFloat />
           </Providers>
         </div>
       </body>
