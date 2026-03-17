@@ -88,12 +88,12 @@ export default function ProductPage() {
           className="glass-effect p-6 sm:p-8 rounded-xl border border-teal-500/40"
         >
           <div className="flex flex-col sm:flex-row gap-6">
-            <div className="aspect-square relative w-full sm:w-64 h-64 sm:flex-shrink-0 rounded-lg overflow-hidden bg-muted">
+            <div className="relative w-full sm:w-64 h-[280px] sm:h-64 sm:flex-shrink-0 rounded-lg overflow-hidden bg-white dark:bg-white/95 border border-gray-200 dark:border-white/20 flex items-center justify-center">
               <Image
                 src={product.image}
                 alt={product.name}
                 fill
-                className="object-cover"
+                className="object-contain p-4 sm:p-5"
                 sizes="(max-width: 640px) 100vw, 256px"
               />
             </div>

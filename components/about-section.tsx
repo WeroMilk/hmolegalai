@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useI18n } from "@/lib/i18n-context";
 import { motion } from "framer-motion";
 import { Mail, Shield, CreditCard } from "lucide-react";
@@ -23,6 +24,18 @@ export function AboutSection() {
           <p className="text-sm xs:text-base sm:text-xl text-muted max-w-2xl mx-auto mt-2 mb-0">
             {t("about_subtitle")}
           </p>
+          <div className="flex justify-center mt-6 mb-2">
+            <div className="relative w-28 h-28 xs:w-32 xs:h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-teal-500/30 shadow-lg ring-2 ring-teal-500/20 flex-shrink-0">
+              <Image
+                src="/diana-perfil.png"
+                alt="L.N.H. Diana Gallardo - Nutrióloga"
+                fill
+                className="object-cover object-top"
+                sizes="(max-width: 480px) 112px, (max-width: 640px) 128px, 144px"
+                priority
+              />
+            </div>
+          </div>
         </motion.div>
 
         <motion.div

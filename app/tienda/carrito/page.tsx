@@ -120,12 +120,12 @@ export default function CarritoPage() {
                 layout
                 className="flex gap-4 p-4 rounded-2xl bg-white dark:bg-card border border-border shadow-sm"
               >
-                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-white dark:bg-white/10 border border-gray-200/50 flex-shrink-0">
                   <Image
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-cover"
+                    className="object-contain p-0.5"
                     sizes="80px"
                   />
                 </div>

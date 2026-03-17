@@ -60,7 +60,7 @@ export default function TiendaPage() {
                   className="rounded-2xl bg-white dark:bg-card border border-gray-200 dark:border-border shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col text-center"
                 >
                   <Link href={`/tienda/familia/${fam.id}`} className="group flex flex-col flex-1">
-                    <div className="relative aspect-[4/3] bg-gray-50 dark:bg-white/5 flex items-center justify-center p-4 sm:p-6">
+                    <div className="relative aspect-[4/3] bg-white dark:bg-white/10 border border-gray-200/50 dark:border-white/10 flex items-center justify-center p-4 sm:p-6">
                       {hasImage ? (
                         <Image
                           src={fam.image!}
