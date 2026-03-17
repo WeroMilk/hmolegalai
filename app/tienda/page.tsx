@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { PRODUCT_FAMILIES, getProductsByFamily } from "@/lib/products";
 import { motion } from "framer-motion";
-import { Truck, Package } from "lucide-react";
+import { Truck, Package, ChevronRight } from "lucide-react";
 
 /** Solo las 4 familias con imagen para la portada principal. */
 const FAMILIAS_PORTADA: (typeof PRODUCT_FAMILIES)[0]["id"][] = ["awaken", "detox", "nutrir", "restaurar"];

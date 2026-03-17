@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyIdToken, adminDb } from "@/lib/auth-server";
 import { getProductById } from "@/lib/products";
+import type Stripe from "stripe";
 
 async function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
@@ -63,8 +64,14 @@ export async function POST(request: NextRequest) {
     if (items.length > 0) {
       const successUrl = bodySuccessUrl || `${origin}/tienda/success?session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = bodyCancelUrl || `${origin}/tienda`;
-      const isSubscription = items.some((i: unknown) => typeof i === "object" && i !== null && "isSubscription" in i && (i as { isSubscription?: boolean }).isSubscription);
-      const lineItems: { price_data: { currency: string; product_data: { name: string; description: string; images?: string[] }; unit_amount: number; recurring?: { interval: string } }; quantity: number }[] = [];
+      const isSubscription = items.some(
+        (i: unknown) =>
+          typeof i === "object" &&
+          i !== null &&
+          "isSubscription" in i &&
+          (i as { isSubscription?: boolean }).isSubscription
+      );
+      const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
 
       for (const item of items) {
         const productId = typeof item === "object" && item !== null && "productId" in item ? String((item as { productId: unknown }).productId) : "";
@@ -74,7 +81,11 @@ export async function POST(request: NextRequest) {
         }
         const rawQty = typeof item === "object" && item !== null && "quantity" in item ? (item as { quantity?: unknown }).quantity : 1;
         const qty = Math.min(10, Math.max(1, Number(rawQty) || 1));
-        const itemIsSubscription = typeof item === "object" && item !== null && "isSubscription" in item && (item as { isSubscription?: boolean }).isSubscription;
+        const itemIsSubscription =
+          typeof item === "object" &&
+          item !== null &&
+          "isSubscription" in item &&
+          (item as { isSubscription?: boolean }).isSubscription;
         if (isSubscription && itemIsSubscription) {
           lineItems.push({
             price_data: {
@@ -85,7 +96,7 @@ export async function POST(request: NextRequest) {
                 images: product.image ? [product.image.startsWith("http") ? product.image : `${origin}${product.image}`] : undefined,
               },
               unit_amount: product.priceSubscription,
-              recurring: { interval: "month" },
+              recurring: { interval: "month" } as Stripe.Checkout.SessionCreateParams.LineItem.PriceData.Recurring,
             },
             quantity: qty,
           });
@@ -106,7 +117,6 @@ export async function POST(request: NextRequest) {
       }
 
       const session = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
         line_items: lineItems,
         mode: isSubscription ? "subscription" : "payment",
         success_url: successUrl,
