@@ -5,7 +5,8 @@ import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
-import { getProductById } from "@/lib/products";
+import { useAuth } from "@/lib/auth-context";
+import { getProductById, PLAN_DIETA_IDS } from "@/lib/products";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { ArrowLeft, ShoppingCart, Trash2, Minus, Plus } from "lucide-react";
@@ -15,6 +16,7 @@ function formatPrice(centavos: number): string {
 }
 
 export default function CarritoPage() {
+  const { user } = useAuth();
   const { items, removeItem, updateQuantity, totalItems, totalPriceCentavos } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -24,18 +26,31 @@ export default function CarritoPage() {
     setError("");
     setLoading(true);
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const token = user ? await user.getIdToken().catch(() => null) : null;
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const planItem = items.find((i) => i.consultaId && (i.productId === PLAN_DIETA_IDS.semanal || i.productId === PLAN_DIETA_IDS.quincenal || i.productId === PLAN_DIETA_IDS.mensual));
+      const consultaId = planItem?.consultaId;
+      const planDieta = planItem
+        ? (planItem.productId === PLAN_DIETA_IDS.semanal ? "semanal" : planItem.productId === PLAN_DIETA_IDS.quincenal ? "quincenal" : "mensual")
+        : undefined;
+      const body: Record<string, unknown> = {
+        items: items.map((i) => ({
+          productId: i.productId,
+          quantity: i.quantity,
+          isSubscription: i.isSubscription ?? false,
+        })),
+        successUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/tienda/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/tienda/carrito`,
+      };
+      if (consultaId) {
+        body.consultaId = consultaId;
+        if (planDieta) body.planDieta = planDieta;
+      }
       const res = await fetch("/api/create-checkout-session", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({
-            productId: i.productId,
-            quantity: i.quantity,
-            isSubscription: i.isSubscription ?? false,
-          })),
-          successUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/tienda/success?session_id={CHECKOUT_SESSION_ID}`,
-          cancelUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/tienda/carrito`,
-        }),
+        headers,
+        body: JSON.stringify(body),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Error al crear la sesión de pago");

@@ -39,13 +39,11 @@ export default function FamiliaPage() {
     );
   }
 
-  const familyWithImage = PRODUCT_FAMILIES.find((f) => f.id === family.id);
-
   return (
     <div className="min-h-screen text-foreground bg-[#fafafa] dark:bg-background">
       <Navbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-12">
-        <div className="sticky top-14 sm:top-16 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 pt-2 pb-3 mb-4 bg-[#fafafa] dark:bg-background border-b border-gray-200/50 dark:border-border">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-16 pb-12">
+        <div className="sticky top-14 sm:top-16 z-10 -mx-4 px-4 sm:-mx-6 sm:px-6 pt-4 pb-3 mb-4 bg-[#fafafa] dark:bg-background border-b border-gray-200/50 dark:border-border">
           <Link
             href="/tienda"
             className="inline-flex items-center gap-2 text-sm font-medium text-foreground bg-white dark:bg-card border border-border hover:border-teal-500 hover:bg-teal-500/5 hover:text-teal-600 dark:hover:text-teal-400 mb-6 px-4 py-2.5 rounded-full shadow-sm transition-colors w-fit"
@@ -55,30 +53,12 @@ export default function FamiliaPage() {
           </Link>
         </div>
 
-        {familyWithImage?.image ? (
-          <div className="relative rounded-2xl overflow-hidden aspect-[21/9] min-h-[180px] max-h-[280px] mb-8 bg-gray-100 dark:bg-white/5">
-            <Image
-              src={familyWithImage.image}
-              alt={family.name}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 1280px"
-              priority
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
-              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{family.name}</h1>
-              <p className="text-white/90 mt-1 max-w-2xl">
-                {family.description ?? `${products.length} productos`}
-              </p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{family.name}</h1>
-            <p className="text-muted mb-8">{family.description ?? `${products.length} productos`}</p>
-          </>
-        )}
+        <div className="rounded-2xl bg-white dark:bg-card border border-gray-200 dark:border-border p-6 sm:p-8 mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{family.name}</h1>
+          <p className="text-muted max-w-2xl">
+            {family.description ?? `${products.length} productos`}
+          </p>
+        </div>
 
         <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product: Product, i: number) => (

@@ -7,7 +7,7 @@ async function getStripe() {
   const key = process.env.STRIPE_SECRET_KEY?.trim();
   if (!key || key === "") return null;
   const { default: Stripe } = await import("stripe");
-  return new Stripe(key);
+  return new Stripe(key, { apiVersion: "2025-02-24.acacia" });
 }
 
 export async function POST(request: NextRequest) {
@@ -30,12 +30,17 @@ export async function POST(request: NextRequest) {
     const items = Array.isArray(body.items) ? body.items : [];
     const bodySuccessUrl = typeof body.successUrl === "string" ? body.successUrl : undefined;
     const bodyCancelUrl = typeof body.cancelUrl === "string" ? body.cancelUrl : undefined;
+    const consultaId = typeof body.consultaId === "string" ? body.consultaId.trim().slice(0, 200) : undefined;
+    const planDieta = typeof body.planDieta === "string" && ["semanal", "quincenal", "mensual"].includes(body.planDieta) ? body.planDieta : undefined;
     const documentId = body.documentId;
     const price = typeof body.price === "number" ? body.price : undefined;
     const saveToAccount = !!body.saveToAccount;
     const bodyToken = body.idToken;
 
-    const origin = request.headers.get("origin") || "";
+    const origin =
+      request.headers.get("origin")?.trim() ||
+      process.env.NEXT_PUBLIC_APP_URL?.trim() ||
+      "";
     let userId: string | undefined;
 
     if (bodyToken || request.headers.get("authorization")) {
@@ -80,7 +85,7 @@ export async function POST(request: NextRequest) {
           return NextResponse.json({ error: `Producto no encontrado: ${productId}` }, { status: 400 });
         }
         const rawQty = typeof item === "object" && item !== null && "quantity" in item ? (item as { quantity?: unknown }).quantity : 1;
-        const qty = Math.min(10, Math.max(1, Number(rawQty) || 1));
+        const qty = Math.min(9999, Math.max(1, Number(rawQty) || 1));
         const itemIsSubscription =
           typeof item === "object" &&
           item !== null &&
@@ -116,22 +121,35 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      const session = await stripe.checkout.sessions.create({
+      const hasTiendaItems = lineItems.some((_, i) => {
+        const item = items[i];
+        if (!item || typeof item !== "object" || !("productId" in item)) return true;
+        const product = getProductById(String((item as { productId: unknown }).productId));
+        return product?.family !== "plan";
+      });
+
+      const sessionParams: Stripe.Checkout.SessionCreateParams = {
         line_items: lineItems,
         mode: isSubscription ? "subscription" : "payment",
         success_url: successUrl,
         cancel_url: cancelUrl,
-        shipping_address_collection: {
-          allowed_countries: ["MX"],
-        },
         metadata: {
-          type: "tienda",
+          type: hasTiendaItems ? "tienda" : "consulta",
           userId: (userId || "").replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 500),
           items: JSON.stringify(items).slice(0, 500),
         },
-      });
+      };
+      if (consultaId) {
+        sessionParams.metadata!.consultaId = consultaId.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 200);
+        if (planDieta) sessionParams.metadata!.planDieta = planDieta;
+      }
+      if (hasTiendaItems) {
+        sessionParams.shipping_address_collection = { allowed_countries: ["MX"] };
+      }
 
-      if (adminDb && session.id) {
+      const session = await stripe.checkout.sessions.create(sessionParams);
+
+      if (adminDb && session.id && hasTiendaItems) {
         try {
           await adminDb.collection("orders").doc(session.id).set({
             stripeSessionId: session.id,
@@ -142,7 +160,6 @@ export async function POST(request: NextRequest) {
           });
         } catch (dbErr) {
           console.error("Error guardando orden en Firestore:", dbErr);
-          // No fallar el checkout si solo falla el guardado en DB
         }
       }
 

@@ -6,6 +6,8 @@ import { Navbar } from "@/components/navbar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/lib/cart-context";
+import { useAuth } from "@/lib/auth-context";
+import { PLAN_DIETA_IDS, type PlanDietaKey } from "@/lib/products";
 import { motion } from "framer-motion";
 
 const OBJETIVOS = [
@@ -37,6 +39,7 @@ const HABITOS_ESTRES = ["Bajo", "Moderado", "Alto", "Muy alto"];
 
 export default function ConsultaPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const { addItem } = useCart();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -51,6 +54,7 @@ export default function ConsultaPage() {
     condicionesMedicas: "",
     importanciaSuplementos: 5,
   });
+  const [planDieta, setPlanDieta] = useState<PlanDietaKey>("semanal");
   const [habitos, setHabitos] = useState({
     alimentacion: [] as string[],
     ejercicio: [] as string[],
@@ -92,15 +96,23 @@ export default function ConsultaPage() {
       });
       const dataConsulta = await resConsulta.json().catch(() => ({}));
       if (!resConsulta.ok) throw new Error(dataConsulta?.error || "Error al guardar la solicitud");
+      const consultaId = dataConsulta?.id;
+      if (!consultaId) throw new Error("No se obtuvo el ID de la solicitud");
 
       const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      const token = user ? await user.getIdToken().catch(() => null) : null;
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const productId = PLAN_DIETA_IDS[planDieta];
       const resCheckout = await fetch("/api/create-checkout-session", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
-          items: [{ productId: "plan-dieta-personalizado", quantity: 1 }],
+          items: [{ productId, quantity: 1 }],
           successUrl: `${origin}/consulta/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${origin}/consulta`,
+          consultaId,
+          planDieta,
         }),
       });
       const dataCheckout = await resCheckout.json().catch(() => ({}));
@@ -148,8 +160,9 @@ export default function ConsultaPage() {
       });
       const dataConsulta = await resConsulta.json().catch(() => ({}));
       if (!resConsulta.ok) throw new Error(dataConsulta?.error || "Error al guardar la solicitud");
+      const consultaId = dataConsulta?.id;
 
-      addItem({ productId: "plan-dieta-personalizado", quantity: 1, isSubscription: false });
+      addItem({ productId: PLAN_DIETA_IDS[planDieta], quantity: 1, isSubscription: false, consultaId });
       router.push("/tienda/carrito");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Error al procesar");
@@ -381,6 +394,31 @@ export default function ConsultaPage() {
               <p className="text-xs text-muted">
                 Si necesitas enviar fotos (analíticas, etc.), podrás hacerlo por WhatsApp después.
               </p>
+              <div>
+                <label className="block text-sm font-medium mb-2">Duración del plan</label>
+                <div className="flex flex-wrap gap-3">
+                  {(
+                    [
+                      { key: "semanal" as const, label: "Semanal", price: "$399" },
+                      { key: "quincenal" as const, label: "Quincenal", price: "$599" },
+                      { key: "mensual" as const, label: "Mensual", price: "$999" },
+                    ] as const
+                  ).map(({ key, label, price }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setPlanDieta(key)}
+                      className={`px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
+                        planDieta === key
+                          ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
+                          : "border-border text-muted hover:border-teal-500/50 hover:text-foreground"
+                      }`}
+                    >
+                      {label} — {price}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
           {error && (

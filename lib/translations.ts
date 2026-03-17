@@ -69,9 +69,9 @@ const _base = {
     auth_password_min: "La contraseña debe tener al menos 6 caracteres",
 
     // Home
-    home_hero_title1: "Tu dieta personalizada",
-    home_hero_title2: "por una nutrióloga seria",
-    home_hero_subtitle: "Diana Gallardo, L.N.H., te diseña tu plan de alimentación a la medida y te recomienda suplementos VitalHealth. Respuesta en menos de 24\u00A0h. Pago seguro con Stripe.",
+    home_hero_title1: "Tu dieta personalizada por L.N.H. Diana Gallardo",
+    home_hero_title2: "",
+    home_hero_subtitle: "Diseña tu plan de alimentación a la medida y te recomienda suplementos VitalHealth. Respuesta en menos de 24\u00A0h. Pago seguro con Stripe.",
     home_shipping: "Envíos a toda la República Mexicana.",
     home_how_it_works: "¿Cómo funciona?",
     home_see_documents: "Ver suplementos",
@@ -281,13 +281,13 @@ const _base = {
 
     // About / Quiénes somos (landing section)
     about_title: "Quiénes somos",
-    about_subtitle: "Nutrióloga titulada",
-    about_who: "L.N.H. Diana Gallardo. Nutrición humana y planes de alimentación personalizados. Suplementos VitalHealth VITALAGE con respaldo profesional. Servicio en línea y seguimiento por WhatsApp. Hermosillo, Sonora.",
+    about_subtitle: "Tu aliada en nutrición",
+    about_who: "Soy Diana Gallardo, Licenciada en Nutrición Humana. Juntos diseñamos tu plan de alimentación a la medida y te recomiendo suplementos VitalHealth con el respaldo de mi experiencia. Te atiendo en línea y te acompaño por WhatsApp desde Hermosillo, Sonora — tu bienestar es mi prioridad.",
     about_trust_title: "Confianza",
     about_trust_short: "Cédula profesional. Planes basados en SMAE y NOM-043. Sin dietas genéricas.",
     about_payment_title: "Pago",
     about_payment_short: "Stripe. Tarjetas y débito. Compra única y 100% segura en dietas y suplementos.",
-    about_contact_email: "contacto@vitahealth.example.com",
+    about_contact_email: "lnhdianagallardo@gmail.com",
 
     // Legal pages (Terms, Privacy, Disclaimer) – section titles and intros
     legal_terms_intro: "Última actualización: Enero 2026. AVATAR LEGAL AI («la Plataforma») es un servicio de generación automatizada de plantillas de documentos legales con sede en Hermosillo, Sonora, México. Al utilizar la Plataforma usted acepta los siguientes términos.",
@@ -644,9 +644,9 @@ const _base = {
     auth_invalid_email: "Enter a valid email",
     auth_password_min: "Password must be at least 6 characters",
 
-    home_hero_title1: "Your personalized diet",
-    home_hero_title2: "by a licensed nutritionist",
-    home_hero_subtitle: "Diana Gallardo, L.N.H., designs your custom meal plan and recommends VitalHealth supplements. Response in under 24 hours. Secure payment with Stripe.",
+    home_hero_title1: "Your personalized diet by L.N.H. Diana Gallardo",
+    home_hero_title2: "",
+    home_hero_subtitle: "Custom meal plan design and VitalHealth supplement recommendations. Response in under 24 hours. Secure payment with Stripe.",
     home_shipping: "Shipping to all of Mexico.",
     home_how_it_works: "How it works",
     home_see_documents: "View supplements",
@@ -845,13 +845,13 @@ const _base = {
     footer_disclaimer: "Disclaimer",
 
     about_title: "About us",
-    about_subtitle: "Licensed nutritionist",
-    about_who: "L.N.H. Diana Gallardo. Human nutrition and personalized meal plans. VitalHealth VITALAGE supplements with professional backing. Online service and follow-up via WhatsApp. Hermosillo, Sonora.",
+    about_subtitle: "Your ally in nutrition",
+    about_who: "I'm Diana Gallardo, a Licensed Nutritionist. Together we design your custom meal plan and I recommend VitalHealth supplements with the full backing of my experience. I work with you online and support you via WhatsApp from Hermosillo, Sonora — your wellbeing is my priority.",
     about_trust_title: "Trust",
     about_trust_short: "Professional license. Plans based on SMAE and NOM-043. No generic diets.",
     about_payment_title: "Payment",
     about_payment_short: "Stripe. Credit and debit. One-time and 100% secure payment for diets and supplements.",
-    about_contact_email: "contacto@vitahealth.example.com",
+    about_contact_email: "lnhdianagallardo@gmail.com",
 
     legal_terms_intro: "Last updated: January 2026. AVATAR LEGAL AI («the Platform») is an automated legal document template generation service based in Hermosillo, Sonora, Mexico. By using the Platform you accept the following terms.",
     legal_terms_s1_title: "Definition of the service",

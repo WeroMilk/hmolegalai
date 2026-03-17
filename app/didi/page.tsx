@@ -196,8 +196,11 @@ export default function DidiPage() {
     setError("");
     setPlanContent("");
     const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones, nombreLnh: form.nombreLnh || "L.N.H. Diana Gallardo" };
+    const DIDI_TIMEOUT_MS = 90000; // 90 s
     const doRequest = async (forceRefreshToken: boolean): Promise<void> => {
       const token = await user!.getIdToken(forceRefreshToken);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), DIDI_TIMEOUT_MS);
       const res = await fetch("/api/didi-generate", {
         method: "POST",
         headers: {
@@ -205,8 +208,10 @@ export default function DidiPage() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
-      const data = await res.json();
+      clearTimeout(timeoutId);
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Error al generar el plan");
       const content = data.content ?? "";
       setPlanContent(content);
@@ -216,21 +221,24 @@ export default function DidiPage() {
     try {
       await doRequest(false);
     } catch (err: unknown) {
-      const msg = err instanceof Error ? err.message : "";
+      const msg = err instanceof Error ? err.message : String(err);
+      const isAbort = msg.toLowerCase().includes("abort") || (err instanceof Error && err.name === "AbortError");
       const isSessionError = /Sesión inválida|iniciar sesión/i.test(msg);
+      if (isAbort) {
+        setError("La generación está tardando más de lo habitual. Por favor intenta de nuevo en un momento.");
+        return;
+      }
       if (isSessionError) {
         await new Promise((r) => setTimeout(r, 400));
         try {
           await doRequest(true);
           return;
         } catch {
-          // No mostrar "Sesión inválida": redirigir a login para volver a entrar
           setTimeout(() => router.replace("/auth?returnTo=/didi"), 1500);
           return;
         }
-      } else {
-        setError(msg || "Error al generar el plan");
       }
+      setError(msg || "No se pudo generar el plan. Revisa que OPENAI_API_KEY esté configurada e intenta de nuevo.");
     } finally {
       setLoading(false);
     }

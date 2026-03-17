@@ -30,6 +30,8 @@ type Consulta = {
   metaPeso?: string;
   tipoDieta?: string;
   createdAt?: string | null;
+  paidAt?: string | null;
+  planDieta?: "semanal" | "quincenal" | "mensual" | null;
 };
 
 type ShippingAddress = {
@@ -219,12 +221,24 @@ export default function AdminPage() {
                   key={c.id}
                   className="rounded-2xl border border-teal-500/20 bg-card/80 backdrop-blur-sm p-5 shadow-lg shadow-teal-500/5 hover:border-teal-500/40 transition-colors"
                 >
-                  <div className="flex items-start justify-between gap-2 mb-3">
+                  <div className="flex items-start justify-between gap-2 mb-3 flex-wrap">
                     <h3 className="font-semibold text-foreground truncate">{c.nombre ?? "Sin nombre"}</h3>
-                    <span className="shrink-0 flex items-center gap-1 text-xs text-muted">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {c.createdAt ? new Date(c.createdAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
-                    </span>
+                    <div className="shrink-0 flex items-center gap-2 flex-wrap">
+                      {c.paidAt && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
+                          Pagado
+                        </span>
+                      )}
+                      {c.planDieta && (
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-500/15 text-teal-600 dark:text-teal-400">
+                          {c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : "Mensual"}
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 text-xs text-muted">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {c.createdAt ? new Date(c.createdAt).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" }) : "-"}
+                      </span>
+                    </div>
                   </div>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center gap-2 text-muted">

@@ -60,12 +60,12 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const addItem = useCallback(
     (item: Omit<CartItem, "quantity"> & { quantity?: number }) => {
-      const qty = Math.min(10, Math.max(1, item.quantity ?? 1));
+      const qty = Math.min(9999, Math.max(1, item.quantity ?? 1));
       setItems((prev) => {
         const existing = prev.findIndex((i) => i.productId === item.productId && i.isSubscription === item.isSubscription);
         if (existing >= 0) {
           const next = [...prev];
-          next[existing] = { ...next[existing], quantity: Math.min(10, next[existing].quantity + qty) };
+          next[existing] = { ...next[existing], quantity: Math.min(9999, next[existing].quantity + qty) };
           return next;
         }
         return [...prev, { ...item, quantity: qty } as CartItem];
@@ -81,7 +81,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const updateQuantity = useCallback((productId: string, quantity: number, isSubscription?: boolean) => {
-    const qty = Math.min(10, Math.max(0, quantity));
+    const qty = Math.min(9999, Math.max(0, quantity));
     const sub = isSubscription ?? false;
     setItems((prev) => {
       if (qty === 0) return prev.filter((i) => !(i.productId === productId && (i.isSubscription ?? false) === sub));

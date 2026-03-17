@@ -18,8 +18,9 @@ export function Hero() {
         >
           <h1 className="text-2xl xs:text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-3 xs:mb-4 md:mb-6 leading-tight">
             <span className="block text-foreground hover-title mb-2">{t("home_hero_title1")}</span>
-            {" "}
-            <span className="block gradient-text hover-title">{t("home_hero_title2")}</span>
+            {t("home_hero_title2") ? (
+              <span className="block gradient-text hover-title">{t("home_hero_title2")}</span>
+            ) : null}
           </h1>
 
           <p className="text-sm xs:text-base sm:text-xl md:text-2xl text-muted mb-6 xs:mb-8 md:mb-12 max-w-3xl mx-auto px-2 xs:px-4">

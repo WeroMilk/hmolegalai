@@ -16,7 +16,15 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Base de datos no configurada" }, { status: 503 });
     }
     const snap = await adminDb.collection("consultas").orderBy("createdAt", "desc").limit(200).get();
-    const consultas = snap.docs.map((doc) => ({ id: doc.id, ...doc.data(), createdAt: doc.data().createdAt?.toDate?.()?.toISOString?.() ?? null }));
+    const consultas = snap.docs.map((doc) => {
+      const d = doc.data();
+      return {
+        id: doc.id,
+        ...d,
+        createdAt: d.createdAt?.toDate?.()?.toISOString?.() ?? null,
+        paidAt: d.paidAt?.toDate?.()?.toISOString?.() ?? (typeof d.paidAt === "string" ? d.paidAt : null),
+      };
+    });
     return NextResponse.json({ consultas });
   } catch (e) {
     console.error("Admin consultas error:", e);
