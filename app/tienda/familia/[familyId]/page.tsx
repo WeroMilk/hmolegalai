@@ -66,13 +66,15 @@ export default function FamiliaPage() {
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{family.name}</h1>
-              <p className="text-white/90 mt-1">{products.length} productos</p>
+              <p className="text-white/90 mt-1 max-w-2xl">
+                {family.description ?? `${products.length} productos`}
+              </p>
             </div>
           </div>
         ) : (
           <>
             <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{family.name}</h1>
-            <p className="text-muted mb-8">{products.length} productos</p>
+            <p className="text-muted mb-8">{family.description ?? `${products.length} productos`}</p>
           </>
         )}
 

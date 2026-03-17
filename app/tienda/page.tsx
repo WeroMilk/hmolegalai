@@ -77,8 +77,8 @@ export default function TiendaPage() {
                       <h3 className="font-bold text-lg sm:text-xl text-foreground">
                         {fam.name}
                       </h3>
-                      <p className="text-sm text-muted mt-1">
-                        {count} producto{count !== 1 ? "s" : ""}
+                      <p className="text-sm text-muted mt-1 line-clamp-3">
+                        {fam.description ?? `${count} producto${count !== 1 ? "s" : ""}`}
                       </p>
                       <span className="mt-5 inline-flex items-center justify-center w-full py-3 px-5 rounded-xl text-white font-semibold bg-gradient-to-b from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-sm">
                         Comprar ahora

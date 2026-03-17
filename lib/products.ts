@@ -49,9 +49,25 @@ export const PRODUCT_FAMILIES: {
   nameEn: string;
   /** Imagen de la familia para la portada de la tienda (opcional). */
   image?: string;
+  /** Descripción corta de la familia (sustituye "X productos" cuando existe). */
+  description?: string;
 }[] = [
-  { id: "awaken", name: "Familia Awaken", nameEn: "Familia Awaken", image: "/tienda/familias/awaken.png" },
-  { id: "detox", name: "Familia Detox", nameEn: "Familia Detox", image: "/tienda/familias/detox.png" },
+  {
+    id: "awaken",
+    name: "Familia Awaken",
+    nameEn: "Familia Awaken",
+    image: "/tienda/familias/awaken.png",
+    description:
+      "Enciende tu día con energía, concentración y claridad. Desde cafés funcionales hasta suplementos de rendimiento, Awaken te ayuda a empezar con fuerza y mantenerte alerta.",
+  },
+  {
+    id: "detox",
+    name: "Familia Detox",
+    nameEn: "Familia Detox",
+    image: "/tienda/familias/detox.png",
+    description:
+      "Revitaliza tu sistema y apoya el equilibrio desde adentro. La Colección Detox combina mezclas específicas para ayudar a tu cuerpo a limpiar, reiniciar y sentirse renovado.",
+  },
   { id: "nutrir", name: "Nutrir a la familia", nameEn: "Nutrir a la familia", image: "/tienda/familias/nutrir.png" },
   { id: "restaurar", name: "Restaurar a la familia", nameEn: "Restaurar a la familia", image: "/tienda/familias/restaurar.png" },
   { id: "plan", name: "Plan dieta", nameEn: "Diet plan" },
@@ -130,9 +146,36 @@ export const PRODUCTS: Product[] = [
     "/tienda/productos/v-ketokafe-bhb.png"
   ),
   // Familia Detox
-  p("v-glucalose", "V-GLUCALOSE", "V-GLUCALOSE", 52500, "detox", "Soporte metabólico y glucosa.", defaultWhy),
-  p("v-italboost", "V-ITALBOOST", "V-ITALBOOST", 63000, "detox", "Energía y vitalidad.", defaultWhy),
-  p("v-curcumax", "V-CURCUMAX", "V-CURCUMAX", 63000, "detox", "Curcumina y bienestar antiinflamatorio.", defaultWhy),
+  p(
+    "v-tedetox",
+    "V-TEDETOX",
+    "V-TEDETOX",
+    26000,
+    "detox",
+    "El reajuste diario para la digestión, la desintoxicación y el equilibrio.",
+    "Mezcla herbal de acción suave formulada para favorecer las vías naturales de depuración sin golpes fuertes ni molestias. Apoya la digestión, la función hepática, reduce la hinchazón ocasional y mantiene el organismo en movimiento de forma natural.",
+    "/tienda/productos/v-tedetox.png"
+  ),
+  p(
+    "v-organex",
+    "V-ORGANEX",
+    "V-ORGANEX",
+    52500,
+    "detox",
+    "El desintoxicante hepático que apoya la depuración profunda y el equilibrio digestivo.",
+    "Combina cardo mariano, guaraná y otros extractos botánicos para favorecer la función hepática, el flujo biliar y los procesos naturales de desintoxicación. También contribuye a una piel más clara y a una digestión equilibrada.",
+    "/tienda/productos/v-organex.png"
+  ),
+  p(
+    "v-itaren",
+    "V-ITAREN",
+    "V-ITAREN",
+    52500,
+    "detox",
+    "Revitalizador renal a base de hierbas que ayuda a limpiar suavemente los riñones y equilibrar los líquidos.",
+    "Con gayuba, cola de caballo, moringa y otros extractos que apoyan la función renal y el flujo urinario, ayudan a la desintoxicación y al equilibrio hídrico y reducen la hinchazón y la retención ocasionales.",
+    "/tienda/productos/v-itaren.png"
+  ),
   // Nutrir a la familia
   p("v-control", "V-CONTROL", "V-CONTROL", 52500, "nutrir", "Soporte de control y balance.", defaultWhy),
   p("colageno-vitalage", "COLÁGENO VITALAGE", "COLÁGENO VITALAGE", 108000, "nutrir", "Colágeno funcional con NAD y astaxantina. Salud articular, piel y energía celular.", "Lo recomiendo para potenciar resultados de dieta con soporte de calidad. NAD y astaxantina respaldan energía y cuidado de la piel; colágeno marino favorece articulaciones y firmeza."),
@@ -143,7 +186,16 @@ export const PRODUCTS: Product[] = [
   p("v-cuarenta-flora", "V-CUARENTA FLORA", "V-CUARENTA FLORA", 52500, "restaurar", "Probióticos y flora intestinal.", defaultWhy),
   p("v-itadol", "V-ITADOL", "V-ITADOL", 52500, "restaurar", "Soporte articular y bienestar.", defaultWhy),
   // Vital Health
-  p("v-glutation-plus", "V-GLUTATION PLUS", "V-GLUTATION PLUS", 105000, "vital", "Glutatión para detox celular.", defaultWhy),
+  p(
+    "v-glutation-plus",
+    "V-GLUTATION PLUS",
+    "V-GLUTATION PLUS",
+    105000,
+    "detox",
+    "Glutatión avanzado para desintoxicación celular profunda y protección antioxidante.",
+    "Combina glutatión con cofactores como L-Cisteína, Clorofila y Tetrahidrocurcumina para maximizar la defensa antioxidante, apoyar el sistema inmunológico y promover una renovación celular profunda.",
+    "/tienda/productos/v-glutation-plus.png"
+  ),
   p("v-glutation", "V-GLUTATION", "V-GLUTATION", 125000, "vital", "Glutatión para antioxidación y detox.", defaultWhy),
   p("v-asculax", "V-ASCULAX", "V-ASCULAX", 52500, "vital", "Soporte cardiovascular.", defaultWhy),
   p("v-italay", "V-ITALAY", "V-ITALAY", 52500, "vital", "Bienestar general.", defaultWhy),
