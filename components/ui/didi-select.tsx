@@ -14,7 +14,7 @@ interface DidiSelectProps {
 }
 
 const optionClassName =
-  "px-4 py-3 cursor-pointer text-foreground dark:text-white hover:!bg-white hover:!text-purple-600 dark:hover:!bg-white dark:hover:!text-purple-600 active:bg-purple-50 dark:active:bg-purple-500/20";
+  "px-4 py-3 cursor-pointer text-foreground dark:text-white hover:!bg-white hover:!text-teal-600 dark:hover:!bg-white dark:hover:!text-teal-600 active:bg-teal-50 dark:active:bg-teal-500/20";
 
 export function DidiSelect({
   value,
@@ -55,7 +55,7 @@ export function DidiSelect({
           role="option"
           aria-selected={value === opt.value}
           onClick={() => handleSelect(opt.value)}
-          className={`${optionClassName} ${value === opt.value ? "font-semibold text-purple-600" : ""}`}
+          className={`${optionClassName} ${value === opt.value ? "font-semibold text-teal-600" : ""}`}
         >
           {opt.label}
         </li>
@@ -72,11 +72,11 @@ export function DidiSelect({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-left text-foreground dark:text-white focus:outline-none focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 flex items-center justify-between"
+        className="w-full px-4 py-3 bg-card dark:bg-transparent border border-border rounded-lg text-left text-foreground dark:text-white focus:outline-none focus:border-teal-500/50 focus:ring-2 focus:ring-teal-500/20 flex items-center justify-between"
       >
         <span className={!value ? "text-muted" : ""}>{displayValue}</span>
         <svg
-          className={`w-5 h-5 text-purple-500 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`}
+          className={`w-5 h-5 text-teal-500 transition-transform shrink-0 ${isOpen ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

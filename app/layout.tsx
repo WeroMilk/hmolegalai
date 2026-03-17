@@ -196,7 +196,7 @@ export default function RootLayout({
                     lowerMsg.includes('useeffect.fetchprofile') ||
                     lowerMsg.includes('window.fetch') ||
                     lowerMsg.includes('(index):') ||
-                    lowerMsg.includes('missing ) after argument list') ||
+                    lowerMsg.includes("missing ) after argument list") ||
                     lowerMsg.includes('syntaxerror') ||
                     lowerMsg.includes('syntax error') ||
                     // React DevTools

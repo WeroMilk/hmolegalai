@@ -305,7 +305,7 @@ export default function DidiPage() {
   if (showSpinner && !planContent) {
     return (
       <div className="min-h-screen text-foreground flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500" />
       </div>
     );
   }
@@ -319,8 +319,8 @@ export default function DidiPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-10 text-center"
         >
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-purple-500/20 border-2 border-purple-500/50 mb-6">
-            <Leaf className="w-10 h-10 text-purple-500" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-teal-500/20 border-2 border-teal-500/50 mb-6">
+            <Leaf className="w-10 h-10 text-teal-500" />
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold gradient-text hover-title mb-2 mt-2 ml-4 sm:ml-6">
             DIDI · Plan Nutricional
@@ -338,213 +338,220 @@ export default function DidiPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             onSubmit={handleSubmit}
-            className="didi-form-section glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40 space-y-6"
+            className="didi-form-section glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-teal-500/40"
           >
             <h2 className="text-xl font-semibold text-foreground mb-6">
               Datos del paciente
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="sm:col-span-2">
-                <label htmlFor="didi-nombreLnh" className="block text-sm font-medium text-foreground mb-2">
-                  Nombre del nutriólogo (LNH)
-                </label>
-                <Input
-                  id="didi-nombreLnh"
-                  name="nombreLnh"
-                  autoComplete="name"
-                  value={form.nombreLnh}
-                  onChange={(e) => handleChange("nombreLnh", e.target.value)}
-                  placeholder="L.N.H. Diana Gallardo"
-                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
-                />
-                <p className="text-xs text-muted mt-1">Aparece en el plan y en el PDF. Por defecto: L.N.H. Diana Gallardo.</p>
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="didi-nombrePaciente" className="block text-sm font-medium text-foreground mb-2">
-                  Nombre del paciente *
-                </label>
-                <Input
-                  id="didi-nombrePaciente"
-                  name="nombrePaciente"
-                  autoComplete="name"
-                  value={form.nombrePaciente}
-                  onChange={(e) => handleChange("nombrePaciente", e.target.value)}
-                  onBlur={() => {
-                    const t = toTitleCase(form.nombrePaciente);
-                    if (t !== form.nombrePaciente) handleChange("nombrePaciente", t);
-                  }}
-                  placeholder="Ej. María García López"
-                  required
-                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
-                />
-              </div>
-              <div>
-                <label htmlFor="didi-peso" className="block text-sm font-medium text-foreground mb-2">
-                  Peso (kg) *
-                </label>
-                <p className="text-xs text-muted mb-1">Formato: 57 → 57.000, 55500 → 55.500. Máx: 150 kg.</p>
-                <Input
-                  id="didi-peso"
-                  name="peso"
-                  type="text"
-                  inputMode="decimal"
-                  autoComplete="off"
-                  value={form.peso}
-                  onChange={(e) => handleChange("peso", e.target.value)}
-                  onBlur={() => {
-                    const f = formatPesoDisplay(form.peso);
-                    if (f && f !== form.peso) handleChange("peso", f);
-                  }}
-                  placeholder="Ej. 57 o 55500 (se convierte a 57.000 o 55.500)"
-                  required
-                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
-                />
-              </div>
-              <div>
-                <label htmlFor="didi-estatura" className="block text-sm font-medium text-foreground mb-2">
-                  Estatura (m) *
-                </label>
-                <p className="text-xs text-muted mb-1">En metros (1.45) o en cm (155 → se convierte a 1.55 m)</p>
-                <Input
-                  id="didi-estatura"
-                  name="estatura"
-                  type="number"
-                  inputMode="decimal"
-                  autoComplete="off"
-                  step="0.01"
-                  min="0.5"
-                  max="250"
-                  value={form.estatura}
-                  onChange={(e) => handleChange("estatura", e.target.value)}
-                  onBlur={() => {
-                    const v = form.estatura.replace(",", ".").trim();
-                    const num = parseFloat(v);
-                    if (!Number.isNaN(num) && num >= 10 && num <= 250) {
-                      const metros = (num / 100).toFixed(2);
-                      if (metros !== form.estatura) handleChange("estatura", metros);
-                    }
-                  }}
-                  placeholder="Ej. 1.45 o 155"
-                  required
-                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
-                />
-              </div>
-              <div>
-                <label htmlFor="didi-edad" className="block text-sm font-medium text-foreground mb-2">
-                  Edad (años) *
-                </label>
-                <p className="text-xs text-muted mb-1">1-120 años. El plan se adapta a bebés, niños, adolescentes, adultos y adultos mayores.</p>
-                <Input
-                  id="didi-edad"
-                  name="edad"
-                  type="number"
-                  inputMode="numeric"
-                  min="1"
-                  max="120"
-                  value={form.edad}
-                  onChange={(e) => handleChange("edad", e.target.value)}
-                  placeholder="Ej. 32"
-                  required
-                  className="focus:border-purple-500/50 focus:ring-purple-500/20"
-                />
-              </div>
-              <div>
-                <label htmlFor="didi-sexo" className="block text-sm font-medium text-foreground mb-2">
-                  Sexo *
-                </label>
-                <DidiSelect
-                  id="didi-sexo"
-                  aria-label="Sexo"
-                  value={form.sexo}
-                  onChange={(v) => handleChange("sexo", v)}
-                  options={SEXO_OPTIONS.map((o) => ({ value: o, label: o }))}
-                  placeholder="Selecciona"
-                  required
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label htmlFor="didi-actividadFisica" className="block text-sm font-medium text-foreground mb-2">
-                  Actividad física *
-                </label>
-                <DidiSelect
-                  id="didi-actividadFisica"
-                  aria-label="Actividad física"
-                  value={form.actividadFisica}
-                  onChange={(v) => handleChange("actividadFisica", v)}
-                  options={ACTIVIDAD_OPTIONS.map((o) => ({ value: o, label: o }))}
-                  placeholder="Selecciona"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="didi-objetivo" className="block text-sm font-medium text-foreground mb-2">
-                  Objetivo del plan *
-                </label>
-                <p className="text-xs text-muted mb-1">La IA calcula calorías según los datos. Se ajustan por etapa de vida (niños, adolescentes, adultos, mayores).</p>
-                <DidiSelect
-                  id="didi-objetivo"
-                  aria-label="Objetivo del plan"
-                  value={form.objetivo}
-                  onChange={(v) => handleChange("objetivo", v)}
-                  options={OBJETIVO_OPTIONS.map((o) => ({ value: o, label: o }))}
-                  placeholder="Selecciona"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="didi-tipoDieta" className="block text-sm font-medium text-foreground mb-2">
-                  Tipo de dieta *
-                </label>
-                <DidiSelect
-                  id="didi-tipoDieta"
-                  aria-label="Tipo de dieta"
-                  value={form.tipoDieta}
-                  onChange={(v) => handleChange("tipoDieta", v)}
-                  options={TIPO_DIETA_OPTIONS.map((o) => ({ value: o, label: o }))}
-                  placeholder="Selecciona"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label className="block text-sm font-medium text-foreground mb-2">
-                Enfermedades o condiciones (opcional)
-              </label>
-              <p className="text-xs text-muted mb-3">Marca las que apliquen para adaptar la dieta (puedes marcar varias).</p>
-              <div className="flex flex-wrap gap-3">
-                {CONDICIONES_OPTIONS.map((cond) => (
-                  <label
-                    key={cond}
-                    htmlFor={`didi-condicion-${cond.replace(/\s+/g, "-")}`}
-                    className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-border px-3 py-2 hover:border-purple-500/40 transition-colors"
-                  >
-                    <input
-                      id={`didi-condicion-${cond.replace(/\s+/g, "-")}`}
-                      name="condiciones"
-                      type="checkbox"
-                      value={cond}
-                      checked={condiciones.includes(cond)}
-                      onChange={() => handleCondicionToggle(cond)}
-                      className="rounded border-border text-purple-500 accent-purple-500 focus:ring-purple-500/30"
-                    />
-                    <span className="text-sm text-foreground">{cond}</span>
+            {/* Móvil: vertical. Desktop: dos columnas como Solicitar plan */}
+            <div className="flex flex-col lg:flex-row lg:gap-10 lg:items-start">
+              <div className="flex-1 space-y-6 min-w-0">
+                <div>
+                  <label htmlFor="didi-nombreLnh" className="block text-sm font-medium text-foreground mb-2">
+                    Nombre del nutriólogo (LNH)
                   </label>
-                ))}
+                  <Input
+                    id="didi-nombreLnh"
+                    name="nombreLnh"
+                    autoComplete="name"
+                    value={form.nombreLnh}
+                    onChange={(e) => handleChange("nombreLnh", e.target.value)}
+                    placeholder="L.N.H. Diana Gallardo"
+                    className="focus:border-teal-500/50 focus:ring-teal-500/20"
+                  />
+                  <p className="text-xs text-muted mt-1">Aparece en el plan y en el PDF.</p>
+                </div>
+                <div>
+                  <label htmlFor="didi-nombrePaciente" className="block text-sm font-medium text-foreground mb-2">
+                    Nombre del paciente *
+                  </label>
+                  <Input
+                    id="didi-nombrePaciente"
+                    name="nombrePaciente"
+                    autoComplete="name"
+                    value={form.nombrePaciente}
+                    onChange={(e) => handleChange("nombrePaciente", e.target.value)}
+                    onBlur={() => {
+                      const t = toTitleCase(form.nombrePaciente);
+                      if (t !== form.nombrePaciente) handleChange("nombrePaciente", t);
+                    }}
+                    placeholder="Ej. María García López"
+                    required
+                    className="focus:border-teal-500/50 focus:ring-teal-500/20"
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="didi-peso" className="block text-sm font-medium text-foreground mb-2">
+                      Peso (kg) *
+                    </label>
+                    <p className="text-xs text-muted mb-1">Ej: 57 o 55500 → 55.500</p>
+                    <Input
+                      id="didi-peso"
+                      name="peso"
+                      type="text"
+                      inputMode="decimal"
+                      autoComplete="off"
+                      value={form.peso}
+                      onChange={(e) => handleChange("peso", e.target.value)}
+                      onBlur={() => {
+                        const f = formatPesoDisplay(form.peso);
+                        if (f && f !== form.peso) handleChange("peso", f);
+                      }}
+                      placeholder="Ej. 57"
+                      required
+                      className="focus:border-teal-500/50 focus:ring-teal-500/20"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="didi-estatura" className="block text-sm font-medium text-foreground mb-2">
+                      Estatura (m) *
+                    </label>
+                    <p className="text-xs text-muted mb-1">1.45 o 155 → 1.55 m</p>
+                    <Input
+                      id="didi-estatura"
+                      name="estatura"
+                      type="number"
+                      inputMode="decimal"
+                      autoComplete="off"
+                      step="0.01"
+                      min="0.5"
+                      max="250"
+                      value={form.estatura}
+                      onChange={(e) => handleChange("estatura", e.target.value)}
+                      onBlur={() => {
+                        const v = form.estatura.replace(",", ".").trim();
+                        const num = parseFloat(v);
+                        if (!Number.isNaN(num) && num >= 10 && num <= 250) {
+                          const metros = (num / 100).toFixed(2);
+                          if (metros !== form.estatura) handleChange("estatura", metros);
+                        }
+                      }}
+                      placeholder="Ej. 1.65"
+                      required
+                      className="focus:border-teal-500/50 focus:ring-teal-500/20"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="didi-edad" className="block text-sm font-medium text-foreground mb-2">
+                      Edad (años) *
+                    </label>
+                    <Input
+                      id="didi-edad"
+                      name="edad"
+                      type="number"
+                      inputMode="numeric"
+                      min="1"
+                      max="120"
+                      value={form.edad}
+                      onChange={(e) => handleChange("edad", e.target.value)}
+                      placeholder="Ej. 32"
+                      required
+                      className="focus:border-teal-500/50 focus:ring-teal-500/20"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="didi-sexo" className="block text-sm font-medium text-foreground mb-2">
+                      Sexo *
+                    </label>
+                    <DidiSelect
+                      id="didi-sexo"
+                      aria-label="Sexo"
+                      value={form.sexo}
+                      onChange={(v) => handleChange("sexo", v)}
+                      options={SEXO_OPTIONS.map((o) => ({ value: o, label: o }))}
+                      placeholder="Selecciona"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex-1 space-y-6 min-w-0 lg:mt-0 mt-6">
+                <div>
+                  <label htmlFor="didi-actividadFisica" className="block text-sm font-medium text-foreground mb-2">
+                    Actividad física *
+                  </label>
+                  <DidiSelect
+                    id="didi-actividadFisica"
+                    aria-label="Actividad física"
+                    value={form.actividadFisica}
+                    onChange={(v) => handleChange("actividadFisica", v)}
+                    options={ACTIVIDAD_OPTIONS.map((o) => ({ value: o, label: o }))}
+                    placeholder="Selecciona"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="didi-objetivo" className="block text-sm font-medium text-foreground mb-2">
+                    Objetivo del plan *
+                  </label>
+                  <p className="text-xs text-muted mb-1">La IA calcula calorías según los datos.</p>
+                  <DidiSelect
+                    id="didi-objetivo"
+                    aria-label="Objetivo del plan"
+                    value={form.objetivo}
+                    onChange={(v) => handleChange("objetivo", v)}
+                    options={OBJETIVO_OPTIONS.map((o) => ({ value: o, label: o }))}
+                    placeholder="Selecciona"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="didi-tipoDieta" className="block text-sm font-medium text-foreground mb-2">
+                    Tipo de dieta *
+                  </label>
+                  <DidiSelect
+                    id="didi-tipoDieta"
+                    aria-label="Tipo de dieta"
+                    value={form.tipoDieta}
+                    onChange={(v) => handleChange("tipoDieta", v)}
+                    options={TIPO_DIETA_OPTIONS.map((o) => ({ value: o, label: o }))}
+                    placeholder="Selecciona"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    Enfermedades o condiciones (opcional)
+                  </label>
+                  <p className="text-xs text-muted mb-3">Marca las que apliquen.</p>
+                  <div className="flex flex-wrap gap-3">
+                    {CONDICIONES_OPTIONS.map((cond) => (
+                      <label
+                        key={cond}
+                        htmlFor={`didi-condicion-${cond.replace(/\s+/g, "-")}`}
+                        className="inline-flex items-center gap-2 cursor-pointer rounded-lg border border-border px-3 py-2 hover:border-teal-500/40 transition-colors"
+                      >
+                        <input
+                          id={`didi-condicion-${cond.replace(/\s+/g, "-")}`}
+                          name="condiciones"
+                          type="checkbox"
+                          value={cond}
+                          checked={condiciones.includes(cond)}
+                          onChange={() => handleCondicionToggle(cond)}
+                          className="rounded border-border text-teal-500 accent-teal-500 focus:ring-teal-500/30"
+                        />
+                        <span className="text-sm text-foreground">{cond}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
             {error && (
-              <div className="p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+              <div className="mt-6 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
                 {error}
               </div>
             )}
 
-            <div className="flex justify-center">
+            <div className="mt-6 flex justify-center">
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full sm:w-auto min-w-[200px] py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-xl hover-button"
+                className="w-full sm:w-auto min-w-[200px] py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-xl hover-button"
               >
               {loading ? (
                 <>
@@ -566,10 +573,10 @@ export default function DidiPage() {
             animate={{ opacity: 1, y: 0 }}
             className="space-y-6"
           >
-            <div className="didi-preview-section glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-purple-500/40">
+            <div className="didi-preview-section glass-effect hover-box p-6 sm:p-8 rounded-2xl border border-teal-500/40">
               <div className="flex flex-wrap items-center justify-center sm:justify-between gap-4 mb-4">
                 <h2 className="text-xl font-semibold text-foreground flex items-center gap-2 w-full sm:w-auto justify-center sm:justify-start">
-                  <FileText className="w-5 h-5 text-purple-500 shrink-0" />
+                  <FileText className="w-5 h-5 text-teal-500 shrink-0" />
                   Plan listo para enviar al paciente
                 </h2>
                 <div className="flex flex-wrap gap-3 justify-center w-full sm:w-auto">
@@ -580,14 +587,14 @@ export default function DidiPage() {
                       setPlanContent("");
                       setOriginalPlanContent("");
                     }}
-                    className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
+                    className="border-teal-500/50 text-teal-500 hover:bg-teal-500/10"
                   >
                     Nuevo plan
                   </Button>
                   <Button
                     type="button"
                     onClick={handleDownloadPdf}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                    className="bg-teal-600 hover:bg-teal-700 text-white"
                   >
                     <Download className="w-4 h-4 mr-2" />
                     Descargar PDF
@@ -599,7 +606,7 @@ export default function DidiPage() {
                 <Button
                   variant="outline"
                   onClick={isEditing ? handleSaveEdit : () => setIsEditing(true)}
-                  className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10 flex items-center gap-2 min-w-[11rem]"
+                  className="border-teal-500/50 text-teal-500 hover:bg-teal-500/10 flex items-center gap-2 min-w-[11rem]"
                 >
                   {isEditing ? (
                     <>
@@ -633,7 +640,7 @@ export default function DidiPage() {
                     autoComplete="off"
                     value={planContent}
                     onChange={(e) => setPlanContent(e.target.value)}
-                    className="w-full min-h-[360px] font-mono text-sm leading-loose whitespace-pre-wrap resize-y focus:outline-none focus:ring-2 focus:ring-purple-500/50 rounded-lg p-4 border border-gray-300"
+                    className="w-full min-h-[360px] font-mono text-sm leading-loose whitespace-pre-wrap resize-y focus:outline-none focus:ring-2 focus:ring-teal-500/50 rounded-lg p-4 border border-gray-300"
                     style={{ backgroundColor: "#fafafa", color: "#1a1a1a" }}
                     placeholder="Plan nutricional... (puedes editar títulos ##, listas - **Desayuno:**, etc.)"
                     spellCheck
@@ -659,7 +666,7 @@ export default function DidiPage() {
                     setPromptEditError("");
                     setPromptEditText("");
                   }}
-                  className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+                  className="bg-teal-600 hover:bg-teal-700 text-white flex items-center gap-2"
                 >
                   <MessageSquare className="w-4 h-4 mr-2" />
                   Edita con PROMPT
@@ -680,11 +687,11 @@ export default function DidiPage() {
                   aria-labelledby="prompt-edit-title"
                 >
                   <div
-                    className="bg-card border border-purple-500/40 rounded-2xl shadow-xl max-w-lg w-full p-6"
+                    className="bg-card border border-teal-500/40 rounded-2xl shadow-xl max-w-lg w-full p-6"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <h3 id="prompt-edit-title" className="text-lg font-semibold text-foreground mb-2 flex items-center gap-2">
-                      <MessageSquare className="w-5 h-5 text-purple-500" />
+                      <MessageSquare className="w-5 h-5 text-teal-500" />
                       Edita con PROMPT
                     </h3>
                     <p className="text-sm text-muted mb-3">
@@ -699,7 +706,7 @@ export default function DidiPage() {
                         setPromptEditError("");
                       }}
                       placeholder="Ej: A mi paciente no le gusta el huevo, sustituye por otra proteína..."
-                      className="w-full min-h-[100px] px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/50 resize-y"
+                      className="w-full min-h-[100px] px-4 py-3 rounded-xl border border-border bg-background text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/50 resize-y"
                       disabled={loadingPromptEdit}
                       aria-label="Instrucción para editar el plan"
                     />
@@ -711,7 +718,7 @@ export default function DidiPage() {
                         type="button"
                         onClick={handleApplyPromptEdit}
                         disabled={loadingPromptEdit || !promptEditText.trim()}
-                        className="bg-purple-600 hover:bg-purple-700 text-white"
+                        className="bg-teal-600 hover:bg-teal-700 text-white"
                       >
                         {loadingPromptEdit ? (
                           <>
@@ -727,7 +734,7 @@ export default function DidiPage() {
                         variant="outline"
                         onClick={() => !loadingPromptEdit && setShowPromptEdit(false)}
                         disabled={loadingPromptEdit}
-                        className="border-purple-500/50 text-purple-500 hover:bg-purple-500/10"
+                        className="border-teal-500/50 text-teal-500 hover:bg-teal-500/10"
                       >
                         Cancelar
                       </Button>

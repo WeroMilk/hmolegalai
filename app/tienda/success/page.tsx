@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { ArrowLeft } from "lucide-react";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
@@ -21,8 +22,9 @@ function SuccessContent() {
         )}
         <Link
           href="/tienda"
-          className="inline-block px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full border border-teal-500/40 text-teal-600 dark:text-teal-400 hover:bg-teal-500/10 transition-colors"
         >
+          <ArrowLeft className="w-4 h-4" />
           Volver a la tienda
         </Link>
       </div>

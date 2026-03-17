@@ -95,6 +95,50 @@ input[type="number"] {
   appearance: textfield;
 }
 
+/* Slider de importancia suplementos: verde menta (reemplaza el rojo por defecto) */
+.range-teal {
+  accent-color: #14b8a6;
+}
+.range-teal::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(226, 232, 240, 0.6);
+}
+.dark .range-teal::-webkit-slider-runnable-track,
+html.dark .range-teal::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0.15);
+}
+.range-teal::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #14b8a6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  margin-top: -6px;
+}
+.range-teal::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(226, 232, 240, 0.6);
+}
+.dark .range-teal::-moz-range-track,
+html.dark .range-teal::-moz-range-track {
+  background: rgba(255, 255, 255, 0.15);
+}
+.range-teal::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #14b8a6;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

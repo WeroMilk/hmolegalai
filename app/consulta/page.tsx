@@ -298,7 +298,7 @@ export default function ConsultaPage() {
                     max={10}
                     value={form.importanciaSuplementos}
                     onChange={(e) => setForm((f) => ({ ...f, importanciaSuplementos: parseInt(e.target.value, 10) }))}
-                    className="flex-1 min-w-[120px] max-w-xs"
+                    className="range-teal flex-1 min-w-[120px] max-w-xs"
                   />
                   <span className="font-medium w-8">{form.importanciaSuplementos}</span>
                 </div>

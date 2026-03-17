@@ -5,14 +5,12 @@ import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
-import { useUserProfile } from "@/lib/use-user-profile";
 import { isDidiUser } from "@/lib/didi";
 import { LogOut, Menu, X, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 
 export function Navbar() {
   const { user, logout } = useAuth();
-  const { profile } = useUserProfile();
   const { theme, toggleThemeWithEffect } = useTheme();
   const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -83,7 +81,7 @@ export function Navbar() {
                     href="/auth"
                     className="hover-button btn-primary i18n-nav-link min-w-[9.5rem] text-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg glow-border text-white font-medium border-2 border-transparent"
                   >
-                    {t("nav_sign_in")}
+                    {t("nav_admin")}
                   </Link>
                   <button
                     type="button"
@@ -161,7 +159,7 @@ export function Navbar() {
                 className="hover-button btn-primary block px-4 py-3 min-h-[48px] flex items-center justify-center bg-teal-600 hover:bg-teal-700 rounded-lg text-center text-white font-medium mt-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {t("nav_sign_in")}
+                {t("nav_admin")}
               </Link>
             )}
           </div>

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { getProductBySlug } from "@/lib/products";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { ArrowLeft } from "lucide-react";
 
 function formatPrice(centavos: number): string {
   return `$${(centavos / 100).toLocaleString("es-MX")} MXN`;
@@ -55,7 +56,11 @@ export default function ProductPage() {
         <Navbar />
         <main className="max-w-xl mx-auto px-4 pt-28 pb-16 text-center">
           <p className="text-muted">Producto no encontrado.</p>
-          <Link href="/tienda" className="text-teal-600 hover:underline mt-4 inline-block">
+          <Link
+            href="/tienda"
+            className="inline-flex items-center gap-2 mt-4 text-sm text-muted hover:text-teal-600 px-3 py-2 rounded-full border border-border hover:border-teal-500/30 hover:bg-teal-500/5 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
             Volver a la tienda
           </Link>
         </main>
@@ -64,11 +69,15 @@ export default function ProductPage() {
   }
 
   return (
-    <div className="min-h-screen text-foreground">
+    <div className="min-h-0 text-foreground">
       <Navbar />
-      <main className="max-w-3xl mx-auto px-4 pt-28 pb-16">
-        <Link href="/tienda" className="text-sm text-muted hover:text-teal-600 mb-6 inline-block">
-          ← Volver a la tienda
+      <main className="max-w-3xl mx-auto px-4 pt-28 pb-10">
+        <Link
+          href="/tienda"
+          className="inline-flex items-center gap-2 text-sm text-muted hover:text-teal-600 mb-6 px-3 py-2 rounded-full border border-border hover:border-teal-500/30 hover:bg-teal-500/5 transition-colors w-fit"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Volver a la tienda
         </Link>
         <motion.div
           initial={{ opacity: 0 }}

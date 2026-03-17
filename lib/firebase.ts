@@ -1,17 +1,17 @@
 import { initializeApp, getApps, FirebaseApp } from "firebase/app";
-import { getAnalytics, Analytics } from "firebase/analytics";
 import { getAuth, Auth } from "firebase/auth";
 import { getFirestore, Firestore } from "firebase/firestore";
 import { getStorage, FirebaseStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY?.trim(),
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN?.trim(),
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim(),
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET?.trim(),
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID?.trim(),
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID?.trim(),
+  // No incluir measurementId si no coincide con el proyecto (evita warning de Analytics)
+  measurementId: undefined as string | undefined,
 };
 
 /** Placeholders que indican que Firebase no está configurado */
@@ -46,7 +46,7 @@ let app: FirebaseApp | undefined;
 let auth: Auth | undefined;
 let db: Firestore | undefined;
 let storage: FirebaseStorage | undefined;
-let analytics: Analytics | undefined;
+let analytics: unknown = undefined;
 
 // Solo inicializar Firebase si está explícitamente habilitado y la API key es válida.
 // Sin esto, cualquier key inválida o placeholder dispara "auth/api-key-not-valid".
@@ -64,13 +64,20 @@ if (typeof window !== "undefined") {
     const validApiKeyFormat = looksLikeValidFirebaseApiKey(apiKey);
 
     if (FIREBASE_ENABLED && noPlaceholders && validApiKeyFormat) {
-      app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+      // Usar solo campos necesarios, sin measurementId, para evitar 400 en installations y warning de Analytics
+      const configForInit = {
+        apiKey: firebaseConfig.apiKey,
+        authDomain: firebaseConfig.authDomain,
+        projectId: firebaseConfig.projectId,
+        storageBucket: firebaseConfig.storageBucket,
+        messagingSenderId: firebaseConfig.messagingSenderId,
+        appId: firebaseConfig.appId,
+      };
+      app = getApps().length === 0 ? initializeApp(configForInit) : getApps()[0];
       auth = getAuth(app);
       db = getFirestore(app);
       storage = getStorage(app);
-      if (firebaseConfig.measurementId?.trim()) {
-        analytics = getAnalytics(app);
-      }
+      // No inicializar Analytics para evitar warning de measurement ID no coincidente
     }
   } catch (error) {
     console.warn("Firebase initialization error:", error);

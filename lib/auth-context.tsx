@@ -3,14 +3,10 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   User,
-  UserCredential,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  GoogleAuthProvider,
-  signInWithPopup,
-  sendEmailVerification,
   sendPasswordResetEmail,
 } from "firebase/auth";
 import { auth } from "./firebase";
@@ -59,10 +55,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  resendVerificationEmail: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -126,47 +119,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const getContinueUrl = () => {
-    if (typeof window !== "undefined") return window.location.origin + "/auth";
-    return process.env.NEXT_PUBLIC_APP_URL ? `${process.env.NEXT_PUBLIC_APP_URL}/auth` : undefined;
-  };
-
-  const signUp = async (email: string, password: string) => {
-    if (!auth) {
-      throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
-    }
-    try {
-      await createUserWithEmailAndPassword(auth, email.trim(), password);
-    } catch (err: any) {
-      const code = err?.code || "";
-      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al crear la cuenta."));
-    }
-    // No se exige verificación de correo: el usuario queda logueado y puede usar la app.
-  };
-
-  const resendVerificationEmail = async (email: string, password: string) => {
-    if (!auth) {
-      throw new Error("Firebase no está configurado.");
-    }
-    let result: UserCredential;
-    try {
-      result = await signInWithEmailAndPassword(auth, email.trim(), password);
-    } catch (err: any) {
-      const code = err?.code || "";
-      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al iniciar sesión."));
-    }
-    if (result.user.emailVerified) {
-      await signOut(auth);
-      throw new Error("Tu correo ya está verificado. Puedes iniciar sesión.");
-    }
-    const continueUrl = getContinueUrl();
-    await sendEmailVerification(result.user, continueUrl ? {
-      url: continueUrl,
-      handleCodeInApp: false,
-    } : undefined);
-    await signOut(auth);
-  };
-
   const resetPassword = async (email: string) => {
     if (!auth) {
       throw new Error("Firebase no está configurado.");
@@ -176,19 +128,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err: any) {
       const code = err?.code || "";
       throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al enviar el correo."));
-    }
-  };
-
-  const signInWithGoogle = async () => {
-    if (!auth) {
-      throw new Error("Firebase no está configurado. Por favor configura las credenciales reales.");
-    }
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (err: any) {
-      const code = err?.code || "";
-      throw new Error(getFriendlyAuthMessage(code, err?.message || "Error al iniciar sesión con Google."));
     }
   };
 
@@ -205,7 +144,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signUp, signInWithGoogle, resetPassword, resendVerificationEmail, logout }}
+      value={{ user, loading, signIn, resetPassword, logout }}
     >
       {children}
     </AuthContext.Provider>
