@@ -11,7 +11,7 @@ import { LogOut, Menu, X, Sun, Moon } from "lucide-react";
 import { useState, useRef } from "react";
 
 const LOGO_CLICKS_NEEDED = 3;
-const LOGO_CLICK_RESET_MS = 1500;
+const LOGO_CLICK_RESET_MS = 500;
 
 export function Navbar() {
   const router = useRouter();
@@ -33,31 +33,28 @@ export function Navbar() {
       return;
     }
     setLogoClickCount(next);
-    logoClickTimeoutRef.current = setTimeout(() => setLogoClickCount(0), LOGO_CLICK_RESET_MS);
+    logoClickTimeoutRef.current = setTimeout(() => {
+      setLogoClickCount(0);
+      router.push("/");
+    }, LOGO_CLICK_RESET_MS);
   };
+
+  const logoClassName = "flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0";
 
   return (
     <nav className="fixed top-0 w-full z-50 glass-effect border-b border-border navbar-no-frame">
       <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 xs:h-16 sm:h-16 gap-2 min-w-0 py-2 sm:py-0">
           {user ? (
-            <Link
-              href="/"
-              className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0"
-            >
+            <Link href="/" className={logoClassName}>
               <Image src="/logo.png" alt="VitalHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
               <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitalHealth</div>
             </Link>
           ) : (
-            <button
-              type="button"
-              onClick={handleLogoClick}
-              className="flex items-center space-x-1.5 xs:space-x-2 cursor-pointer transition-transform duration-200 ease-out hover:scale-105 origin-left shrink-0 bg-transparent border-none p-0 text-left"
-              aria-label="VitalHealth"
-            >
+            <Link href="/" onClick={handleLogoClick} className={logoClassName} aria-label="VitalHealth">
               <Image src="/logo.png" alt="VitalHealth" width={36} height={36} className="flex-shrink-0 w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10" />
               <div className="text-lg xs:text-xl sm:text-2xl font-bold gradient-text shrink-0">VitalHealth</div>
-            </button>
+            </Link>
           )}
 
           <div className="hidden sm:flex items-center shrink-0 min-w-0">

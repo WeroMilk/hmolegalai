@@ -27,6 +27,8 @@ type Consulta = {
   telefono?: string;
   edad?: number;
   objetivoPrincipal?: string;
+  metaPeso?: string;
+  tipoDieta?: string;
   createdAt?: string | null;
 };
 
@@ -226,6 +228,18 @@ export default function AdminPage() {
                       <Target className="w-4 h-4 text-teal-500/70 shrink-0 mt-0.5" />
                       <span className="line-clamp-2">{c.objetivoPrincipal ?? "-"}</span>
                     </li>
+                    {c.metaPeso && (
+                      <li className="flex items-center gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80">Meta peso:</span>
+                        <span>{c.metaPeso === "bajar" ? "Bajar" : c.metaPeso === "mantener" ? "Mantener" : c.metaPeso === "subir" ? "Subir" : c.metaPeso}</span>
+                      </li>
+                    )}
+                    {c.tipoDieta && (
+                      <li className="flex items-center gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80">Dieta:</span>
+                        <span className="line-clamp-1">{c.tipoDieta.replace(/-/g, " ")}</span>
+                      </li>
+                    )}
                   </ul>
                 </div>
               ))}

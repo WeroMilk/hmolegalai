@@ -22,7 +22,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleBuy = async (subscription: boolean) => {
+  const handleBuy = async () => {
     if (!product) return;
     setError("");
     setLoading(true);
@@ -31,7 +31,7 @@ export default function ProductPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: [{ productId: product.id, quantity: 1, isSubscription: subscription }],
+          items: [{ productId: product.id, quantity: 1, isSubscription: false }],
           successUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/tienda/success`,
           cancelUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/tienda/${slug}`,
         }),
@@ -100,29 +100,16 @@ export default function ProductPage() {
               </span>
               <h1 className="text-2xl font-bold">{product.name}</h1>
               <p className="text-muted mt-2">{product.description}</p>
-              <div className="mt-4 space-y-2">
-                <p>
-                  <span className="font-semibold">Compra única:</span> {formatPrice(product.priceOneTime)}
-                </p>
-                <p>
-                  <span className="font-semibold">Suscripción (10% dto):</span> {formatPrice(product.priceSubscription)}/mes
-                </p>
+              <div className="mt-4">
+                <p className="font-semibold text-lg">{formatPrice(product.priceOneTime)}</p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+              <div className="mt-6">
                 <Button
-                  onClick={() => handleBuy(false)}
+                  onClick={handleBuy}
                   disabled={loading}
                   className="bg-teal-600 hover:bg-teal-700"
                 >
                   {loading ? "Procesando..." : `Comprar por ${formatPrice(product.priceOneTime)}`}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => handleBuy(true)}
-                  disabled={loading}
-                  className="border-teal-500 text-teal-600 hover:bg-teal-500/10"
-                >
-                  Suscripción {formatPrice(product.priceSubscription)}/mes
                 </Button>
               </div>
               {error && (

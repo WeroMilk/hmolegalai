@@ -14,13 +14,26 @@ const OBJETIVOS = [
   { value: "salud articular", label: "Salud articular" },
 ];
 
+const META_PESO = [
+  { value: "bajar", label: "Bajar de peso" },
+  { value: "mantener", label: "Mantener peso" },
+  { value: "subir", label: "Subir de peso" },
+];
+
+const TIPO_DIETA = [
+  { value: "normal", label: "Normal / equilibrada" },
+  { value: "alta-proteina", label: "Alta en proteína" },
+  { value: "baja-carbohidratos", label: "Baja en carbohidratos" },
+  { value: "baja-calorias", label: "Baja en calorías" },
+  { value: "sin-restricciones", label: "Sin restricciones (mantenimiento)" },
+];
+
 const HABITOS_ALIMENTACION = ["Regular", "Irregular", "Mucha comida rápida", "Cocino en casa", "Dietas restrictivas", "Otro"];
 const HABITOS_EJERCICIO = ["Sedentario", "1-2 veces/semana", "3-4 veces/semana", "5+ veces/semana", "Otro"];
 const HABITOS_SUENO = ["Menos de 6 h", "6-7 h", "7-8 h", "Más de 8 h", "Irregular"];
 const HABITOS_ESTRES = ["Bajo", "Moderado", "Alto", "Muy alto"];
 
 export default function ConsultaPage() {
-  const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [form, setForm] = useState({
@@ -29,6 +42,8 @@ export default function ConsultaPage() {
     telefono: "",
     email: "",
     objetivoPrincipal: "",
+    metaPeso: "",
+    tipoDieta: "",
     condicionesMedicas: "",
     importanciaSuplementos: 5,
   });
@@ -51,70 +66,52 @@ export default function ConsultaPage() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/consulta", {
+      const consultaPayload = {
+        nombre: form.nombre.trim(),
+        edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
+        telefono: form.telefono.trim(),
+        email: form.email.trim(),
+        objetivoPrincipal: form.objetivoPrincipal || null,
+        metaPeso: form.metaPeso || null,
+        tipoDieta: form.tipoDieta || null,
+        condicionesMedicas: form.condicionesMedicas.trim() || null,
+        habitosAlimentacion: habitos.alimentacion,
+        habitosEjercicio: habitos.ejercicio,
+        habitosSueno: habitos.sueno,
+        habitosEstres: habitos.estres,
+        importanciaSuplementos: form.importanciaSuplementos,
+      };
+      const resConsulta = await fetch("/api/consulta", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(consultaPayload),
+      });
+      const dataConsulta = await resConsulta.json().catch(() => ({}));
+      if (!resConsulta.ok) throw new Error(dataConsulta?.error || "Error al guardar la solicitud");
+
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const resCheckout = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nombre: form.nombre.trim(),
-          edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
-          telefono: form.telefono.trim(),
-          email: form.email.trim(),
-          objetivoPrincipal: form.objetivoPrincipal || null,
-          condicionesMedicas: form.condicionesMedicas.trim() || null,
-          habitosAlimentacion: habitos.alimentacion,
-          habitosEjercicio: habitos.ejercicio,
-          habitosSueno: habitos.sueno,
-          habitosEstres: habitos.estres,
-          importanciaSuplementos: form.importanciaSuplementos,
+          items: [{ productId: "plan-dieta-personalizado", quantity: 1 }],
+          successUrl: `${origin}/consulta/success?session_id={CHECKOUT_SESSION_ID}`,
+          cancelUrl: `${origin}/consulta`,
         }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.error || "Error al enviar");
-      setSubmitted(true);
+      const dataCheckout = await resCheckout.json().catch(() => ({}));
+      if (!resCheckout.ok) throw new Error(dataCheckout?.error || "Error al crear el pago");
+      if (dataCheckout?.url) {
+        window.location.href = dataCheckout.url;
+        return;
+      }
+      throw new Error("No se recibió URL de pago");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Error al enviar");
+      setError(err instanceof Error ? err.message : "Error al procesar");
     } finally {
       setLoading(false);
     }
   };
-
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
-  const whatsappMessage = encodeURIComponent(
-    "Hola Nutrióloga, ya envié mi formulario de consulta. Quedo atenta a mi plan personalizado."
-  );
-  const whatsappUrl = whatsappNumber ? `https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${whatsappMessage}` : "#";
-
-  if (submitted) {
-    return (
-      <div className="min-h-screen text-foreground">
-        <Navbar />
-        <main className="max-w-xl mx-auto px-4 pt-28 pb-16 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="glass-effect p-8 rounded-xl border border-teal-500/40"
-          >
-            <h1 className="text-2xl font-bold text-teal-700 dark:text-teal-300 mb-4">
-              ¡Gracias!
-            </h1>
-            <p className="text-muted mb-6">
-              La nutrióloga recibió tu información. En menos de 24 horas hábiles te contactará por WhatsApp con tu plan personalizado.
-            </p>
-            {whatsappNumber && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Contactar por WhatsApp
-              </a>
-            )}
-          </motion.div>
-        </main>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen text-foreground">
@@ -193,6 +190,39 @@ export default function ConsultaPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">¿Qué deseas lograr con tu peso? *</label>
+                <select
+                  required
+                  value={form.metaPeso}
+                  onChange={(e) => setForm((f) => ({ ...f, metaPeso: e.target.value }))}
+                  className="w-full max-w-md rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Selecciona uno</option>
+                  {META_PESO.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Tipo de dieta preferida *</label>
+                <select
+                  required
+                  value={form.tipoDieta}
+                  onChange={(e) => setForm((f) => ({ ...f, tipoDieta: e.target.value }))}
+                  className="w-full max-w-md rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Selecciona uno</option>
+                  {TIPO_DIETA.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted mt-1">Ej. alta en proteína, baja en carbohidratos, etc.</p>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">Condiciones médicas (opcional)</label>
@@ -315,7 +345,7 @@ export default function ConsultaPage() {
           )}
           <div className="mt-6">
             <Button type="submit" disabled={loading} className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700">
-              {loading ? "Enviando..." : "Enviar solicitud"}
+              {loading ? "Procesando..." : "Pagar y enviar solicitud"}
             </Button>
           </div>
         </motion.form>

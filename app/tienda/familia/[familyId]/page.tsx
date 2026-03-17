@@ -37,6 +37,8 @@ export default function FamiliaPage() {
     );
   }
 
+  const familyWithImage = PRODUCT_FAMILIES.find((f) => f.id === family.id);
+
   return (
     <div className="min-h-screen text-foreground bg-[#fafafa] dark:bg-background">
       <Navbar />
@@ -48,8 +50,30 @@ export default function FamiliaPage() {
           <ArrowLeft className="w-4 h-4" />
           Volver a la tienda
         </Link>
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{family.name}</h1>
-        <p className="text-muted mb-8">{products.length} productos</p>
+
+        {familyWithImage?.image ? (
+          <div className="relative rounded-2xl overflow-hidden aspect-[21/9] min-h-[180px] max-h-[280px] mb-8 bg-gray-100 dark:bg-white/5">
+            <Image
+              src={familyWithImage.image}
+              alt={family.name}
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 1280px"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-md">{family.name}</h1>
+              <p className="text-white/90 mt-1">{products.length} productos</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{family.name}</h1>
+            <p className="text-muted mb-8">{products.length} productos</p>
+          </>
+        )}
+
         <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product: Product, i: number) => (
             <motion.article

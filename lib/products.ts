@@ -10,7 +10,7 @@ export interface Product {
   stripePriceIdOneTime?: string;
   stripePriceIdSubscription?: string;
   whyRecommend: string;
-  family: "awaken" | "detox" | "nutrir" | "restaurar" | "vital";
+  family: "awaken" | "detox" | "nutrir" | "restaurar" | "vital" | "plan";
 }
 
 const defaultWhy =
@@ -41,12 +41,20 @@ function p(
   };
 }
 
-export const PRODUCT_FAMILIES: { id: Product["family"]; name: string; nameEn: string }[] = [
-  { id: "awaken", name: "Familia Awaken", nameEn: "Familia Awaken" },
-  { id: "detox", name: "Familia Detox", nameEn: "Familia Detox" },
-  { id: "nutrir", name: "Nutrir a la familia", nameEn: "Nutrir a la familia" },
-  { id: "restaurar", name: "Restaurar a la familia", nameEn: "Restaurar a la familia" },
+/** Familias visibles en la tienda (excluimos "plan", que es solo para checkout desde Solicitar plan). */
+export const PRODUCT_FAMILIES: {
+  id: Product["family"];
+  name: string;
+  nameEn: string;
+  /** Imagen de la familia para la portada de la tienda (opcional). */
+  image?: string;
+}[] = [
+  { id: "awaken", name: "Familia Awaken", nameEn: "Familia Awaken", image: "/tienda/familias/awaken.png" },
+  { id: "detox", name: "Familia Detox", nameEn: "Familia Detox", image: "/tienda/familias/detox.png" },
+  { id: "nutrir", name: "Nutrir a la familia", nameEn: "Nutrir a la familia", image: "/tienda/familias/nutrir.png" },
+  { id: "restaurar", name: "Restaurar a la familia", nameEn: "Restaurar a la familia", image: "/tienda/familias/restaurar.png" },
   { id: "vital", name: "Vital Health", nameEn: "Vital Health" },
+  { id: "plan", name: "Plan dieta", nameEn: "Diet plan" },
 ];
 
 export const PRODUCTS: Product[] = [
@@ -89,6 +97,8 @@ export const PRODUCTS: Product[] = [
   p("paquete-detox", "Paquete Detox", "Detox Bundle", 194850, "vital", "Pack detox. Incluye productos de la familia detox.", defaultWhy),
   p("plan-adulto-mayor", "Plan para personas mayores", "Plan Adulto Mayor", 404850, "vital", "Plan completo para adultos mayores. Varios productos incluidos.", defaultWhy),
   p("v-smoothie", "V-SMOOTHIE", "V-SMOOTHIE", 67500, "vital", "Batido nutritivo.", defaultWhy),
+  // Plan de dieta (solo checkout desde /consulta, no se muestra en tienda)
+  p("plan-dieta-personalizado", "Plan de alimentación 100% personalizado", "Personalized diet plan", 50000, "plan", "Dieta personalizada por tu nutrióloga en menos de 24 h.", defaultWhy),
 ];
 
 export function getProductBySlug(slug: string): Product | undefined {

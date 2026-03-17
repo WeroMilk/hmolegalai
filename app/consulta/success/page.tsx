@@ -31,7 +31,7 @@ function runConfetti() {
   })();
 }
 
-function SuccessContent() {
+function ConsultaSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
   const confettiRun = useRef(false);
@@ -49,35 +49,32 @@ function SuccessContent() {
           <CheckCircle className="w-10 h-10" />
         </div>
         <h1 className="text-2xl font-bold text-teal-700 dark:text-teal-300 mb-4">
-          Pago generado con éxito
+          Cobro generado con éxito
         </h1>
-        <p className="text-muted mb-4 leading-relaxed">
-          En menos de 24 horas recibirás notificación por WhatsApp con los detalles de tu pedido.
-        </p>
-        <p className="text-muted mb-6 text-sm leading-relaxed">
-          Si estás en Hermosillo, te indicaremos en cuánto tiempo te llega. Si estás fuera, te solicitaremos tu ubicación y dirección para enviarte la guía de envío.
+        <p className="text-muted mb-6 leading-relaxed">
+          En menos de 24 horas estarás recibiendo tu dieta 100% personalizada.
         </p>
         {sessionId && (
           <p className="text-xs text-muted mb-6">ID de sesión: {sessionId}</p>
         )}
         <Link
-          href="/tienda"
+          href="/"
           className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full border border-teal-500/40 text-teal-600 dark:text-teal-400 hover:bg-teal-500/10 transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Volver a la tienda
+          Volver al inicio
         </Link>
       </div>
     </main>
   );
 }
 
-export default function TiendaSuccessPage() {
+export default function ConsultaSuccessPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
       <Suspense fallback={<div className="pt-28 text-center">Cargando...</div>}>
-        <SuccessContent />
+        <ConsultaSuccessContent />
       </Suspense>
     </div>
   );

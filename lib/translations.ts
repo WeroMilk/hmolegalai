@@ -71,7 +71,7 @@ const _base = {
     // Home
     home_hero_title1: "Tu dieta personalizada",
     home_hero_title2: "por una nutrióloga seria",
-    home_hero_subtitle: "Diana Gallardo, L.N.H., te diseña tu plan de alimentación a la medida y te recomienda suplementos VitalHealth. Respuesta en menos de 24 h. Pago seguro con Stripe.",
+    home_hero_subtitle: "Diana Gallardo, L.N.H., te diseña tu plan de alimentación a la medida y te recomienda suplementos VitalHealth. Respuesta en menos de 24\u00A0h. Pago seguro con Stripe.",
     home_shipping: "Envíos a toda la República Mexicana.",
     home_how_it_works: "¿Cómo funciona?",
     home_see_documents: "Ver suplementos",
