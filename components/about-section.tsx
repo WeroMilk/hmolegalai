@@ -30,7 +30,7 @@ export function AboutSection() {
                 src="/diana-perfil.png"
                 alt="L.N.H. Diana Gallardo - Nutrióloga"
                 fill
-                className="object-cover object-top"
+                className="object-cover object-[50%_42%]"
                 sizes="(max-width: 480px) 112px, (max-width: 640px) 128px, 144px"
                 priority
               />

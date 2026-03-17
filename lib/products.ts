@@ -49,8 +49,10 @@ export const PRODUCT_FAMILIES: {
   nameEn: string;
   /** Imagen de la familia para la portada de la tienda (opcional). */
   image?: string;
-  /** Descripción corta de la familia (sustituye "X productos" cuando existe). */
+  /** Descripción completa (p. ej. en la página de la familia). */
   description?: string;
+  /** Resumen para la portada de la tienda (sin truncar). */
+  shortDescription?: string;
 }[] = [
   {
     id: "awaken",
@@ -59,6 +61,7 @@ export const PRODUCT_FAMILIES: {
     image: "/tienda/familias/awaken.png",
     description:
       "Enciende tu día con energía, concentración y claridad. Desde cafés funcionales hasta suplementos de rendimiento, Awaken te ayuda a empezar con fuerza y mantenerte alerta.",
+    shortDescription: "Energía, concentración y claridad. Cafés funcionales y suplementos de rendimiento.",
   },
   {
     id: "detox",
@@ -67,6 +70,7 @@ export const PRODUCT_FAMILIES: {
     image: "/tienda/familias/detox.png",
     description:
       "Revitaliza tu sistema y apoya el equilibrio desde adentro. La Colección Detox combina mezclas específicas para ayudar a tu cuerpo a limpiar, reiniciar y sentirse renovado.",
+    shortDescription: "Revitaliza tu sistema y apoya el equilibrio. Mezclas para limpiar y renovar.",
   },
   {
     id: "nutrir",
@@ -75,6 +79,7 @@ export const PRODUCT_FAMILIES: {
     image: "/tienda/familias/nutrir.png",
     description:
       "Dale a tu cuerpo el cuidado diario que se merece. La colección Nourish proporciona nutrientes esenciales y bienestar fundamental para ayudarte a prosperar cada día.",
+    shortDescription: "Cuidado diario y nutrientes esenciales para prosperar cada día.",
   },
   {
     id: "restaurar",
@@ -83,6 +88,7 @@ export const PRODUCT_FAMILIES: {
     image: "/tienda/familias/restaurar.png",
     description:
       "Encuentre el equilibrio, la fuerza y la renovación. La colección Restore está pensada para favorecer la recuperación, la resistencia y la vitalidad en general, para que te sientas lo mejor posible.",
+    shortDescription: "Equilibrio, fuerza y renovación. Recuperación y vitalidad.",
   },
   { id: "plan", name: "Plan dieta", nameEn: "Diet plan" },
 ];
