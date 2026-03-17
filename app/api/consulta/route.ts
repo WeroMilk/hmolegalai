@@ -82,8 +82,8 @@ export async function POST(request: NextRequest) {
 
     const ref = await adminDb.collection("consultas").add(consulta);
 
-    const nutritionistEmail = process.env.NUTRITIONIST_EMAIL?.trim();
-    if (nutritionistEmail && process.env.RESEND_API_KEY?.trim()) {
+    const nutritionistEmail = process.env.NUTRITIONIST_EMAIL?.trim() || "didi@dietas.com";
+    if (process.env.RESEND_API_KEY?.trim()) {
       try {
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",

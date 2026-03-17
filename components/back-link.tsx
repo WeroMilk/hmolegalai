@@ -6,17 +6,17 @@ import { ArrowLeft } from "lucide-react";
 interface BackLinkProps {
   href: string;
   children: React.ReactNode;
-  /** Color: blue (default) o purple (DIDI) */
-  variant?: "blue" | "purple";
+  /** Color: teal (default) o purple (DIDI) */
+  variant?: "teal" | "purple";
   className?: string;
 }
 
 /** Botón Volver unificado: misma posición en desktop y móvil en toda la app */
-export function BackLink({ href, children, variant = "blue", className = "" }: BackLinkProps) {
+export function BackLink({ href, children, variant = "teal", className = "" }: BackLinkProps) {
   const colorClass =
     variant === "purple"
       ? "text-purple-500 hover:text-purple-400"
-      : "text-blue-500 hover:text-blue-400";
+      : "text-teal-500 hover:text-teal-400";
 
   return (
     <Link

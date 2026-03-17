@@ -69,14 +69,14 @@ const _base = {
     auth_password_min: "La contraseña debe tener al menos 6 caracteres",
 
     // Home
-    home_hero_title1: "Nutrición personalizada",
-    home_hero_title2: "y suplementos VitalHealth",
-    home_hero_subtitle: "Planes de alimentación a tu medida y suplementos de alta calidad. Nutrióloga titulada. Salud integral y bienestar.",
-    home_shipping: "Envíos nacionales a toda la República Mexicana.",
+    home_hero_title1: "Tu dieta personalizada",
+    home_hero_title2: "por una nutrióloga seria",
+    home_hero_subtitle: "Diana Gallardo, L.N.H., te diseña tu plan de alimentación a la medida y te recomienda suplementos VitalHealth. Respuesta en menos de 24 h. Pago seguro con Stripe.",
+    home_shipping: "Envíos a toda la República Mexicana.",
     home_how_it_works: "¿Cómo funciona?",
     home_see_documents: "Ver suplementos",
     home_fast: "Personalizado",
-    home_fast_desc: "Tu plan en 48 horas hábiles",
+    home_fast_desc: "Tu plan en menos de 24 horas hábiles",
     home_secure: "Seguro",
     home_secure_desc: "Tus datos están protegidos",
     home_smart: "Profesional",
@@ -90,9 +90,9 @@ const _base = {
     feat_choose: "Solicita tu plan",
     feat_choose_desc: "Completa el formulario y la nutrióloga te enviará tu dieta por WhatsApp",
     feat_pay: "Pago seguro",
-    feat_pay_desc: "Stripe. Compra única o suscripción con 10% de descuento",
+    feat_pay_desc: "Stripe. Compra única y 100% segura.",
     feat_form: "Consulta personalizada",
-    feat_form_desc: "Objetivos, hábitos y condiciones. Respuesta en 48 h hábiles",
+    feat_form_desc: "Objetivos, hábitos y condiciones. Respuesta en menos de 24 h hábiles",
     feat_download: "Suplementos VitalHealth",
     feat_download_desc: "VITALAGE y más. Recomendados por tu nutrióloga",
 
@@ -218,7 +218,7 @@ const _base = {
 
     // Footer
     footer_location: "Hermosillo, Sonora. México.",
-    footer_shipping: "Envíos nacionales a toda la República Mexicana.",
+    footer_shipping: "Envíos a toda la República Mexicana.",
     footer_copyright: "© {{year}} VitalHealth.",
     footer_copyright_suffix: "",
 
@@ -286,7 +286,7 @@ const _base = {
     about_trust_title: "Confianza",
     about_trust_short: "Cédula profesional. Planes basados en SMAE y NOM-043. Sin dietas genéricas.",
     about_payment_title: "Pago",
-    about_payment_short: "Stripe. Tarjetas y débito. Compra única o suscripción con 10% de descuento en suplementos.",
+    about_payment_short: "Stripe. Tarjetas y débito. Compra única y 100% segura en dietas y suplementos.",
     about_contact_email: "contacto@vitahealth.example.com",
 
     // Legal pages (Terms, Privacy, Disclaimer) – section titles and intros
@@ -644,14 +644,14 @@ const _base = {
     auth_invalid_email: "Enter a valid email",
     auth_password_min: "Password must be at least 6 characters",
 
-    home_hero_title1: "Personalized nutrition",
-    home_hero_title2: "and VitalHealth supplements",
-    home_hero_subtitle: "Custom meal plans and high-quality supplements. Licensed nutritionist. Health and wellness.",
-    home_shipping: "National shipping to all of Mexico.",
+    home_hero_title1: "Your personalized diet",
+    home_hero_title2: "by a licensed nutritionist",
+    home_hero_subtitle: "Diana Gallardo, L.N.H., designs your custom meal plan and recommends VitalHealth supplements. Response in under 24 hours. Secure payment with Stripe.",
+    home_shipping: "Shipping to all of Mexico.",
     home_how_it_works: "How it works",
     home_see_documents: "View supplements",
     home_fast: "Personalized",
-    home_fast_desc: "Your plan within 48 business hours",
+    home_fast_desc: "Your plan in less than 24 business hours",
     home_secure: "Secure",
     home_secure_desc: "Your data is protected",
     home_smart: "Professional",
@@ -668,7 +668,7 @@ const _base = {
     feat_pay: "Secure payment",
     feat_pay_desc: "Stripe. One-time or subscription with 10% off",
     feat_form: "Personal consultation",
-    feat_form_desc: "Goals, habits and conditions. Response within 48 business hours",
+    feat_form_desc: "Goals, habits and conditions. Response in less than 24 business hours",
     feat_download: "VitalHealth supplements",
     feat_download_desc: "VITALAGE and more. Recommended by your nutritionist",
 
@@ -786,7 +786,7 @@ const _base = {
     mis_docs_date_unavailable: "Date unavailable",
 
     footer_location: "Hermosillo, Sonora. Mexico.",
-    footer_shipping: "National shipping to all of Mexico.",
+    footer_shipping: "Shipping to all of Mexico.",
     footer_copyright: "© {{year}} VitalHealth.",
     footer_copyright_suffix: "",
 
@@ -850,7 +850,7 @@ const _base = {
     about_trust_title: "Trust",
     about_trust_short: "Professional license. Plans based on SMAE and NOM-043. No generic diets.",
     about_payment_title: "Payment",
-    about_payment_short: "Stripe. Credit and debit. One-time purchase or subscription with 10% off on supplements.",
+    about_payment_short: "Stripe. Credit and debit. One-time and 100% secure payment for diets and supplements.",
     about_contact_email: "contacto@vitahealth.example.com",
 
     legal_terms_intro: "Last updated: January 2026. AVATAR LEGAL AI («the Platform») is an automated legal document template generation service based in Hermosillo, Sonora, Mexico. By using the Platform you accept the following terms.",

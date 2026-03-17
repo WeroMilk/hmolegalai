@@ -44,14 +44,14 @@ export function Features() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.25, delay: index * 0.03 }}
-                className="glass-effect hover-box p-4 xs:p-5 sm:p-6 md:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[260px] sm:min-h-[280px] md:min-h-[300px] flex flex-col"
+                className="glass-effect hover-box p-4 xs:p-5 sm:p-6 md:p-8 rounded-xl border border-teal-500/40 group min-h-[220px] xs:min-h-[260px] sm:min-h-[280px] md:min-h-[300px] flex flex-col"
               >
-                <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
-                  <Icon className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125" />
+                <div className="w-16 h-16 bg-teal-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-teal-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
+                  <Icon className="w-8 h-8 text-teal-500 transition-transform duration-300 group-hover:scale-125" />
                 </div>
                 <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t(feat.title)}</h3>
                 <p className="text-muted flex-grow leading-relaxed">{t(feat.desc)}</p>
-                <div className="mt-4 text-blue-500 font-semibold flex-shrink-0">
+                <div className="mt-4 text-teal-500 font-semibold flex-shrink-0">
                   {String(index + 1).padStart(2, "0")}
                 </div>
               </motion.div>

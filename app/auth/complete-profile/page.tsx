@@ -68,7 +68,7 @@ export default function CompleteProfilePage() {
   if (loading || !user || profile?.role) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500" />
       </div>
     );
   }
@@ -80,7 +80,7 @@ export default function CompleteProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="glass-effect p-6 sm:p-8 rounded-xl border border-blue-500/40"
+          className="glass-effect p-6 sm:p-8 rounded-xl border border-teal-500/40"
         >
           <h1 className="text-2xl font-bold text-center mb-2">Completa tu perfil</h1>
           <p className="text-muted text-center text-sm mb-6">

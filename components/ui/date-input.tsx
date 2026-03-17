@@ -136,9 +136,9 @@ export function DateInput({
         "w-full px-4 py-3 bg-card border rounded-lg cursor-text",
         "dark:bg-gray-800/90 dark:text-gray-100 dark:placeholder:text-gray-400",
         "text-foreground placeholder:text-muted",
-        "focus:outline-none focus:ring-2 focus:ring-blue-500/20",
+        "focus:outline-none focus:ring-2 focus:ring-teal-500/20",
         "transition-all",
-        "border-border focus:border-blue-500/50",
+        "border-border focus:border-teal-500/50",
         "dark:border-gray-600/50",
         showError && "border-red-500/60 focus:border-red-500/50",
         className

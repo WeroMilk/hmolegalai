@@ -183,7 +183,7 @@ export default function AdminPage() {
                             o.status === "paid"
                               ? "text-green-600"
                               : o.status === "enviada"
-                                ? "text-blue-600"
+                                ? "text-teal-600"
                                 : "text-muted"
                           }
                         >

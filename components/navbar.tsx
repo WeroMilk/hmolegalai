@@ -5,18 +5,16 @@ import Image from "next/image";
 import { useAuth } from "@/lib/auth-context";
 import { useTheme } from "@/lib/theme-context";
 import { useI18n } from "@/lib/i18n-context";
-import { useFlag } from "@/lib/flag-context";
 import { useUserProfile } from "@/lib/use-user-profile";
 import { isDidiUser } from "@/lib/didi";
-import { User, LogOut, Menu, X, Sun, Moon } from "lucide-react";
+import { LogOut, Menu, X, Sun, Moon } from "lucide-react";
 import { useState } from "react";
 
 export function Navbar() {
   const { user, logout } = useAuth();
   const { profile } = useUserProfile();
   const { theme, toggleThemeWithEffect } = useTheme();
-  const { locale, setLocale, t } = useI18n();
-  const { setFlag } = useFlag();
+  const { t } = useI18n();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -70,24 +68,6 @@ export function Navbar() {
                     <LogOut className="w-4 h-4" aria-hidden />
                     <span className="whitespace-nowrap">{t("nav_sign_out")}</span>
                   </button>
-                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("es"); setFlag("mx"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_spanish")}
-                    >
-                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("en"); setFlag("us"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_english")}
-                    >
-                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                  </div>
                   <button
                     type="button"
                     onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
@@ -101,28 +81,10 @@ export function Navbar() {
                 <>
                   <Link
                     href="/auth"
-                    className="hover-button btn-primary i18n-nav-link min-w-[9.5rem] text-center px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg glow-border text-white font-medium border-2 border-transparent"
+                    className="hover-button btn-primary i18n-nav-link min-w-[9.5rem] text-center px-4 py-2 bg-teal-600 hover:bg-teal-700 rounded-lg glow-border text-white font-medium border-2 border-transparent"
                   >
                     {t("nav_sign_in")}
                   </Link>
-                  <div className="flex items-center gap-0.5 p-0.5 rounded-lg bg-background/80 border border-border">
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("es"); setFlag("mx"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_spanish")}
-                    >
-                      <Image src="/flag-mexico.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setLocale("en"); setFlag("us"); }}
-                      className={`flex items-center justify-center w-8 h-6 rounded transition-all ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-1 ring-offset-background" : "opacity-70 hover:opacity-100"}`}
-                      aria-label={t("nav_aria_english")}
-                    >
-                      <Image src="/flag-usa.png" alt="" width={24} height={18} className="w-6 h-4.5 rounded-sm object-cover" style={{ width: "auto", height: "auto" }} />
-                    </button>
-                  </div>
                   <button
                     type="button"
                     onClick={(e) => toggleThemeWithEffect(e.clientX, e.clientY)}
@@ -182,27 +144,6 @@ export function Navbar() {
                 {user.email}
               </div>
             )}
-            <div className="py-3 px-4 border-t border-border">
-              <div className="text-sm font-medium text-foreground mb-3">{t("nav_language") || "Idioma"}</div>
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => { setLocale("es"); setFlag("mx"); setMobileMenuOpen(false); }}
-                  className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "es" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
-                  aria-label={t("nav_aria_spanish")}
-                >
-                  <Image src="/flag-mexico.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" style={{ width: "auto", height: "auto" }} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setLocale("en"); setFlag("us"); setMobileMenuOpen(false); }}
-                  className={`flex items-center justify-center w-20 h-12 rounded-lg transition-all shadow-sm hover:shadow-md ${locale === "en" ? "ring-2 ring-blue-500 ring-offset-2 ring-offset-background border-2 border-blue-500 scale-105" : "border border-border opacity-80 hover:opacity-100 hover:scale-105"}`}
-                  aria-label={t("nav_aria_english")}
-                >
-                  <Image src="/flag-usa.png" alt="" width={40} height={30} className="w-full h-full rounded-md object-cover" style={{ width: "auto", height: "auto" }} />
-                </button>
-              </div>
-            </div>
             {user ? (
               <button
                 type="button"
@@ -217,7 +158,7 @@ export function Navbar() {
             ) : (
               <Link
                 href="/auth"
-                className="hover-button btn-primary block px-4 py-3 min-h-[48px] flex items-center justify-center bg-blue-600 hover:bg-blue-700 rounded-lg text-center text-white font-medium mt-2"
+                className="hover-button btn-primary block px-4 py-3 min-h-[48px] flex items-center justify-center bg-teal-600 hover:bg-teal-700 rounded-lg text-center text-white font-medium mt-2"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 {t("nav_sign_in")}

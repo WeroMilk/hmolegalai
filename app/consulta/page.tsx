@@ -98,7 +98,7 @@ export default function ConsultaPage() {
               ¡Gracias!
             </h1>
             <p className="text-muted mb-6">
-              La nutrióloga recibió tu información. En un máximo de 48 horas hábiles te contactará por WhatsApp con tu plan personalizado.
+              La nutrióloga recibió tu información. En menos de 24 horas hábiles te contactará por WhatsApp con tu plan personalizado.
             </p>
             {whatsappNumber && (
               <a
@@ -119,196 +119,205 @@ export default function ConsultaPage() {
   return (
     <div className="min-h-screen text-foreground">
       <Navbar />
-      <main className="max-w-2xl mx-auto px-4 pt-28 pb-16">
+      <main className="max-w-6xl mx-auto px-4 pt-28 pb-16">
         <h1 className="text-2xl font-bold mb-2">Solicitar mi plan de alimentación</h1>
         <p className="text-muted text-sm mb-6">
-          Completa el formulario. En 48 h hábiles te contactaremos por WhatsApp con tu plan personalizado.
+          Completa el formulario. En menos de 24 h hábiles te contactaremos por WhatsApp con tu plan personalizado.
         </p>
         <motion.form
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onSubmit={handleSubmit}
-          className="glass-effect p-6 sm:p-8 rounded-xl border border-teal-500/40 space-y-5"
+          className="glass-effect p-6 sm:p-8 rounded-xl border border-teal-500/40"
         >
-          <div>
-            <label className="block text-sm font-medium mb-1">Nombre completo *</label>
-            <Input
-              required
-              value={form.nombre}
-              onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
-              placeholder="Tu nombre"
-              className="max-w-md"
-            />
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1">Edad *</label>
-              <Input
-                required
-                type="number"
-                min={1}
-                max={120}
-                value={form.edad}
-                onChange={(e) => setForm((f) => ({ ...f, edad: e.target.value }))}
-                placeholder="Ej. 35"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium mb-1">Teléfono *</label>
-              <Input
-                required
-                type="tel"
-                value={form.telefono}
-                onChange={(e) => setForm((f) => ({ ...f, telefono: e.target.value }))}
-                placeholder="Ej. (662) 123-4567"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Email *</label>
-            <Input
-              required
-              type="email"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              placeholder="tu@email.com"
-              className="max-w-md"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Objetivo principal *</label>
-            <select
-              required
-              value={form.objetivoPrincipal}
-              onChange={(e) => setForm((f) => ({ ...f, objetivoPrincipal: e.target.value }))}
-              className="w-full max-w-md rounded-lg border border-input bg-background px-3 py-2 text-sm"
-            >
-              <option value="">Selecciona uno</option>
-              {OBJETIVOS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Condiciones médicas (opcional)</label>
-            <textarea
-              value={form.condicionesMedicas}
-              onChange={(e) => setForm((f) => ({ ...f, condicionesMedicas: e.target.value }))}
-              placeholder="Diabetes, alergias, medicación, etc."
-              className="w-full max-w-md rounded-lg border border-input bg-background px-3 py-2 text-sm min-h-[80px]"
-              maxLength={5000}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Hábitos (opcional)</label>
-            <div className="space-y-3 text-sm">
+          {/* Desktop: layout horizontal en dos columnas */}
+          <div className="flex flex-col lg:flex-row lg:gap-10 lg:items-start">
+            <div className="flex-1 space-y-5 min-w-0">
               <div>
-                <span className="text-muted block mb-1">Alimentación</span>
-                <div className="flex flex-wrap gap-2">
-                  {HABITOS_ALIMENTACION.map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => toggleHabito("alimentacion", h)}
-                      className={`px-3 py-1 rounded-full border text-sm ${
-                        habitos.alimentacion.includes(h)
-                          ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
-                          : "border-border text-muted hover:border-teal-500/50"
-                      }`}
-                    >
-                      {h}
-                    </button>
-                  ))}
+                <label className="block text-sm font-medium mb-1">Nombre completo *</label>
+                <Input
+                  required
+                  value={form.nombre}
+                  onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
+                  placeholder="Tu nombre"
+                  className="max-w-md"
+                />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Edad *</label>
+                  <Input
+                    required
+                    type="number"
+                    min={1}
+                    max={120}
+                    value={form.edad}
+                    onChange={(e) => setForm((f) => ({ ...f, edad: e.target.value }))}
+                    placeholder="Ej. 35"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Teléfono *</label>
+                  <Input
+                    required
+                    type="tel"
+                    value={form.telefono}
+                    onChange={(e) => setForm((f) => ({ ...f, telefono: e.target.value }))}
+                    placeholder="Ej. (662) 123-4567"
+                  />
                 </div>
               </div>
               <div>
-                <span className="text-muted block mb-1">Ejercicio</span>
-                <div className="flex flex-wrap gap-2">
-                  {HABITOS_EJERCICIO.map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => toggleHabito("ejercicio", h)}
-                      className={`px-3 py-1 rounded-full border text-sm ${
-                        habitos.ejercicio.includes(h)
-                          ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
-                          : "border-border text-muted hover:border-teal-500/50"
-                      }`}
-                    >
-                      {h}
-                    </button>
+                <label className="block text-sm font-medium mb-1">Email *</label>
+                <Input
+                  required
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+                  placeholder="tu@email.com"
+                  className="max-w-md"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Objetivo principal *</label>
+                <select
+                  required
+                  value={form.objetivoPrincipal}
+                  onChange={(e) => setForm((f) => ({ ...f, objetivoPrincipal: e.target.value }))}
+                  className="w-full max-w-md rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Selecciona uno</option>
+                  {OBJETIVOS.map((o) => (
+                    <option key={o.value} value={o.value}>
+                      {o.label}
+                    </option>
                   ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Condiciones médicas (opcional)</label>
+                <textarea
+                  value={form.condicionesMedicas}
+                  onChange={(e) => setForm((f) => ({ ...f, condicionesMedicas: e.target.value }))}
+                  placeholder="Diabetes, alergias, medicación, etc."
+                  className="w-full max-w-md rounded-lg border border-input bg-background px-3 py-2 text-sm min-h-[80px]"
+                  maxLength={5000}
+                />
+              </div>
+            </div>
+            <div className="flex-1 space-y-5 min-w-0 lg:mt-0 mt-6">
+              <div>
+                <label className="block text-sm font-medium mb-2">Hábitos (opcional)</label>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <span className="text-muted block mb-1">Alimentación</span>
+                    <div className="flex flex-wrap gap-2">
+                      {HABITOS_ALIMENTACION.map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHabito("alimentacion", h)}
+                          className={`px-3 py-1 rounded-full border text-sm ${
+                            habitos.alimentacion.includes(h)
+                              ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
+                              : "border-border text-muted hover:border-teal-500/50"
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-muted block mb-1">Ejercicio</span>
+                    <div className="flex flex-wrap gap-2">
+                      {HABITOS_EJERCICIO.map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHabito("ejercicio", h)}
+                          className={`px-3 py-1 rounded-full border text-sm ${
+                            habitos.ejercicio.includes(h)
+                              ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
+                              : "border-border text-muted hover:border-teal-500/50"
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-muted block mb-1">Sueño</span>
+                    <div className="flex flex-wrap gap-2">
+                      {HABITOS_SUENO.map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHabito("sueno", h)}
+                          className={`px-3 py-1 rounded-full border text-sm ${
+                            habitos.sueno.includes(h)
+                              ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
+                              : "border-border text-muted hover:border-teal-500/50"
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <span className="text-muted block mb-1">Estrés</span>
+                    <div className="flex flex-wrap gap-2">
+                      {HABITOS_ESTRES.map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => toggleHabito("estres", h)}
+                          className={`px-3 py-1 rounded-full border text-sm ${
+                            habitos.estres.includes(h)
+                              ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
+                              : "border-border text-muted hover:border-teal-500/50"
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
               <div>
-                <span className="text-muted block mb-1">Sueño</span>
-                <div className="flex flex-wrap gap-2">
-                  {HABITOS_SUENO.map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => toggleHabito("sueno", h)}
-                      className={`px-3 py-1 rounded-full border text-sm ${
-                        habitos.sueno.includes(h)
-                          ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
-                          : "border-border text-muted hover:border-teal-500/50"
-                      }`}
-                    >
-                      {h}
-                    </button>
-                  ))}
+                <label className="block text-sm font-medium mb-1">
+                  ¿Qué tan importante es para ti usar suplementos de alta calidad? (1-10)
+                </label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <input
+                    type="range"
+                    min={0}
+                    max={10}
+                    value={form.importanciaSuplementos}
+                    onChange={(e) => setForm((f) => ({ ...f, importanciaSuplementos: parseInt(e.target.value, 10) }))}
+                    className="flex-1 min-w-[120px] max-w-xs"
+                  />
+                  <span className="font-medium w-8">{form.importanciaSuplementos}</span>
                 </div>
               </div>
-              <div>
-                <span className="text-muted block mb-1">Estrés</span>
-                <div className="flex flex-wrap gap-2">
-                  {HABITOS_ESTRES.map((h) => (
-                    <button
-                      key={h}
-                      type="button"
-                      onClick={() => toggleHabito("estres", h)}
-                      className={`px-3 py-1 rounded-full border text-sm ${
-                        habitos.estres.includes(h)
-                          ? "border-teal-500 bg-teal-500/20 text-teal-700 dark:text-teal-300"
-                          : "border-border text-muted hover:border-teal-500/50"
-                      }`}
-                    >
-                      {h}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              <p className="text-xs text-muted">
+                Si necesitas enviar fotos (analíticas, etc.), podrás hacerlo por WhatsApp después.
+              </p>
             </div>
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              ¿Qué tan importante es para ti usar suplementos de alta calidad? (1-10)
-            </label>
-            <div className="flex items-center gap-2 flex-wrap">
-              <input
-                type="range"
-                min={0}
-                max={10}
-                value={form.importanciaSuplementos}
-                onChange={(e) => setForm((f) => ({ ...f, importanciaSuplementos: parseInt(e.target.value, 10) }))}
-                className="flex-1 min-w-[120px] max-w-xs"
-              />
-              <span className="font-medium w-8">{form.importanciaSuplementos}</span>
-            </div>
-          </div>
-          <p className="text-xs text-muted">
-            Si necesitas enviar fotos (analíticas, etc.), podrás hacerlo por WhatsApp después.
-          </p>
           {error && (
-            <div className="p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
+            <div className="mt-5 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 text-sm">
               {error}
             </div>
           )}
-          <Button type="submit" disabled={loading} className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700">
-            {loading ? "Enviando..." : "Enviar solicitud"}
-          </Button>
+          <div className="mt-6">
+            <Button type="submit" disabled={loading} className="w-full sm:w-auto bg-teal-600 hover:bg-teal-700">
+              {loading ? "Enviando..." : "Enviar solicitud"}
+            </Button>
+          </div>
         </motion.form>
       </main>
     </div>

@@ -34,7 +34,7 @@ export default function GlobalError({
             </button>
             <Link
               href="/"
-              className="inline-flex items-center justify-center rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-3 transition-colors"
+              className="inline-flex items-center justify-center rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-semibold px-5 py-3 transition-colors"
             >
               {t("error_go_home")}
             </Link>

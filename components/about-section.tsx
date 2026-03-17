@@ -38,7 +38,7 @@ export function AboutSection() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 pt-4">
             <a
               href={`mailto:${t("about_contact_email")}`}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/20 text-blue-500 hover:text-blue-400 font-medium text-sm transition-all duration-200"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/20 text-teal-500 hover:text-teal-400 font-medium text-sm transition-all duration-200"
             >
               <Mail className="w-4 h-4" />
               {t("about_contact_email")}
@@ -51,10 +51,10 @@ export function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.25, delay: 0 }}
-              className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
-            >
-              <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
-                <Shield className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125" />
+className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-teal-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
+              >
+                <div className="w-16 h-16 bg-teal-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-teal-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
+                  <Shield className="w-8 h-8 text-teal-500 transition-transform duration-300 group-hover:scale-125" />
               </div>
               <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t("about_trust_title")}</h3>
               <p className="text-muted flex-grow leading-relaxed">{t("about_trust_short")}</p>
@@ -65,10 +65,10 @@ export function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.25, delay: 0.03 }}
-              className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-blue-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
-            >
-              <div className="w-16 h-16 bg-blue-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-blue-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
-                <CreditCard className="w-8 h-8 text-blue-500 transition-transform duration-300 group-hover:scale-125" />
+className="glass-effect hover-box p-4 xs:p-6 sm:p-8 rounded-xl border border-teal-500/40 group min-h-[220px] xs:min-h-[280px] flex flex-col"
+              >
+                <div className="w-16 h-16 bg-teal-600/20 rounded-lg flex items-center justify-center mb-6 group-hover:bg-teal-600/30 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3 flex-shrink-0">
+                  <CreditCard className="w-8 h-8 text-teal-500 transition-transform duration-300 group-hover:scale-125" />
               </div>
               <h3 className="hover-title text-base xs:text-lg sm:text-xl font-semibold mb-2 xs:mb-3 leading-tight text-foreground">{t("about_payment_title")}</h3>
               <p className="text-muted flex-grow leading-relaxed">{t("about_payment_short")}</p>

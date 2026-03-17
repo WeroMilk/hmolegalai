@@ -220,7 +220,7 @@ function AuthPageContent() {
             </div>
           )}
 
-          <div className="glass-effect hover-box hover-box-no-lift p-6 sm:p-8 rounded-xl border border-blue-500/40 w-full">
+          <div className="glass-effect hover-box hover-box-no-lift p-6 sm:p-8 rounded-xl border border-teal-500/40 w-full">
             {showVerifyEmail ? (
               <div className="space-y-4 text-center">
                 <div className="w-16 h-16 mx-auto rounded-full bg-green-500/20 flex items-center justify-center">
@@ -240,7 +240,7 @@ function AuthPageContent() {
                 {resendSent ? (
                   <p className="text-sm text-green-500 font-medium">{t("auth_verify_email_resend_success")}</p>
                 ) : (
-                  <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/30 text-left space-y-2">
+                  <div className="p-4 rounded-lg bg-teal-500/10 border border-teal-500/30 text-left space-y-2">
                     <p className="text-sm text-muted">{t("auth_verify_email_resend")}</p>
                     <div className="flex gap-2">
                       <label htmlFor="auth-verify-password" className="sr-only">{t("auth_password")}</label>
@@ -336,7 +336,7 @@ function AuthPageContent() {
                         setError("");
                         setResetSent(false);
                       }}
-                      className="text-xs text-blue-500 hover:text-blue-400"
+                      className="text-xs text-teal-500 hover:text-teal-400"
                     >
                       {t("auth_forgot_password")}
                     </button>
@@ -356,7 +356,7 @@ function AuthPageContent() {
               </div>
 
               {showForgotPassword && (
-                <div className="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30">
+                <div className="p-3 rounded-lg bg-teal-500/10 border border-teal-500/30">
                   {resetSent ? (
                     <p className="text-sm text-foreground">{t("auth_reset_sent")}</p>
                   ) : (
@@ -442,8 +442,8 @@ function AuthPageContent() {
                       onClick={() => setRole("cliente")}
                       className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
                         role === "cliente"
-                          ? "border-blue-500 bg-blue-500/10 text-foreground"
-                          : "border-border text-muted hover:border-blue-500/50"
+                          ? "border-teal-500 bg-teal-500/10 text-foreground"
+                          : "border-border text-muted hover:border-teal-500/50"
                       }`}
                     >
                       <User className="w-5 h-5" />
@@ -454,8 +454,8 @@ function AuthPageContent() {
                       onClick={() => setRole("abogado")}
                       className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border-2 transition-all ${
                         role === "abogado"
-                          ? "border-blue-500 bg-blue-500/10 text-foreground"
-                          : "border-border text-muted hover:border-blue-500/50"
+                          ? "border-teal-500 bg-teal-500/10 text-foreground"
+                          : "border-border text-muted hover:border-teal-500/50"
                       }`}
                     >
                       <Briefcase className="w-5 h-5" />
@@ -466,7 +466,7 @@ function AuthPageContent() {
               )}
 
               {!isLogin && role === "abogado" && (
-                <div className="space-y-3 p-4 rounded-xl bg-blue-500/5 border border-blue-500/30">
+                <div className="space-y-3 p-4 rounded-xl bg-teal-500/5 border border-teal-500/30">
                   <p className="text-sm font-medium text-foreground">Datos del despacho (requeridos para verificación)</p>
                   <div>
                     <label htmlFor="auth-nombreCompleto" className="sr-only">Nombre completo</label>
@@ -577,7 +577,7 @@ function AuthPageContent() {
                   setDireccionDespacho("");
                   setTelefonoDespacho("");
                 }}
-                className="text-blue-500 hover:text-blue-400 text-sm"
+                className="text-teal-500 hover:text-teal-400 text-sm"
               >
                 {isLogin ? t("auth_no_account") : t("auth_has_account")}
               </button>
