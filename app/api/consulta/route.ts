@@ -53,10 +53,10 @@ export async function POST(request: NextRequest) {
       fotosUrls,
     } = body;
 
-    const nombreS = sanitize(nombre, 200);
-    const emailS = sanitize(email, 200);
-    const telefonoS = sanitize(telefono, 50);
-    const condicionesS = sanitize(condicionesMedicas ?? "", MAX_CONDICIONES);
+    const nombreS = sanitize(String(nombre ?? ""), 200);
+    const emailS = sanitize(String(email ?? ""), 200);
+    const telefonoS = sanitize(String(telefono ?? ""), 50);
+    const condicionesS = sanitize(String(condicionesMedicas ?? ""), MAX_CONDICIONES);
 
     if (!nombreS) {
       return NextResponse.json({ error: "El nombre es obligatorio." }, { status: 400 });
