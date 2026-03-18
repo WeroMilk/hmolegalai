@@ -19,7 +19,7 @@ export default function TiendaPage() {
     <div className="min-h-screen text-foreground bg-[#fafafa] dark:bg-background">
       <Navbar />
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-16 pb-16">
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-20 sm:pt-24 pb-16">
         <motion.section
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
