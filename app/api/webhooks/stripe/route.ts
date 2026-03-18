@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
           );
         }
         if (meta.consultaId) {
-          const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual"].includes(meta.planDieta) ? meta.planDieta : null;
+          const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual", "prueba"].includes(meta.planDieta) ? meta.planDieta : null;
           await adminDb.collection("consultas").doc(meta.consultaId).set(
             { paidAt: new Date(), stripeSessionId: session.id, planDieta: planDieta ?? "semanal" },
             { merge: true }
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
             try {
               const consultaSnap = await adminDb.collection("consultas").doc(meta.consultaId).get();
               const c = consultaSnap.data() as Record<string, unknown> | undefined;
-              const planLabel = planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
+              const planLabel = planDieta === "prueba" ? "Prueba ($1)" : planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
               const habitos = (c?.habitos as Record<string, string[]>) ?? {};
               const text = [
                 `Plan de alimentación PAGADO — ${planLabel}`,

@@ -29,10 +29,10 @@ export default function CarritoPage() {
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       const token = user ? await user.getIdToken().catch(() => null) : null;
       if (token) headers.Authorization = `Bearer ${token}`;
-      const planItem = items.find((i) => i.consultaId && (i.productId === PLAN_DIETA_IDS.semanal || i.productId === PLAN_DIETA_IDS.quincenal || i.productId === PLAN_DIETA_IDS.mensual));
+      const planItem = items.find((i) => i.consultaId && (i.productId === PLAN_DIETA_IDS.semanal || i.productId === PLAN_DIETA_IDS.quincenal || i.productId === PLAN_DIETA_IDS.mensual || i.productId === PLAN_DIETA_IDS.prueba));
       const consultaId = planItem?.consultaId;
       const planDieta = planItem
-        ? (planItem.productId === PLAN_DIETA_IDS.semanal ? "semanal" : planItem.productId === PLAN_DIETA_IDS.quincenal ? "quincenal" : "mensual")
+        ? (planItem.productId === PLAN_DIETA_IDS.semanal ? "semanal" : planItem.productId === PLAN_DIETA_IDS.quincenal ? "quincenal" : planItem.productId === PLAN_DIETA_IDS.mensual ? "mensual" : "prueba")
         : undefined;
       const body: Record<string, unknown> = {
         items: items.map((i) => ({

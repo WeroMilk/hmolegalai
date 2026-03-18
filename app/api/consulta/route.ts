@@ -62,8 +62,9 @@ export async function POST(request: NextRequest) {
     if (Number.isNaN(edadN) || edadN < 1 || edadN > 120) {
       return NextResponse.json({ error: "La edad debe ser un número entre 1 y 120." }, { status: 400 });
     }
-    if (!objetivoPrincipal || !OBJETIVOS.includes(objetivoPrincipal)) {
-      return NextResponse.json({ error: "Selecciona un objetivo principal válido." }, { status: 400 });
+    const objetivoS = typeof objetivoPrincipal === "string" ? objetivoPrincipal.trim().slice(0, 200) : "";
+    if (!objetivoS) {
+      return NextResponse.json({ error: "Selecciona un objetivo principal." }, { status: 400 });
     }
     const importancia =
       typeof importanciaSuplementos === "number"
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
       edad: edadN,
       telefono: telefonoS,
       email: emailS,
-      objetivoPrincipal,
+      objetivoPrincipal: objetivoS,
       metaPeso: typeof metaPeso === "string" && metaPeso.trim() ? metaPeso.trim().slice(0, 100) : null,
       tipoDieta: typeof tipoDieta === "string" && tipoDieta.trim() ? tipoDieta.trim().slice(0, 100) : null,
       condicionesMedicas: condicionesS || null,

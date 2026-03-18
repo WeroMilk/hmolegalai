@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const bodySuccessUrl = typeof body.successUrl === "string" ? body.successUrl : undefined;
     const bodyCancelUrl = typeof body.cancelUrl === "string" ? body.cancelUrl : undefined;
     const consultaId = typeof body.consultaId === "string" ? body.consultaId.trim().slice(0, 200) : undefined;
-    const planDieta = typeof body.planDieta === "string" && ["semanal", "quincenal", "mensual"].includes(body.planDieta) ? body.planDieta : undefined;
+    const planDieta = typeof body.planDieta === "string" && ["semanal", "quincenal", "mensual", "prueba"].includes(body.planDieta) ? body.planDieta : undefined;
     const documentId = body.documentId;
     const price = typeof body.price === "number" ? body.price : undefined;
     const saveToAccount = !!body.saveToAccount;

@@ -30,9 +30,12 @@ type Consulta = {
   objetivoPrincipal?: string;
   metaPeso?: string;
   tipoDieta?: string;
+  condicionesMedicas?: string | null;
+  habitos?: { alimentacion?: string[]; ejercicio?: string[]; sueno?: string[]; estres?: string[] };
+  importanciaSuplementos?: number;
   createdAt?: string | null;
   paidAt?: string | null;
-  planDieta?: "semanal" | "quincenal" | "mensual" | null;
+  planDieta?: "semanal" | "quincenal" | "mensual" | "prueba" | null;
 };
 
 type ShippingAddress = {
@@ -268,7 +271,7 @@ export default function AdminPage() {
                       )}
                       {c.planDieta && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-500/15 text-teal-600 dark:text-teal-400">
-                          {c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : "Mensual"}
+                          {c.planDieta === "prueba" ? "Prueba ($1)" : c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : c.planDieta === "mensual" ? "Mensual" : c.planDieta ?? ""}
                         </span>
                       )}
                       <span className="flex items-center gap-1 text-xs text-muted">
@@ -300,6 +303,31 @@ export default function AdminPage() {
                       <li className="flex items-center gap-2 text-muted">
                         <span className="text-xs font-medium text-foreground/80">Dieta:</span>
                         <span className="line-clamp-1">{c.tipoDieta.replace(/-/g, " ")}</span>
+                      </li>
+                    )}
+                    {c.condicionesMedicas && (
+                      <li className="flex items-start gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80 shrink-0">Condiciones médicas:</span>
+                        <span className="text-xs line-clamp-3">{c.condicionesMedicas}</span>
+                      </li>
+                    )}
+                    {(c.habitos?.alimentacion?.length || c.habitos?.ejercicio?.length || c.habitos?.sueno?.length || c.habitos?.estres?.length) ? (
+                      <li className="flex items-start gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80 shrink-0">Hábitos:</span>
+                        <span className="text-xs">
+                          {[
+                            c.habitos?.alimentacion?.length ? `Alim.: ${c.habitos.alimentacion.join(", ")}` : "",
+                            c.habitos?.ejercicio?.length ? `Ejerc.: ${c.habitos.ejercicio.join(", ")}` : "",
+                            c.habitos?.sueno?.length ? `Sueño: ${c.habitos.sueno.join(", ")}` : "",
+                            c.habitos?.estres?.length ? `Estrés: ${c.habitos.estres.join(", ")}` : "",
+                          ].filter(Boolean).join(" · ")}
+                        </span>
+                      </li>
+                    ) : null}
+                    {typeof c.importanciaSuplementos === "number" && (
+                      <li className="flex items-center gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80">Importancia suplementos (1-10):</span>
+                        <span>{c.importanciaSuplementos}</span>
                       </li>
                     )}
                   </ul>

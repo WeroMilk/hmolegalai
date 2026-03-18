@@ -18,16 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "El mensaje es obligatorio." }, { status: 400 });
     }
 
-    // 1. Guardar en Firestore (siempre que esté configurado). Los mensajes son anónimos y van a la misma persona.
-    if (adminDb) {
-      await adminDb.collection("contactos").add({
-        nombre,
-        mensaje,
-        createdAt: new Date(),
-      });
-    }
-
-    // 2. Opcional: enviar copia por correo a lnhdianagallardo@gmail.com (no falla si Resend no está)
+    // 1. Enviar correo a lnhdianagallardo@gmail.com si hay Resend (no depende de Firestore)
     if (process.env.RESEND_API_KEY?.trim()) {
       try {
         const res = await fetch("https://api.resend.com/emails", {
@@ -49,9 +40,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (!adminDb) {
+    // 2. Guardar en Firestore si está configurado (para ver en /admin)
+    if (adminDb) {
+      await adminDb.collection("contactos").add({
+        nombre,
+        mensaje,
+        createdAt: new Date(),
+      });
+    }
+
+    // Éxito si al menos Resend o Firestore está disponible
+    if (!process.env.RESEND_API_KEY?.trim() && !adminDb) {
       return NextResponse.json(
-        { error: "Base de datos no configurada. Revisa Firebase en .env.local." },
+        { error: "No está configurado el envío de correos (RESEND_API_KEY) ni la base de datos (Firebase). Revisa .env.local." },
         { status: 503 }
       );
     }
