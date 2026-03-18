@@ -68,9 +68,35 @@ export default function ConsultaPage() {
     }));
   };
 
+  /** Convierte lo que el usuario escribió (1.67 o 167) a cm para el backend */
+  const estaturaDisplayToCm = (display: string): number => {
+    const s = display.trim().replace(",", ".");
+    if (!s) return 0;
+    const n = parseFloat(s);
+    if (Number.isNaN(n)) return 0;
+    if (s.includes(".")) return Math.round(n * 100);
+    if (n >= 100) return Math.round(n);
+    return Math.round(n * 100);
+  };
+
+  /** Al salir del campo: si escribió 167, mostrar 1.67 */
+  const formatEstaturaBlur = () => {
+    const s = form.estatura.trim().replace(",", ".");
+    if (!s) return;
+    const n = parseFloat(s);
+    if (Number.isNaN(n)) return;
+    if (n >= 100) setForm((f) => ({ ...f, estatura: (n / 100).toFixed(2) }));
+    else if (n > 0 && n < 10) setForm((f) => ({ ...f, estatura: n.toFixed(2) }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const cm = estaturaDisplayToCm(form.estatura);
+    if (form.estatura.trim() && (cm < 100 || cm > 250)) {
+      setError("Estatura debe estar entre 1.00 y 2.50 m (ej. 1.67).");
+      return;
+    }
     setLoading(true);
     try {
       const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -89,7 +115,10 @@ export default function ConsultaPage() {
           consulta: {
             nombre: form.nombre.trim(),
             edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
-            estatura: form.estatura.trim() ? form.estatura.trim() : "",
+            estatura: (() => {
+              const cm = estaturaDisplayToCm(form.estatura);
+              return cm >= 100 && cm <= 250 ? String(cm) : "";
+            })(),
             telefono: form.telefono.trim(),
             email: form.email.trim(),
             objetivoPrincipal: form.objetivoPrincipal || "",
@@ -159,16 +188,17 @@ export default function ConsultaPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Estatura (cm) *</label>
+                  <label className="block text-sm font-medium mb-1">Estatura (m) *</label>
                   <Input
                     required
-                    type="number"
-                    min={100}
-                    max={250}
+                    type="text"
+                    inputMode="decimal"
                     value={form.estatura}
                     onChange={(e) => setForm((f) => ({ ...f, estatura: e.target.value }))}
-                    placeholder="Ej. 165"
+                    onBlur={formatEstaturaBlur}
+                    placeholder="Ej. 1.67"
                   />
+                  <p className="text-xs text-muted mt-1">En metros. Si escribes 167 se corrige a 1.67.</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Teléfono *</label>

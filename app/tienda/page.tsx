@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Navbar } from "@/components/navbar";
 import { PRODUCT_FAMILIES, getProductsByFamily } from "@/lib/products";
 import { motion } from "framer-motion";
-import { Truck, Package, ChevronRight } from "lucide-react";
+import { Package, ChevronRight } from "lucide-react";
 
 /** Solo las 4 familias con imagen para la portada principal. */
 const FAMILIAS_PORTADA: (typeof PRODUCT_FAMILIES)[0]["id"][] = ["awaken", "detox", "nutrir", "restaurar"];
@@ -17,16 +17,6 @@ export default function TiendaPage() {
   return (
     <div className="min-h-screen text-foreground bg-[#fafafa] dark:bg-background">
       <Navbar />
-
-      <div className="bg-teal-600 text-white text-center py-2.5 px-4 text-sm font-medium">
-        <span className="inline-flex items-center gap-2">
-          <Truck className="w-4 h-4" aria-hidden />
-          Envíos a toda la República Mexicana
-        </span>
-        <p className="mt-1 text-teal-100 text-xs font-normal">
-          Fuera de Hermosillo: $200 MXN por envío nacional. En compras mayores a $3,000 el envío es gratis.
-        </p>
-      </div>
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 sm:pt-16 pb-16">
         <motion.section

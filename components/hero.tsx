@@ -43,11 +43,11 @@ export function Hero() {
             </Link>
           </div>
 
-          <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-8 xs:mb-12">
+          <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-8 xs:mb-10 sm:mb-12">
             {t("home_shipping")}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 xs:gap-12 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-28 xs:mt-32 sm:mt-20 md:mt-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 xs:gap-12 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-10 xs:mt-12 mb-10 xs:mb-12 sm:mt-20 sm:mb-0 md:mt-16 md:mb-0">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
