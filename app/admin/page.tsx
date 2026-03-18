@@ -18,6 +18,7 @@ import {
   Calendar,
   Truck,
   Sparkles,
+  Inbox,
 } from "lucide-react";
 
 type Consulta = {
@@ -55,13 +56,22 @@ type Order = {
   shippingAddress?: ShippingAddress | null;
 };
 
+type ContactoMsg = {
+  id: string;
+  nombre?: string;
+  mensaje?: string;
+  createdAt?: string | null;
+};
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [consultas, setConsultas] = useState<Consulta[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
+  const [contactos, setContactos] = useState<ContactoMsg[]>([]);
   const [loadingConsultas, setLoadingConsultas] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [loadingContactos, setLoadingContactos] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -114,8 +124,27 @@ export default function AdminPage() {
         setLoadingOrders(false);
       }
     };
+    const fetchContactos = async () => {
+      try {
+        const token = await user.getIdToken();
+        const res = await fetch("/api/admin/contactos", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setContactos(data.contactos ?? []);
+        } else {
+          setContactos([]);
+        }
+      } catch {
+        setContactos([]);
+      } finally {
+        setLoadingContactos(false);
+      }
+    };
     fetchConsultas();
     fetchOrders();
+    fetchContactos();
   }, [user]);
 
   const markAsShipped = async (orderId: string) => {
@@ -210,7 +239,7 @@ export default function AdminPage() {
         <section className="mb-12">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-teal-500" />
-            Solicitudes de plan (consultas)
+            Solicitudes de plan (consultas) — didi@dietas.com
           </h2>
           {loadingConsultas ? (
             <div className="flex items-center gap-3 text-muted py-8">
@@ -274,6 +303,42 @@ export default function AdminPage() {
                       </li>
                     )}
                   </ul>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Mensajes de contacto */}
+        <section className="mb-12">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Inbox className="w-5 h-5 text-teal-500" />
+            Mensajes de contacto (lnhdianagallardo@gmail.com)
+          </h2>
+          {loadingContactos ? (
+            <div className="flex items-center gap-3 text-muted py-6">
+              <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-500/30 border-t-teal-500" />
+              <span>Cargando...</span>
+            </div>
+          ) : contactos.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-teal-500/30 bg-teal-500/5 p-8 text-center">
+              <Inbox className="w-10 h-10 text-teal-500/50 mx-auto mb-2" />
+              <p className="text-muted text-sm">No hay mensajes aún.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {contactos.map((c) => (
+                <div
+                  key={c.id}
+                  className="rounded-2xl border border-teal-500/20 bg-card/80 backdrop-blur-sm p-5 shadow-lg shadow-teal-500/5"
+                >
+                  <div className="flex items-start justify-between gap-2 mb-2">
+                    <p className="font-semibold text-foreground">{c.nombre ?? "Sin nombre"}</p>
+                    <span className="text-xs text-muted shrink-0">
+                      {c.createdAt ? new Date(c.createdAt).toLocaleString("es-MX") : "-"}
+                    </span>
+                  </div>
+                  <p className="text-muted text-sm whitespace-pre-wrap">{c.mensaje ?? ""}</p>
                 </div>
               ))}
             </div>

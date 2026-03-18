@@ -325,6 +325,8 @@ export const PRODUCTS: Product[] = [
   p("paquete-detox", "Paquete Detox", "Detox Bundle", 194850, "vital", "Pack detox. Incluye productos de la familia detox.", defaultWhy),
   p("plan-adulto-mayor", "Plan para personas mayores", "Plan Adulto Mayor", 404850, "vital", "Plan completo para adultos mayores. Varios productos incluidos.", defaultWhy),
   p("v-smoothie", "V-SMOOTHIE", "V-SMOOTHIE", 67500, "vital", "Batido nutritivo.", defaultWhy),
+  // --- PRUEBAS STRIPE: eliminar cuando termines las pruebas ---
+  p("test-stripe-1-peso", "Prueba Stripe $1", "Stripe test $1", 100, "vital", "Artículo de prueba por $1 MXN. Eliminar después de probar pagos.", defaultWhy),
   // Planes de dieta (solo checkout desde /consulta; no se muestran en tienda)
   p("plan-dieta-semanal", "Plan de dieta — Semanal", "Weekly diet plan", 39900, "plan", "Dieta personalizada por 1 semana. Entrega en menos de 24 h.", defaultWhy),
   p("plan-dieta-quincenal", "Plan de dieta — Quincenal", "Biweekly diet plan", 59900, "plan", "Dieta personalizada por 2 semanas. Entrega en menos de 24 h.", defaultWhy),

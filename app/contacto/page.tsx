@@ -31,10 +31,6 @@ export default function ContactoPage() {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.error || "Error al enviar");
-      if (data?.ok === false) {
-        setError(data?.error || "No se pudo enviar el correo.");
-        return;
-      }
       setSuccess(true);
       setForm({ nombreCompleto: "", mensaje: "" });
     } catch (err) {

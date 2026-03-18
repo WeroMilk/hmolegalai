@@ -1,22 +1,33 @@
 import { NextRequest, NextResponse } from "next/server";
+import { adminDb } from "@/lib/auth-server";
 
-const CONTACT_EMAIL = "lnhdianagallardo@gmail.com";
+const DESTINO_EMAIL = "lnhdianagallardo@gmail.com";
 const MAX_NAME = 200;
 const MAX_MESSAGE = 5000;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const nombreCompleto = typeof body.nombreCompleto === "string" ? body.nombreCompleto.trim().slice(0, MAX_NAME) : "";
+    const nombre = typeof body.nombreCompleto === "string" ? body.nombreCompleto.trim().slice(0, MAX_NAME) : "";
     const mensaje = typeof body.mensaje === "string" ? body.mensaje.trim().slice(0, MAX_MESSAGE) : "";
 
-    if (!nombreCompleto) {
-      return NextResponse.json({ error: "El nombre completo es obligatorio." }, { status: 400 });
+    if (!nombre) {
+      return NextResponse.json({ error: "El nombre es obligatorio." }, { status: 400 });
     }
     if (!mensaje) {
       return NextResponse.json({ error: "El mensaje es obligatorio." }, { status: 400 });
     }
 
+    // 1. Guardar en Firestore (siempre que esté configurado). Los mensajes son anónimos y van a la misma persona.
+    if (adminDb) {
+      await adminDb.collection("contactos").add({
+        nombre,
+        mensaje,
+        createdAt: new Date(),
+      });
+    }
+
+    // 2. Opcional: enviar copia por correo a lnhdianagallardo@gmail.com (no falla si Resend no está)
     if (process.env.RESEND_API_KEY?.trim()) {
       try {
         const res = await fetch("https://api.resend.com/emails", {
@@ -27,35 +38,20 @@ export async function POST(request: NextRequest) {
           },
           body: JSON.stringify({
             from: "VitalHealth <onboarding@resend.dev>",
-            to: [CONTACT_EMAIL],
-            subject: `Contacto web: ${nombreCompleto}`,
-            text: `Nombre: ${nombreCompleto}\n\nMensaje:\n${mensaje}`,
+            to: [DESTINO_EMAIL],
+            subject: `Contacto web: ${nombre}`,
+            text: `Nombre: ${nombre}\n\nMensaje:\n${mensaje}`,
           }),
         });
-        if (!res.ok) {
-          const errText = await res.text();
-          console.error("Resend contact email failed:", res.status, errText);
-          let userMessage = "No se pudo enviar el correo. Intenta de nuevo más tarde.";
-          try {
-            const errJson = JSON.parse(errText);
-            if (errJson?.message && typeof errJson.message === "string") {
-              if (errJson.message.includes("domain") || errJson.message.includes("from")) {
-                userMessage = "Configuración de correo en revisión. Escribe directamente a lnhdianagallardo@gmail.com.";
-              }
-            }
-          } catch {
-            // keep default userMessage
-          }
-          // Devolvemos 200 para que no aparezca "Failed to load resource: 502" en consola
-          return NextResponse.json({ ok: false, error: userMessage });
-        }
+        if (!res.ok) console.error("Resend contact:", res.status, await res.text());
       } catch (e) {
-        console.error("Error sending contact email:", e);
-        return NextResponse.json({ ok: false, error: "Error al enviar el mensaje. Intenta de nuevo." });
+        console.error("Resend contact error:", e);
       }
-    } else {
+    }
+
+    if (!adminDb) {
       return NextResponse.json(
-        { error: "El envío de correo no está configurado. Contacta al administrador." },
+        { error: "Base de datos no configurada. Revisa Firebase en .env.local." },
         { status: 503 }
       );
     }
@@ -63,6 +59,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true });
   } catch (error) {
     console.error("Contact API error:", error);
-    return NextResponse.json({ error: "Error al procesar la solicitud." }, { status: 500 });
+    return NextResponse.json({ error: "Error al enviar. Intenta de nuevo." }, { status: 500 });
   }
 }
