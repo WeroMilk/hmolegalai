@@ -88,7 +88,7 @@ export default function ProductPage() {
           className="glass-effect p-6 sm:p-8 rounded-xl border border-teal-500/40"
         >
           <div className="flex flex-col sm:flex-row gap-6">
-            <div className="relative w-full sm:w-64 h-[280px] sm:h-64 sm:flex-shrink-0 rounded-lg overflow-hidden bg-white dark:bg-card border border-gray-200 dark:border-border flex items-center justify-center">
+            <div className="relative w-full sm:w-64 h-[280px] sm:h-64 sm:flex-shrink-0 rounded-lg overflow-hidden bg-white dark:bg-transparent border border-gray-200 dark:border-border flex items-center justify-center">
               <Image
                 src={product.image}
                 alt={product.name}

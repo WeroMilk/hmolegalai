@@ -15,11 +15,11 @@ export const metadata: Metadata = {
   keywords: "nutrición, dieta personalizada, suplementos, VitalHealth, VITALAGE, colágeno, NAD, nutrióloga, Didi Gallardo",
   icons: {
     icon: [
-      { url: `${siteUrl}/favicon.ico`, sizes: "48x48", type: "image/x-icon" },
-      { url: `${siteUrl}/icon-192.png`, type: "image/png", sizes: "192x192" },
-      { url: `${siteUrl}/icon-512.png`, type: "image/png", sizes: "512x512" },
+      { url: "/logo.png", sizes: "48x48", type: "image/png" },
+      { url: "/logo.png", sizes: "192x192", type: "image/png" },
+      { url: "/logo.png", sizes: "512x512", type: "image/png" },
     ],
-    apple: `${siteUrl}/icon-192.png`,
+    apple: "/logo.png",
   },
   openGraph: {
     type: "website",

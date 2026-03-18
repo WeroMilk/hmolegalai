@@ -70,7 +70,7 @@ export default function FamiliaPage() {
               className="group bg-white dark:bg-card rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300"
             >
               <Link href={`/tienda/${product.slug}`} className="block">
-                <div className="aspect-square relative bg-white dark:bg-card border border-gray-200/50 dark:border-border overflow-hidden flex items-center justify-center">
+                <div className="aspect-square relative bg-white dark:bg-transparent border border-gray-200/50 dark:border-border overflow-hidden flex items-center justify-center">
                   <Image
                     src={product.image}
                     alt={product.name}
