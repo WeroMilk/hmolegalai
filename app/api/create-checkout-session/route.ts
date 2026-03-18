@@ -173,6 +173,7 @@ export async function POST(request: NextRequest) {
         meta.cTel = trunc(telefono, 500);
         meta.cEdad = trunc(String(bodyConsulta.edad ?? ""), 20);
         meta.cEstatura = trunc(String(bodyConsulta.estatura ?? ""), 20);
+        meta.cPeso = trunc(String(bodyConsulta.peso ?? ""), 20);
         meta.cObj = trunc(String(bodyConsulta.objetivoPrincipal ?? ""), 500);
         meta.cMetaPeso = trunc(String(bodyConsulta.metaPeso ?? ""), 100);
         meta.cTipoDieta = trunc(String(bodyConsulta.tipoDieta ?? ""), 500);
@@ -193,33 +194,8 @@ export async function POST(request: NextRequest) {
 
       const session = await stripe.checkout.sessions.create(sessionParams);
 
-      // Plan dieta (consulta): la consulta ya se guardó en POST /api/consulta; el webhook actualizará paidAt cuando Stripe confirme el pago. No requiere adminDb aquí.
-      // Tienda: la orden debe quedar registrada en Firebase o el dashboard no mostrará nada.
-      if (hasTiendaItems) {
-        if (!adminDb) {
-          return NextResponse.json(
-            { error: "Firebase no está configurado en este entorno. Configura FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL y NEXT_PUBLIC_FIREBASE_PROJECT_ID en Vercel para que los pedidos aparezcan en el dashboard." },
-            { status: 503 }
-          );
-        }
-        try {
-          await adminDb.collection("orders").doc(session.id).set({
-            stripeSessionId: session.id,
-            status: "pending",
-            userId: userId || null,
-            items,
-            createdAt: new Date(),
-          });
-        } catch (dbErr) {
-          const msg = dbErr instanceof Error ? dbErr.message : String(dbErr);
-          console.error("Error guardando orden en Firestore:", dbErr);
-          return NextResponse.json(
-            { error: "No se pudo registrar el pedido. Revisa permisos de Firestore en la colección «orders».", detail: msg },
-            { status: 503 }
-          );
-        }
-      }
-
+      // Plan dieta: el webhook crea/actualiza la consulta al confirmar el pago.
+      // Tienda: la orden se crea en el webhook (checkout.session.completed) para evitar fallos de Firestore antes del pago.
       return NextResponse.json({ sessionId: session.id, url: session.url });
     }
 

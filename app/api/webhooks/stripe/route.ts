@@ -50,10 +50,21 @@ export async function POST(request: NextRequest) {
                 name: shippingName ?? "",
               }
             : null;
-          await adminDb.collection("orders").doc(session.id).set(
-            { status: "paid", paidAt: new Date(), shippingAddress: shippingAddress ?? null },
-            { merge: true }
-          );
+          let itemsOrder: unknown[] = [];
+          try {
+            if (meta.items) itemsOrder = JSON.parse(meta.items) as unknown[];
+          } catch {
+            // ignore
+          }
+          await adminDb.collection("orders").doc(session.id).set({
+            stripeSessionId: session.id,
+            status: "paid",
+            paidAt: new Date(),
+            shippingAddress: shippingAddress ?? null,
+            userId: meta.userId && meta.userId.length > 0 ? meta.userId : null,
+            items: itemsOrder,
+            createdAt: new Date(),
+          });
         }
         const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual", "prueba"].includes(meta.planDieta) ? meta.planDieta : null;
         let consultaIdToUse: string | null = meta.consultaId ?? null;
@@ -80,10 +91,12 @@ export async function POST(request: NextRequest) {
           }
           const importanciaNum = Math.min(10, Math.max(0, parseInt(String(meta.cImportancia ?? "0"), 10) || 0));
           const estaturaN = parseInt(String(meta.cEstatura ?? "0"), 10) || 0;
+          const pesoVal = (meta.cPeso ?? "").trim();
           const consultaDoc = {
             nombre: meta.cNombre ?? "",
             edad: Number.isNaN(edadN) || edadN < 1 || edadN > 120 ? 0 : edadN,
             estatura: estaturaN >= 100 && estaturaN <= 250 ? estaturaN : 0,
+            peso: pesoVal || null,
             telefono: meta.cTel ?? "",
             email: meta.cEmail ?? "",
             objetivoPrincipal: meta.cObj || null,
@@ -120,6 +133,7 @@ export async function POST(request: NextRequest) {
                 `Nombre: ${c?.nombre ?? "-"}`,
                 `Edad: ${c?.edad ?? "-"}`,
                 c?.estatura ? `Estatura: ${c.estatura} cm` : "",
+                c?.peso ? `Peso: ${c.peso} kg` : "",
                 `Teléfono: ${c?.telefono ?? "-"}`,
                 `Email: ${c?.email ?? "-"}`,
                 `Objetivo: ${c?.objetivoPrincipal ?? "-"}`,
@@ -133,7 +147,7 @@ export async function POST(request: NextRequest) {
                 Array.isArray(habitos.estres) && habitos.estres.length ? `Estrés: ${habitos.estres.join(", ")}` : "",
                 "",
                 `ID consulta: ${consultaIdToUse}`,
-                `Dashboard: revisa la sección "Solicitudes de plan" en /admin`,
+                `Revisa tu panel en /admin`,
               ]
                 .filter(Boolean)
                 .join("\n");

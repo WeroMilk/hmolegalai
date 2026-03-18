@@ -186,7 +186,7 @@ export default function CarritoPage() {
             {loading ? "Procesando..." : "Procesar pago y enviar solicitud"}
           </Button>
           <p className="text-xs text-muted mt-3 text-center">
-            Serás redirigido a un pago seguro. El admin recibirá tu solicitud una vez confirmado el pago.
+            Serás redirigido a un pago seguro. La Nutrióloga recibirá tu solicitud una vez confirmado el pago.
           </p>
         </div>
       </main>

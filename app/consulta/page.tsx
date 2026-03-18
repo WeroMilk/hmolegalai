@@ -45,6 +45,7 @@ export default function ConsultaPage() {
     nombre: "",
     edad: "",
     estatura: "",
+    peso: "",
     telefono: "",
     email: "",
     objetivoPrincipal: "",
@@ -119,6 +120,7 @@ export default function ConsultaPage() {
               const cm = estaturaDisplayToCm(form.estatura);
               return cm >= 100 && cm <= 250 ? String(cm) : "";
             })(),
+            peso: form.peso.trim() ? form.peso.trim() : "",
             telefono: form.telefono.trim(),
             email: form.email.trim(),
             objetivoPrincipal: form.objetivoPrincipal || "",
@@ -171,10 +173,10 @@ export default function ConsultaPage() {
                   value={form.nombre}
                   onChange={(e) => setForm((f) => ({ ...f, nombre: e.target.value }))}
                   placeholder="Tu nombre"
-                  className="max-w-md"
+                  className="w-full max-w-md"
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Edad *</label>
                   <Input
@@ -185,6 +187,7 @@ export default function ConsultaPage() {
                     value={form.edad}
                     onChange={(e) => setForm((f) => ({ ...f, edad: e.target.value }))}
                     placeholder="Ej. 35"
+                    className="w-full max-w-md"
                   />
                 </div>
                 <div>
@@ -197,8 +200,21 @@ export default function ConsultaPage() {
                     onChange={(e) => setForm((f) => ({ ...f, estatura: e.target.value }))}
                     onBlur={formatEstaturaBlur}
                     placeholder="Ej. 1.67"
+                    className="w-full max-w-md"
                   />
                   <p className="text-xs text-muted mt-1">En metros. Si escribes 167 se corrige a 1.67.</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Peso (kg) *</label>
+                  <Input
+                    required
+                    type="text"
+                    inputMode="decimal"
+                    value={form.peso}
+                    onChange={(e) => setForm((f) => ({ ...f, peso: e.target.value }))}
+                    placeholder="Ej. 70"
+                    className="w-full max-w-md"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">Teléfono *</label>
@@ -208,6 +224,7 @@ export default function ConsultaPage() {
                     value={form.telefono}
                     onChange={(e) => setForm((f) => ({ ...f, telefono: e.target.value }))}
                     placeholder="Ej. (662) 123-4567"
+                    className="w-full max-w-md"
                   />
                 </div>
               </div>
@@ -219,7 +236,7 @@ export default function ConsultaPage() {
                   value={form.email}
                   onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
                   placeholder="tu@email.com"
-                  className="max-w-md"
+                  className="w-full max-w-md"
                 />
               </div>
               <div>

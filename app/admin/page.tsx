@@ -30,6 +30,7 @@ type Consulta = {
   telefono?: string;
   edad?: number;
   estatura?: number;
+  peso?: string | null;
   objetivoPrincipal?: string;
   metaPeso?: string;
   tipoDieta?: string;
@@ -238,8 +239,8 @@ export default function AdminPage() {
               <LayoutDashboard className="w-6 h-6 text-teal-500" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Panel de administración</h1>
-              <p className="text-muted text-sm mt-0.5">Consultas y órdenes en un vistazo</p>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Panel de la Nutrióloga</h1>
+              <p className="text-muted text-sm mt-0.5">Solicitudes de dieta y compras de la tienda</p>
             </div>
           </div>
         </header>
@@ -288,7 +289,7 @@ export default function AdminPage() {
             Solicitudes de plan (consultas)
           </h2>
           <p className="text-sm text-muted mb-4 rounded-lg bg-muted/40 border border-border/50 px-3 py-2 max-w-2xl">
-            Las solicitudes llegan aquí cuando un cliente paga un plan de alimentación en la web (Stripe). Debes iniciar sesión con <strong className="text-foreground">didi@dietas.com</strong> para ver este panel.
+            Solicitudes de dieta y compras de la tienda visibles para la Nutrióloga. Inicia sesión con <strong className="text-foreground">didi@dietas.com</strong>.
           </p>
           {loadingConsultas ? (
             <div className="flex items-center gap-3 text-muted py-8">
@@ -345,6 +346,12 @@ export default function AdminPage() {
                       <li className="flex items-center gap-2 text-muted">
                         <span className="text-xs font-medium text-foreground/80">Estatura:</span>
                         <span>{c.estatura} cm</span>
+                      </li>
+                    )}
+                    {c.peso && (
+                      <li className="flex items-center gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80">Peso:</span>
+                        <span>{c.peso} kg</span>
                       </li>
                     )}
                     <li className="flex items-start gap-2 text-muted">
