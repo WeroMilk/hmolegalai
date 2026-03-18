@@ -31,13 +31,13 @@ export function Hero() {
           <div className="flex flex-col sm:flex-row gap-2 xs:gap-3 sm:gap-4 justify-center items-center mb-8 xs:mb-12 md:mb-16 px-2 xs:px-4">
             <Link
               href="/consulta"
-              className="hover-button btn-primary w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2.5 xs:py-3 sm:py-3.5 bg-teal-600 hover:bg-teal-700 rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-white border-2 border-transparent flex items-center justify-center"
+              className="hover-button btn-primary w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2.5 xs:py-3 sm:py-3.5 min-h-[44px] xs:min-h-[48px] sm:min-h-[52px] bg-teal-600 hover:bg-teal-700 rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-white border-2 border-transparent flex items-center justify-center"
             >
               {t("nav_consulta")}
             </Link>
             <Link
               href="/tienda"
-              className="hover-button w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2 xs:py-2.5 sm:py-3 bg-white hover:bg-white/95 border border-border dark:border-transparent rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-teal-600 hover:text-teal-700 shadow-sm flex items-center justify-center"
+              className="hover-button w-full sm:w-auto px-4 xs:px-6 sm:px-8 py-2.5 xs:py-3 sm:py-3.5 bg-white hover:bg-white/95 border border-border dark:border-transparent rounded-lg text-sm xs:text-base sm:text-lg font-semibold text-center text-teal-600 hover:text-teal-700 shadow-sm flex items-center justify-center min-h-[44px] xs:min-h-[48px] sm:min-h-[52px]"
             >
               {t("home_see_documents")}
             </Link>
