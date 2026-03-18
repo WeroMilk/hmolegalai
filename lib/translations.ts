@@ -88,6 +88,18 @@ const _base = {
     home_how_section_title: "¿Cómo funciona?",
     home_how_section_subtitle: "Solicita tu plan o compra con confianza",
 
+    // FAQ (inicio)
+    faq_section_title: "Preguntas frecuentes",
+    faq_section_subtitle: "Resolvemos tus dudas más comunes",
+    faq_1_q: "¿Cómo recibo mi plan de alimentación?",
+    faq_1_a: "Después de pagar, te contactamos por WhatsApp en menos de 24 horas hábiles con tu plan personalizado.",
+    faq_2_q: "¿Puedo comprar suplementos sin solicitar dieta?",
+    faq_2_a: "Sí. En la tienda puedes comprar VITALAGE y otros productos con envío a toda la República Mexicana.",
+    faq_3_q: "¿Los pagos son seguros?",
+    faq_3_a: "Sí. Usamos Stripe. No guardamos datos de tu tarjeta y el pago está protegido.",
+    faq_4_q: "¿Hacen envíos a todo México?",
+    faq_4_a: "Sí. Enviamos a toda la República Mexicana. El tiempo de entrega depende de tu ubicación.",
+
     // Contacto
     contact_title: "Contacto",
     contact_subtitle: "¿Dudas o aclaraciones? Escríbenos y te responderemos lo antes posible.",
@@ -677,6 +689,16 @@ const _base = {
     home_pro_desc: "Diets and supplements that work",
     home_how_section_title: "How it works",
     home_how_section_subtitle: "Request your plan or shop with confidence",
+    faq_section_title: "Frequently asked questions",
+    faq_section_subtitle: "Answers to common questions",
+    faq_1_q: "How do I receive my meal plan?",
+    faq_1_a: "After payment, we contact you via WhatsApp within 24 business hours with your personalized plan.",
+    faq_2_q: "Can I buy supplements without requesting a diet?",
+    faq_2_a: "Yes. In the store you can buy VITALAGE and other products with shipping across Mexico.",
+    faq_3_q: "Are payments secure?",
+    faq_3_a: "Yes. We use Stripe. We do not store your card details and payment is protected.",
+    faq_4_q: "Do you ship nationwide in Mexico?",
+    faq_4_a: "Yes. We ship to all of Mexico. Delivery time depends on your location.",
     home_docs_section_title: "Documents",
     home_docs_section_subtitle: "Select the legal document you need",
 

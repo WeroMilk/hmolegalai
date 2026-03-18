@@ -6,6 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { isDidiUser } from "@/lib/didi";
 import { Navbar } from "@/components/navbar";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   LayoutDashboard,
   MessageSquare,
@@ -18,6 +19,8 @@ import {
   Calendar,
   Truck,
   Sparkles,
+  Trash2,
+  Check,
 } from "lucide-react";
 
 type Consulta = {
@@ -26,6 +29,7 @@ type Consulta = {
   email?: string;
   telefono?: string;
   edad?: number;
+  estatura?: number;
   objetivoPrincipal?: string;
   metaPeso?: string;
   tipoDieta?: string;
@@ -56,6 +60,8 @@ type Order = {
   createdAt?: string | null;
   paidAt?: string | null;
   shippingAddress?: ShippingAddress | null;
+  numeroGuia?: string | null;
+  enviadaAt?: string | null;
 };
 
 export default function AdminPage() {
@@ -66,6 +72,11 @@ export default function AdminPage() {
   const [loadingConsultas, setLoadingConsultas] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
+  const [guiaByOrderId, setGuiaByOrderId] = useState<Record<string, string>>({});
+  const [editingGuiaOrderId, setEditingGuiaOrderId] = useState<string | null>(null);
+  const [guiaEditValue, setGuiaEditValue] = useState("");
+  const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
+  const [deletingConsultaId, setDeletingConsultaId] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return;
@@ -123,6 +134,7 @@ export default function AdminPage() {
 
   const markAsShipped = async (orderId: string) => {
     if (!user) return;
+    const numeroGuia = guiaByOrderId[orderId]?.trim() || "";
     setUpdatingOrderId(orderId);
     try {
       const token = await user.getIdToken();
@@ -132,15 +144,75 @@ export default function AdminPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status: "enviada" }),
+        body: JSON.stringify({ status: "enviada", ...(numeroGuia ? { numeroGuia } : {}) }),
       });
       if (res.ok) {
         setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, status: "enviada" } : o))
+          prev.map((o) =>
+            o.id === orderId ? { ...o, status: "enviada", numeroGuia: numeroGuia || o.numeroGuia } : o
+          )
         );
+        setGuiaByOrderId((prev) => ({ ...prev, [orderId]: "" }));
       }
     } finally {
       setUpdatingOrderId(null);
+    }
+  };
+
+  const saveOrderGuia = async (orderId: string) => {
+    if (!user) return;
+    setUpdatingOrderId(orderId);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ numeroGuia: guiaEditValue.trim().slice(0, 200) }),
+      });
+      if (res.ok) {
+        setOrders((prev) =>
+          prev.map((o) => (o.id === orderId ? { ...o, numeroGuia: guiaEditValue.trim() || null } : o))
+        );
+        setEditingGuiaOrderId(null);
+        setGuiaEditValue("");
+      }
+    } finally {
+      setUpdatingOrderId(null);
+    }
+  };
+
+  const deleteOrder = async (orderId: string) => {
+    if (!user) return;
+    if (!confirm("¿Eliminar esta orden? No se puede deshacer.")) return;
+    setDeletingOrderId(orderId);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`/api/admin/orders/${orderId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setOrders((prev) => prev.filter((o) => o.id !== orderId));
+    } finally {
+      setDeletingOrderId(null);
+    }
+  };
+
+  const deleteConsulta = async (consultaId: string) => {
+    if (!user) return;
+    if (!confirm("¿Eliminar esta solicitud de plan? No se puede deshacer.")) return;
+    setDeletingConsultaId(consultaId);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`/api/admin/consultas/${consultaId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setConsultas((prev) => prev.filter((c) => c.id !== consultaId));
+    } finally {
+      setDeletingConsultaId(null);
     }
   };
 
@@ -213,8 +285,11 @@ export default function AdminPage() {
         <section className="mb-12">
           <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-teal-500" />
-            Solicitudes de plan (consultas) — didi@dietas.com
+            Solicitudes de plan (consultas)
           </h2>
+          <p className="text-sm text-muted mb-4 rounded-lg bg-muted/40 border border-border/50 px-3 py-2 max-w-2xl">
+            Las solicitudes llegan aquí cuando un cliente paga un plan de alimentación en la web (Stripe). Debes iniciar sesión con <strong className="text-foreground">didi@dietas.com</strong> para ver este panel.
+          </p>
           {loadingConsultas ? (
             <div className="flex items-center gap-3 text-muted py-8">
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-500/30 border-t-teal-500" />
@@ -266,6 +341,12 @@ export default function AdminPage() {
                         <span>{c.edad} años</span>
                       </li>
                     )}
+                    {typeof c.estatura === "number" && c.estatura > 0 && (
+                      <li className="flex items-center gap-2 text-muted">
+                        <span className="text-xs font-medium text-foreground/80">Estatura:</span>
+                        <span>{c.estatura} cm</span>
+                      </li>
+                    )}
                     <li className="flex items-start gap-2 text-muted">
                       <Target className="w-4 h-4 text-teal-500/70 shrink-0 mt-0.5" />
                       <span className="line-clamp-2">{c.objetivoPrincipal ?? "-"}</span>
@@ -308,6 +389,24 @@ export default function AdminPage() {
                       </li>
                     )}
                   </ul>
+                  <div className="mt-4 pt-3 border-t border-border/50">
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                      disabled={deletingConsultaId === c.id}
+                      onClick={() => deleteConsulta(c.id)}
+                    >
+                      {deletingConsultaId === c.id ? (
+                        <span className="animate-spin inline-block w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full" />
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-1.5" />
+                          Eliminar
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -383,25 +482,84 @@ export default function AdminPage() {
                     </div>
                   )}
                   {o.status === "paid" && (
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={updatingOrderId === o.id}
-                      onClick={() => markAsShipped(o.id)}
-                      className="border-teal-500/50 text-teal-600 hover:bg-teal-500/10"
-                    >
-                      {updatingOrderId === o.id ? (
-                        <>
-                          <span className="animate-spin inline-block w-4 h-4 border-2 border-teal-500/30 border-t-teal-500 rounded-full mr-2" />
-                          Procesando...
-                        </>
+                    <div className="space-y-2">
+                      <label className="block text-xs font-medium text-muted">Número de guía (opcional)</label>
+                      <Input
+                        placeholder="Ej. 1234567890"
+                        value={guiaByOrderId[o.id] ?? ""}
+                        onChange={(e) => setGuiaByOrderId((prev) => ({ ...prev, [o.id]: e.target.value }))}
+                        className="max-w-xs text-sm"
+                      />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={updatingOrderId === o.id}
+                        onClick={() => markAsShipped(o.id)}
+                        className="border-teal-500/50 text-teal-600 hover:bg-teal-500/10"
+                      >
+                        {updatingOrderId === o.id ? (
+                          <>
+                            <span className="animate-spin inline-block w-4 h-4 border-2 border-teal-500/30 border-t-teal-500 rounded-full mr-2" />
+                            Procesando...
+                          </>
+                        ) : (
+                          <>
+                            <Truck className="w-4 h-4 mr-2" />
+                            Enviada
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+                  {o.status === "enviada" && (
+                    <div className="space-y-2 pt-2 border-t border-border/50">
+                      {editingGuiaOrderId === o.id ? (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Input
+                            placeholder="Número de guía"
+                            value={guiaEditValue}
+                            onChange={(e) => setGuiaEditValue(e.target.value)}
+                            className="max-w-[180px] text-sm"
+                          />
+                          <Button size="sm" variant="outline" disabled={updatingOrderId === o.id} onClick={() => saveOrderGuia(o.id)}>
+                            {updatingOrderId === o.id ? <span className="animate-spin inline-block w-4 h-4 border-2 border-teal-500/30 border-t-teal-500 rounded-full" /> : <Check className="w-4 h-4" />}
+                          </Button>
+                          <Button size="sm" variant="ghost" onClick={() => { setEditingGuiaOrderId(null); setGuiaEditValue(""); }}>
+                            Cancelar
+                          </Button>
+                        </div>
                       ) : (
-                        <>
-                          <Truck className="w-4 h-4 mr-2" />
-                          Marcar como enviada
-                        </>
+                        <div className="flex flex-wrap items-center gap-2">
+                          {o.numeroGuia ? (
+                            <span className="text-sm text-muted">Guía: <strong className="text-foreground">{o.numeroGuia}</strong></span>
+                          ) : null}
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="text-muted hover:text-foreground"
+                            onClick={() => { setEditingGuiaOrderId(o.id); setGuiaEditValue(o.numeroGuia ?? ""); }}
+                          >
+                            {o.numeroGuia ? "Editar guía" : "Agregar número de guía"}
+                          </Button>
+                        </div>
                       )}
-                    </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                        disabled={deletingOrderId === o.id}
+                        onClick={() => deleteOrder(o.id)}
+                      >
+                        {deletingOrderId === o.id ? (
+                          <span className="animate-spin inline-block w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full" />
+                        ) : (
+                          <>
+                            <Trash2 className="w-4 h-4 mr-1.5" />
+                            Eliminar
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   )}
                 </div>
               ))}

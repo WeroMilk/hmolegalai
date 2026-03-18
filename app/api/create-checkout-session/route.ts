@@ -172,6 +172,7 @@ export async function POST(request: NextRequest) {
         meta.cEmail = trunc(email, 500);
         meta.cTel = trunc(telefono, 500);
         meta.cEdad = trunc(String(bodyConsulta.edad ?? ""), 20);
+        meta.cEstatura = trunc(String(bodyConsulta.estatura ?? ""), 20);
         meta.cObj = trunc(String(bodyConsulta.objetivoPrincipal ?? ""), 500);
         meta.cMetaPeso = trunc(String(bodyConsulta.metaPeso ?? ""), 100);
         meta.cTipoDieta = trunc(String(bodyConsulta.tipoDieta ?? ""), 500);

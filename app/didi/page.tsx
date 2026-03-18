@@ -195,7 +195,7 @@ export default function DidiPage() {
     setLoading(true);
     setError("");
     setPlanContent("");
-    const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones, nombreLnh: form.nombreLnh || "L.N.H. Diana Gallardo" };
+    const payload = { ...form, peso: parsePesoForApi(form.peso), condiciones, nombreLnh: "L.N.H. Diana Gallardo" };
     const DIDI_TIMEOUT_MS = 90000; // 90 s
     const doRequest = async (forceRefreshToken: boolean): Promise<void> => {
       const token = await user!.getIdToken(forceRefreshToken);
@@ -259,7 +259,7 @@ export default function DidiPage() {
 
   const handleDownloadPdf = () => {
     if (!planContent) return;
-    generateDidiPdf(planContent, form.nombrePaciente || "Paciente", form.nombreLnh || "L.N.H. Diana Gallardo");
+    generateDidiPdf(planContent, form.nombrePaciente || "Paciente", "L.N.H. Diana Gallardo");
   };
 
   const handleSaveEdit = () => {
@@ -334,7 +334,7 @@ export default function DidiPage() {
             DIDI · Plan Nutricional
           </h1>
           <p className="text-muted text-base sm:text-lg max-w-xl mx-auto">
-            {form.nombreLnh || "L.N.H. Diana Gallardo"}
+            L.N.H. Diana Gallardo
           </p>
           <p className="text-muted text-sm max-w-2xl mx-auto mt-2">
             Los planes se rigen por el <strong className="text-foreground/90">Sistema Mexicano de Alimentos Equivalentes (SMAE)</strong> y por las recomendaciones de ingestión de nutrimentos para la población mexicana (NOM-043).
@@ -361,11 +361,9 @@ export default function DidiPage() {
                   <Input
                     id="didi-nombreLnh"
                     name="nombreLnh"
-                    autoComplete="name"
-                    value={form.nombreLnh}
-                    onChange={(e) => handleChange("nombreLnh", e.target.value)}
-                    placeholder="L.N.H. Diana Gallardo"
-                    className="focus:border-teal-500/50 focus:ring-teal-500/20"
+                    readOnly
+                    value="L.N.H. Diana Gallardo"
+                    className="focus:border-teal-500/50 focus:ring-teal-500/20 bg-muted/50"
                   />
                   <p className="text-xs text-muted mt-1">Aparece en el plan y en el PDF.</p>
                 </div>

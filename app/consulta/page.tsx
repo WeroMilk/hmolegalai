@@ -44,6 +44,7 @@ export default function ConsultaPage() {
   const [form, setForm] = useState({
     nombre: "",
     edad: "",
+    estatura: "",
     telefono: "",
     email: "",
     objetivoPrincipal: "",
@@ -88,6 +89,7 @@ export default function ConsultaPage() {
           consulta: {
             nombre: form.nombre.trim(),
             edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
+            estatura: form.estatura.trim() ? form.estatura.trim() : "",
             telefono: form.telefono.trim(),
             email: form.email.trim(),
             objetivoPrincipal: form.objetivoPrincipal || "",
@@ -143,7 +145,7 @@ export default function ConsultaPage() {
                   className="max-w-md"
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">Edad *</label>
                   <Input
@@ -154,6 +156,18 @@ export default function ConsultaPage() {
                     value={form.edad}
                     onChange={(e) => setForm((f) => ({ ...f, edad: e.target.value }))}
                     placeholder="Ej. 35"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Estatura (cm) *</label>
+                  <Input
+                    required
+                    type="number"
+                    min={100}
+                    max={250}
+                    value={form.estatura}
+                    onChange={(e) => setForm((f) => ({ ...f, estatura: e.target.value }))}
+                    placeholder="Ej. 165"
                   />
                 </div>
                 <div>

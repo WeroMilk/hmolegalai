@@ -79,9 +79,11 @@ export async function POST(request: NextRequest) {
             // ignore invalid JSON
           }
           const importanciaNum = Math.min(10, Math.max(0, parseInt(String(meta.cImportancia ?? "0"), 10) || 0));
+          const estaturaN = parseInt(String(meta.cEstatura ?? "0"), 10) || 0;
           const consultaDoc = {
             nombre: meta.cNombre ?? "",
             edad: Number.isNaN(edadN) || edadN < 1 || edadN > 120 ? 0 : edadN,
+            estatura: estaturaN >= 100 && estaturaN <= 250 ? estaturaN : 0,
             telefono: meta.cTel ?? "",
             email: meta.cEmail ?? "",
             objetivoPrincipal: meta.cObj || null,
@@ -117,6 +119,7 @@ export async function POST(request: NextRequest) {
                 "",
                 `Nombre: ${c?.nombre ?? "-"}`,
                 `Edad: ${c?.edad ?? "-"}`,
+                c?.estatura ? `Estatura: ${c.estatura} cm` : "",
                 `Teléfono: ${c?.telefono ?? "-"}`,
                 `Email: ${c?.email ?? "-"}`,
                 `Objetivo: ${c?.objetivoPrincipal ?? "-"}`,

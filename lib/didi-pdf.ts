@@ -441,8 +441,8 @@ const BOTTOM_MARGIN = 2;
  * Genera el PDF en UNA sola hoja oficio horizontal (340 x 216 mm).
  * Si el contenido medido no cabe, se escala automáticamente para que SIEMPRE quepa en una hoja.
  */
-export function generateDidiPdf(planContent: string, nombrePaciente: string, nombreLnh?: string): void {
-  const lnh = nombreLnh?.trim() || "L.N.H. Diana Gallardo";
+export function generateDidiPdf(planContent: string, nombrePaciente: string, _nombreLnh?: string): void {
+  const lnh = "L.N.H. Diana Gallardo";
   const { patientBlock, days, recommendations } = parsePlanContent(planContent);
 
   // Pasada 1: medir altura del contenido con escala 1

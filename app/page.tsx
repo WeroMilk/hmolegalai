@@ -3,6 +3,7 @@
 import { Hero } from "@/components/hero";
 import { Features } from "@/components/features";
 import { AboutSection } from "@/components/about-section";
+import { FAQSection } from "@/components/faq-section";
 import { Navbar } from "@/components/navbar";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
         <Hero />
         <Features />
         <AboutSection />
+        <FAQSection />
       </div>
     </main>
   );
