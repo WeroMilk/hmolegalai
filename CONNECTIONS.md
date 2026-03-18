@@ -76,6 +76,30 @@
 
 ---
 
+## Si pagaste pero no ves la orden/consulta en el dashboard
+
+1. **Firebase en producción (Vercel)**  
+   En el proyecto de Vercel → Settings → Environment Variables deben estar:
+   - `FIREBASE_PRIVATE_KEY` (clave privada de la cuenta de servicio, con `\n` para saltos de línea)
+   - `FIREBASE_CLIENT_EMAIL`
+   - `NEXT_PUBLIC_FIREBASE_PROJECT_ID`  
+   Sin estas variables, las órdenes y consultas no se guardan en Firestore y el dashboard sale vacío. Redeploy después de añadirlas.
+
+2. **Webhook de Stripe**  
+   En Stripe Dashboard → Developers → Webhooks, el endpoint debe ser:
+   `https://tu-dominio-vercel.com/api/webhooks/stripe`  
+   Evento: `checkout.session.completed`.  
+   Sin el webhook, la orden puede existir como "pending" pero no se actualiza a "paid" ni se guarda la dirección de envío.  
+   En Vercel, configura `STRIPE_WEBHOOK_SECRET` con el *Signing secret* del webhook.
+
+3. **Mismo proyecto de Firebase**  
+   El proyecto que ves en Firebase Console debe ser el mismo que `NEXT_PUBLIC_FIREBASE_PROJECT_ID`. Las colecciones son `orders`, `consultas` y `contactos`.
+
+4. **Pruebas en local**  
+   Si compraste desde `localhost`, Stripe no puede llamar al webhook. Usa `stripe listen --forward-to localhost:3000/api/webhooks/stripe` y el secret que te da Stripe CLI en `.env.local` como `STRIPE_WEBHOOK_SECRET`.
+
+---
+
 ## Checklist rápido
 
 - [ ] Firebase: login Google funciona y en Firestore aparecen consultas y órdenes.

@@ -70,9 +70,6 @@ export function Navbar() {
               <Link href="/tienda" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
                 {t("nav_tienda")}
               </Link>
-              <Link href="/contacto" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-medium text-muted transition-colors">
-                {t("nav_contacto")}
-              </Link>
               {user && isDidiUser(user.email) && (
                 <>
                   <Link href="/didi" className="i18n-nav-link navbar-link-hover shrink-0 px-1.5 py-2 text-sm font-semibold text-muted transition-colors">
@@ -177,9 +174,6 @@ export function Navbar() {
             </Link>
             <Link href="/tienda" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
               {t("nav_tienda")}
-            </Link>
-            <Link href="/contacto" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
-              {t("nav_contacto")}
             </Link>
             <Link href="/tienda/carrito" className="navbar-link-hover block py-3 px-4 min-h-[44px] flex items-center text-muted hover:bg-card/50 rounded-lg active:bg-card transition-colors" onClick={() => setMobileMenuOpen(false)}>
               Carrito {totalItems > 0 ? `(${totalItems})` : ""}

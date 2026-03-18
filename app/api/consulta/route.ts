@@ -103,13 +103,32 @@ export async function POST(request: NextRequest) {
 
     if (!adminDb) {
       return NextResponse.json(
-        { error: "Base de datos no configurada. Revisa las variables de entorno de Firebase (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, NEXT_PUBLIC_FIREBASE_PROJECT_ID)." },
+        {
+          error: "Solicitar dieta no está disponible: falta configurar Firebase. En Vercel (o tu hosting) añade: FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL y NEXT_PUBLIC_FIREBASE_PROJECT_ID del mismo proyecto de Firebase Console. Ver CONNECTIONS.md o SOLICITAR_DIETA_DEPLOY.md.",
+          detail: "adminDb is null (Firebase Admin no inicializado)",
+        },
         { status: 503 }
       );
     }
 
     const doc = firestoreSafe(consulta);
-    const ref = await adminDb.collection("consultas").add(doc);
+    let ref: { id: string };
+    try {
+      ref = await adminDb.collection("consultas").add(doc);
+    } catch (firestoreError: unknown) {
+      const fsMsg = firestoreError instanceof Error ? firestoreError.message : String(firestoreError);
+      console.error("Consultas Firestore add error:", fsMsg);
+      const isPermission = /permission|denied|insufficient|unauthenticated/i.test(fsMsg);
+      return NextResponse.json(
+        {
+          error: isPermission
+            ? "Firestore: permisos insuficientes. Revisa las reglas de la colección «consultas» y que la cuenta de servicio tenga acceso de escritura."
+            : "No se pudo guardar la consulta en la base de datos.",
+          detail: fsMsg,
+        },
+        { status: 503 }
+      );
+    }
 
     // Notificación por email al admin (didi@dietas.com). También ve las consultas en /admin.
     const nutritionistEmail = process.env.NUTRITIONIST_EMAIL?.trim() || "didi@dietas.com";
@@ -160,10 +179,9 @@ export async function POST(request: NextRequest) {
       /permission-denied|unauthenticated|failed-precondition|resource-exhausted/i.test(code);
     const userMessage = isFirebase
       ? "Error al conectar con Firestore. Revisa .env.local (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, NEXT_PUBLIC_FIREBASE_PROJECT_ID) y que la cuenta de servicio tenga permisos de escritura en la colección «consultas»."
-      : "Error al guardar la consulta. Intenta de nuevo. (Revisa la consola del servidor para más detalle.)";
-    const detail = process.env.NODE_ENV === "development" ? msg : undefined;
+      : "Error al guardar la consulta. Intenta de nuevo.";
     return NextResponse.json(
-      { error: userMessage, ...(detail ? { detail } : {}) },
+      { error: userMessage, detail: msg },
       { status: 500 }
     );
   }
