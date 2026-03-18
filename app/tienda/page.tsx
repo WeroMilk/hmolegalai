@@ -8,10 +8,11 @@ import { motion } from "framer-motion";
 import { Package, ChevronRight } from "lucide-react";
 
 /** Solo las 4 familias con imagen para la portada principal. */
-const FAMILIAS_PORTADA: (typeof PRODUCT_FAMILIES)[0]["id"][] = ["awaken", "detox", "nutrir", "restaurar"];
+const FAMILIAS_PORTADA: (typeof PRODUCT_FAMILIES)[0]["id"][] = ["detox", "nutrir", "restaurar", "awaken"];
 
 export default function TiendaPage() {
-  const familiasPortada = PRODUCT_FAMILIES.filter((f) => FAMILIAS_PORTADA.includes(f.id));
+  const familiasPortada = PRODUCT_FAMILIES.filter((f) => FAMILIAS_PORTADA.includes(f.id))
+    .sort((a, b) => FAMILIAS_PORTADA.indexOf(a.id) - FAMILIAS_PORTADA.indexOf(b.id));
   const otrasFamilias = PRODUCT_FAMILIES.filter((f) => f.id !== "plan" && !FAMILIAS_PORTADA.includes(f.id));
 
   return (

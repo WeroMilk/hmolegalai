@@ -47,7 +47,7 @@ export function Hero() {
             {t("home_shipping")}
           </p>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 xs:gap-12 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-10 xs:mt-12 mb-10 xs:mb-12 sm:mt-20 sm:mb-0 md:mt-16 md:mb-0">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 xs:gap-12 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-2 xs:px-4 mt-20 xs:mt-24 mb-6 xs:mb-8 sm:mt-20 sm:mb-0 md:mt-16 md:mb-0">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
