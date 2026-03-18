@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
             try {
               const consultaSnap = await adminDb.collection("consultas").doc(meta.consultaId).get();
               const c = consultaSnap.data() as Record<string, unknown> | undefined;
-              const planLabel = planDieta === "prueba" ? "Prueba ($1)" : planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
+              const planLabel = planDieta === "prueba" ? "Prueba ($10)" : planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
               const habitos = (c?.habitos as Record<string, string[]>) ?? {};
               const text = [
                 `Plan de alimentación PAGADO — ${planLabel}`,

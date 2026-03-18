@@ -93,7 +93,11 @@ export default function ConsultaPage() {
         body: JSON.stringify(consultaPayload),
       });
       const dataConsulta = await resConsulta.json().catch(() => ({}));
-      if (!resConsulta.ok) throw new Error(dataConsulta?.error || "Error al guardar la solicitud");
+      if (!resConsulta.ok) {
+        const msg = dataConsulta?.error || "Error al guardar la solicitud";
+        const detail = dataConsulta?.detail;
+        throw new Error(detail ? `${msg}: ${detail}` : msg);
+      }
       const consultaId = dataConsulta?.id;
       if (!consultaId) throw new Error("No se obtuvo el ID de la solicitud");
 
@@ -358,7 +362,7 @@ export default function ConsultaPage() {
                       { key: "semanal" as const, label: "Semanal", price: "$399" },
                       { key: "quincenal" as const, label: "Quincenal", price: "$599" },
                       { key: "mensual" as const, label: "Mensual", price: "$999" },
-                      { key: "prueba" as const, label: "$1 (pruebas)", price: "$1" },
+                      { key: "prueba" as const, label: "$10 (pruebas)", price: "$10" },
                     ] as const
                   ).map(({ key, label, price }) => (
                     <button

@@ -25,8 +25,17 @@ function firestoreSafe<T extends Record<string, unknown>>(obj: T): T {
 }
 
 export async function POST(request: NextRequest) {
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Cuerpo de la petición inválido (JSON esperado)." }, { status: 400 });
+  }
+  if (!body || typeof body !== "object") {
+    return NextResponse.json({ error: "Cuerpo de la petición inválido." }, { status: 400 });
+  }
+
+  try {
     const {
       nombre,
       edad,
@@ -82,13 +91,13 @@ export async function POST(request: NextRequest) {
       tipoDieta: typeof tipoDieta === "string" && tipoDieta.trim() ? tipoDieta.trim().slice(0, 100) : null,
       condicionesMedicas: condicionesS || null,
       habitos: {
-        alimentacion: Array.isArray(habitosAlimentacion) ? habitosAlimentacion.slice(0, 20) : [],
-        ejercicio: Array.isArray(habitosEjercicio) ? habitosEjercicio.slice(0, 20) : [],
-        sueno: Array.isArray(habitosSueno) ? habitosSueno.slice(0, 20) : [],
-        estres: Array.isArray(habitosEstres) ? habitosEstres.slice(0, 20) : [],
+        alimentacion: Array.isArray(habitosAlimentacion) ? habitosAlimentacion.slice(0, 20).map((x) => String(x)) : [],
+        ejercicio: Array.isArray(habitosEjercicio) ? habitosEjercicio.slice(0, 20).map((x) => String(x)) : [],
+        sueno: Array.isArray(habitosSueno) ? habitosSueno.slice(0, 20).map((x) => String(x)) : [],
+        estres: Array.isArray(habitosEstres) ? habitosEstres.slice(0, 20).map((x) => String(x)) : [],
       },
       importanciaSuplementos: importanciaNum,
-      fotosUrls: Array.isArray(fotosUrls) ? fotosUrls.slice(0, 5) : [],
+      fotosUrls: Array.isArray(fotosUrls) ? fotosUrls.slice(0, 5).map((x) => String(x)) : [],
       createdAt: new Date(),
     };
 
@@ -141,17 +150,20 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ id: ref.id, ok: true });
-  } catch (error) {
+  } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error(String(error));
     console.error("Error saving consulta:", err.message, err.stack);
     const msg = err.message;
-    const isFirebase = /firebase|permission|unavailable|deadline|not found|invalid|credential/i.test(msg);
+    const code = typeof (error as { code?: string })?.code === "string" ? (error as { code: string }).code : "";
+    const isFirebase =
+      /firebase|permission|unavailable|deadline|not found|invalid|credential|denied|unauthorized/i.test(msg) ||
+      /permission-denied|unauthenticated|failed-precondition|resource-exhausted/i.test(code);
+    const userMessage = isFirebase
+      ? "Error al conectar con Firestore. Revisa .env.local (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, NEXT_PUBLIC_FIREBASE_PROJECT_ID) y que la cuenta de servicio tenga permisos de escritura en la colección «consultas»."
+      : "Error al guardar la consulta. Intenta de nuevo. (Revisa la consola del servidor para más detalle.)";
+    const detail = process.env.NODE_ENV === "development" ? msg : undefined;
     return NextResponse.json(
-      {
-        error: isFirebase
-          ? "Error al conectar con Firestore. Revisa .env.local (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, NEXT_PUBLIC_FIREBASE_PROJECT_ID) y que la cuenta de servicio tenga permisos en Firestore."
-          : "Error al guardar la consulta. Intenta de nuevo. (Revisa la consola del servidor para más detalle.)",
-      },
+      { error: userMessage, ...(detail ? { detail } : {}) },
       { status: 500 }
     );
   }

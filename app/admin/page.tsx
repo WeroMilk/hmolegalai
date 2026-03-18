@@ -271,7 +271,7 @@ export default function AdminPage() {
                       )}
                       {c.planDieta && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-500/15 text-teal-600 dark:text-teal-400">
-                          {c.planDieta === "prueba" ? "Prueba ($1)" : c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : c.planDieta === "mensual" ? "Mensual" : c.planDieta ?? ""}
+                          {c.planDieta === "prueba" ? "Prueba ($10)" : c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : c.planDieta === "mensual" ? "Mensual" : c.planDieta ?? ""}
                         </span>
                       )}
                       <span className="flex items-center gap-1 text-xs text-muted">

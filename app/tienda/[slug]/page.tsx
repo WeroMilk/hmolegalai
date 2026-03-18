@@ -130,6 +130,11 @@ export default function ProductPage() {
               {error && (
                 <p className="text-red-500 text-sm mt-3">{error}</p>
               )}
+              {product.id === "test-1-peso-awaken" && (
+                <p className="text-muted text-xs mt-3">
+                  Producto de prueba por $10 MXN. Eliminar cuando termines las pruebas.
+                </p>
+              )}
             </div>
           </div>
           <div className="mt-8 pt-6 border-t border-border">

@@ -105,12 +105,12 @@ export const PRODUCTS: Product[] = [
     "Promueve la energía natural y el equilibrio hormonal; favorece el estado de ánimo, la libido y la resistencia; fomenta la resistencia al estrés y la durabilidad. Ideal para quienes buscan vitalidad y apoyo hormonal.",
     "/tienda/productos/v-lovkafe.png"
   ),
-  // Pruebas Stripe $1 (eliminar cuando termines): copia de V-LOVKAFE visible en Familia Awaken
+  // Pruebas Stripe $10 (eliminar cuando termines): copia de V-LOVKAFE visible en Familia Awaken
   p(
     "test-1-peso-awaken",
-    "V-LOVKAFE (prueba $1)",
-    "Lovkafe test $1",
-    100,
+    "V-LOVKAFE (prueba $10)",
+    "Lovkafe test $10",
+    1000,
     "awaken",
     "Café con Tongkat Ali y Shilajit para vitalidad, resistencia y equilibrio hormonal.",
     "Promueve la energía natural y el equilibrio hormonal; favorece el estado de ánimo, la libido y la resistencia; fomenta la resistencia al estrés y la durabilidad. Ideal para quienes buscan vitalidad y apoyo hormonal.",
@@ -340,7 +340,7 @@ export const PRODUCTS: Product[] = [
   p("plan-dieta-semanal", "Plan de dieta — Semanal", "Weekly diet plan", 39900, "plan", "Dieta personalizada por 1 semana. Entrega en menos de 24 h.", defaultWhy),
   p("plan-dieta-quincenal", "Plan de dieta — Quincenal", "Biweekly diet plan", 59900, "plan", "Dieta personalizada por 2 semanas. Entrega en menos de 24 h.", defaultWhy),
   p("plan-dieta-mensual", "Plan de dieta — Mensual", "Monthly diet plan", 99900, "plan", "Dieta personalizada por 1 mes. Entrega en menos de 24 h.", defaultWhy),
-  p("plan-dieta-prueba", "Plan prueba $1", "Plan test $1", 100, "plan", "Plan de prueba por $1 MXN. Eliminar después de pruebas.", defaultWhy),
+  p("plan-dieta-prueba", "Plan prueba $10", "Plan test $10", 1000, "plan", "Plan de prueba por $10 MXN. Eliminar después de pruebas.", defaultWhy),
 ];
 
 /** IDs de planes de dieta para uso en consulta y checkout */

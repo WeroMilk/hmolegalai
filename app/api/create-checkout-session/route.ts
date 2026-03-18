@@ -121,6 +121,18 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Stripe exige un mínimo por moneda; en MXN suele ser 500 centavos ($5). Evitar error devolviendo mensaje claro.
+      const STRIPE_MIN_MXN_CENTAVOS = 500;
+      const totalMxnCentavos = lineItems.reduce((sum, li) => sum + (Number(li.price_data?.unit_amount) || 0) * (li.quantity || 1), 0);
+      if (totalMxnCentavos > 0 && totalMxnCentavos < STRIPE_MIN_MXN_CENTAVOS) {
+        return NextResponse.json(
+          {
+            error: "Stripe no permite cobros menores a $5 MXN en la tienda. Para pruebas de $10, usa la opción «$10 (pruebas)» en la página Solicitar plan.",
+          },
+          { status: 400 }
+        );
+      }
+
       const hasTiendaItems = lineItems.some((_, i) => {
         const item = items[i];
         if (!item || typeof item !== "object" || !("productId" in item)) return true;
