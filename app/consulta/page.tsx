@@ -72,35 +72,6 @@ export default function ConsultaPage() {
     setError("");
     setLoading(true);
     try {
-      const consultaPayload = {
-        nombre: form.nombre.trim(),
-        edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
-        telefono: form.telefono.trim(),
-        email: form.email.trim(),
-        objetivoPrincipal: form.objetivoPrincipal || null,
-        metaPeso: form.metaPeso || null,
-        tipoDieta: form.tipoDieta || null,
-        condicionesMedicas: form.condicionesMedicas.trim() || null,
-        habitosAlimentacion: habitos.alimentacion,
-        habitosEjercicio: habitos.ejercicio,
-        habitosSueno: habitos.sueno,
-        habitosEstres: habitos.estres,
-        importanciaSuplementos: form.importanciaSuplementos,
-      };
-      const resConsulta = await fetch("/api/consulta", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(consultaPayload),
-      });
-      const dataConsulta = await resConsulta.json().catch(() => ({}));
-      if (!resConsulta.ok) {
-        const msg = dataConsulta?.error || "Error al guardar la solicitud";
-        const detail = dataConsulta?.detail;
-        throw new Error(detail ? `${msg}: ${detail}` : msg);
-      }
-      const consultaId = dataConsulta?.id;
-      if (!consultaId) throw new Error("No se obtuvo el ID de la solicitud");
-
       const origin = typeof window !== "undefined" ? window.location.origin : "";
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       const token = user ? await user.getIdToken().catch(() => null) : null;
@@ -113,8 +84,22 @@ export default function ConsultaPage() {
           items: [{ productId, quantity: 1 }],
           successUrl: `${origin}/consulta/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${origin}/consulta`,
-          consultaId,
           planDieta,
+          consulta: {
+            nombre: form.nombre.trim(),
+            edad: form.edad.trim() ? parseInt(form.edad, 10) : 0,
+            telefono: form.telefono.trim(),
+            email: form.email.trim(),
+            objetivoPrincipal: form.objetivoPrincipal || "",
+            metaPeso: form.metaPeso || "",
+            tipoDieta: form.tipoDieta || "",
+            condicionesMedicas: form.condicionesMedicas.trim() || "",
+            habitosAlimentacion: habitos.alimentacion,
+            habitosEjercicio: habitos.ejercicio,
+            habitosSueno: habitos.sueno,
+            habitosEstres: habitos.estres,
+            importanciaSuplementos: form.importanciaSuplementos,
+          },
         }),
       });
       const dataCheckout = await resCheckout.json().catch(() => ({}));

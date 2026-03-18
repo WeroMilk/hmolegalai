@@ -32,6 +32,7 @@ export async function POST(request: NextRequest) {
     const bodyCancelUrl = typeof body.cancelUrl === "string" ? body.cancelUrl : undefined;
     const consultaId = typeof body.consultaId === "string" ? body.consultaId.trim().slice(0, 200) : undefined;
     const planDieta = typeof body.planDieta === "string" && ["semanal", "quincenal", "mensual", "prueba"].includes(body.planDieta) ? body.planDieta : undefined;
+    const bodyConsulta = body.consulta && typeof body.consulta === "object" ? (body.consulta as Record<string, unknown>) : undefined;
     const documentId = body.documentId;
     const price = typeof body.price === "number" ? body.price : undefined;
     const saveToAccount = !!body.saveToAccount;
@@ -154,6 +155,36 @@ export async function POST(request: NextRequest) {
       if (consultaId) {
         sessionParams.metadata!.consultaId = consultaId.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 200);
         if (planDieta) sessionParams.metadata!.planDieta = planDieta;
+      }
+      if (bodyConsulta && !hasTiendaItems && planDieta) {
+        const nombre = String(bodyConsulta.nombre ?? "").trim().slice(0, 200);
+        const email = String(bodyConsulta.email ?? "").trim().slice(0, 200);
+        const telefono = String(bodyConsulta.telefono ?? "").trim().slice(0, 50);
+        if (!nombre || !email || !telefono) {
+          return NextResponse.json(
+            { error: "Para solicitar plan de dieta envía nombre, email y teléfono en consulta." },
+            { status: 400 }
+          );
+        }
+        const meta = sessionParams.metadata!;
+        const trunc = (s: string, max: number) => s.slice(0, max);
+        meta.cNombre = trunc(nombre, 500);
+        meta.cEmail = trunc(email, 500);
+        meta.cTel = trunc(telefono, 500);
+        meta.cEdad = trunc(String(bodyConsulta.edad ?? ""), 20);
+        meta.cObj = trunc(String(bodyConsulta.objetivoPrincipal ?? ""), 500);
+        meta.cMetaPeso = trunc(String(bodyConsulta.metaPeso ?? ""), 100);
+        meta.cTipoDieta = trunc(String(bodyConsulta.tipoDieta ?? ""), 500);
+        meta.cCond = trunc(String(bodyConsulta.condicionesMedicas ?? ""), 500);
+        const habitos = {
+          alimentacion: Array.isArray(bodyConsulta.habitosAlimentacion) ? bodyConsulta.habitosAlimentacion : [],
+          ejercicio: Array.isArray(bodyConsulta.habitosEjercicio) ? bodyConsulta.habitosEjercicio : [],
+          sueno: Array.isArray(bodyConsulta.habitosSueno) ? bodyConsulta.habitosSueno : [],
+          estres: Array.isArray(bodyConsulta.habitosEstres) ? bodyConsulta.habitosEstres : [],
+        };
+        meta.cHab = trunc(JSON.stringify(habitos), 500);
+        meta.cImportancia = trunc(String(bodyConsulta.importanciaSuplementos ?? ""), 20);
+        meta.planDieta = planDieta;
       }
       if (hasTiendaItems) {
         sessionParams.shipping_address_collection = { allowed_countries: ["MX"] };

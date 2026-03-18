@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (event.type === "checkout.session.completed" && event.data?.object) {
       const session = event.data.object as {
         id?: string;
-        metadata?: { type?: string; consultaId?: string; planDieta?: string };
+        metadata?: Record<string, string | undefined>;
         customer_details?: { address?: { city?: string; country?: string; line1?: string; line2?: string; postal_code?: string; state?: string }; name?: string };
         shipping_details?: { address?: { city?: string; country?: string; line1?: string; line2?: string; postal_code?: string; state?: string }; name?: string };
       };
@@ -55,17 +55,60 @@ export async function POST(request: NextRequest) {
             { merge: true }
           );
         }
-        if (meta.consultaId) {
-          const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual", "prueba"].includes(meta.planDieta) ? meta.planDieta : null;
+        const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual", "prueba"].includes(meta.planDieta) ? meta.planDieta : null;
+        let consultaIdToUse: string | null = meta.consultaId ?? null;
+        if (meta.type === "consulta" && meta.cNombre && !consultaIdToUse) {
+          const edadN = parseInt(String(meta.cEdad ?? "0"), 10) || 0;
+          let habitos: { alimentacion: string[]; ejercicio: string[]; sueno: string[]; estres: string[] } = {
+            alimentacion: [],
+            ejercicio: [],
+            sueno: [],
+            estres: [],
+          };
+          try {
+            if (meta.cHab) {
+              const parsed = JSON.parse(meta.cHab) as Record<string, unknown>;
+              habitos = {
+                alimentacion: Array.isArray(parsed.alimentacion) ? parsed.alimentacion.map(String) : [],
+                ejercicio: Array.isArray(parsed.ejercicio) ? parsed.ejercicio.map(String) : [],
+                sueno: Array.isArray(parsed.sueno) ? parsed.sueno.map(String) : [],
+                estres: Array.isArray(parsed.estres) ? parsed.estres.map(String) : [],
+              };
+            }
+          } catch {
+            // ignore invalid JSON
+          }
+          const importanciaNum = Math.min(10, Math.max(0, parseInt(String(meta.cImportancia ?? "0"), 10) || 0));
+          const consultaDoc = {
+            nombre: meta.cNombre ?? "",
+            edad: Number.isNaN(edadN) || edadN < 1 || edadN > 120 ? 0 : edadN,
+            telefono: meta.cTel ?? "",
+            email: meta.cEmail ?? "",
+            objetivoPrincipal: meta.cObj || null,
+            metaPeso: meta.cMetaPeso || null,
+            tipoDieta: meta.cTipoDieta || null,
+            condicionesMedicas: meta.cCond || null,
+            habitos,
+            importanciaSuplementos: importanciaNum,
+            createdAt: new Date(),
+            paidAt: new Date(),
+            stripeSessionId: session.id,
+            planDieta: planDieta ?? "semanal",
+          };
+          const ref = await adminDb.collection("consultas").add(consultaDoc);
+          consultaIdToUse = ref.id;
+        } else if (meta.consultaId) {
           await adminDb.collection("consultas").doc(meta.consultaId).set(
             { paidAt: new Date(), stripeSessionId: session.id, planDieta: planDieta ?? "semanal" },
             { merge: true }
           );
-          // Notificar al admin (didi@dietas.com) cuando el plan esté pagado
+          consultaIdToUse = meta.consultaId;
+        }
+        if (consultaIdToUse && meta.type === "consulta") {
           const nutritionistEmail = process.env.NUTRITIONIST_EMAIL?.trim() || "didi@dietas.com";
           if (process.env.RESEND_API_KEY?.trim()) {
             try {
-              const consultaSnap = await adminDb.collection("consultas").doc(meta.consultaId).get();
+              const consultaSnap = await adminDb.collection("consultas").doc(consultaIdToUse).get();
               const c = consultaSnap.data() as Record<string, unknown> | undefined;
               const planLabel = planDieta === "prueba" ? "Prueba ($10)" : planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
               const habitos = (c?.habitos as Record<string, string[]>) ?? {};
@@ -86,7 +129,7 @@ export async function POST(request: NextRequest) {
                 Array.isArray(habitos.sueno) && habitos.sueno.length ? `Sueño: ${habitos.sueno.join(", ")}` : "",
                 Array.isArray(habitos.estres) && habitos.estres.length ? `Estrés: ${habitos.estres.join(", ")}` : "",
                 "",
-                `ID consulta: ${meta.consultaId}`,
+                `ID consulta: ${consultaIdToUse}`,
                 `Dashboard: revisa la sección "Solicitudes de plan" en /admin`,
               ]
                 .filter(Boolean)
