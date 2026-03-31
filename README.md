@@ -1,4 +1,4 @@
-# VitalHealth | Didi Gallardo — Nutrición y Suplementos
+# VitalHealth | Diana Gallardo — Nutrición y Suplementos
 
 Sitio web para nutrióloga: planes de alimentación personalizados (formulario de consulta + DIDI con OpenAI) y tienda de suplementos VitalHealth (Stripe). Next.js 15, Firebase, Stripe.
 
