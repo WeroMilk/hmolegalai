@@ -16,8 +16,8 @@ function TikTokIcon({ className }: { className?: string }) {
 export function Footer() {
   const { t } = useI18n();
   const year = new Date().getFullYear();
-  const instagramUrl = "#";
-  const tiktokUrl = "#";
+  const instagramUrl = "https://www.instagram.com/dianabigaligallardo";
+  const tiktokUrl = "https://www.tiktok.com/@dianabigalig";
 
   return (
     <footer className="relative z-10 py-8 px-4 border-t border-border bg-background">

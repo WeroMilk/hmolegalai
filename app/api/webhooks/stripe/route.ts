@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
             createdAt: new Date(),
           });
         }
-        const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual", "prueba"].includes(meta.planDieta) ? meta.planDieta : null;
+        const planDieta = meta.planDieta && ["semanal", "quincenal", "mensual"].includes(meta.planDieta) ? meta.planDieta : null;
         let consultaIdToUse: string | null = meta.consultaId ?? null;
         if (meta.type === "consulta" && meta.cNombre && !consultaIdToUse) {
           const edadN = parseInt(String(meta.cEdad ?? "0"), 10) || 0;
@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
             try {
               const consultaSnap = await adminDb.collection("consultas").doc(consultaIdToUse).get();
               const c = consultaSnap.data() as Record<string, unknown> | undefined;
-              const planLabel = planDieta === "prueba" ? "Prueba ($10)" : planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
+              const planLabel = planDieta === "mensual" ? "Mensual ($999)" : planDieta === "quincenal" ? "Quincenal ($599)" : "Semanal ($399)";
               const habitos = (c?.habitos as Record<string, string[]>) ?? {};
               const text = [
                 `Plan de alimentación PAGADO — ${planLabel}`,

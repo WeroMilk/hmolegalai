@@ -38,7 +38,7 @@ type Consulta = {
   importanciaSuplementos?: number;
   createdAt?: string | null;
   paidAt?: string | null;
-  planDieta?: "semanal" | "quincenal" | "mensual" | "prueba" | null;
+  planDieta?: "semanal" | "quincenal" | "mensual" | null;
 };
 
 type ShippingAddress = {
@@ -87,7 +87,7 @@ function getOrderStatusClass(status?: string): string {
   if (normalized === "enviado") return "bg-sky-500/15 text-sky-600 dark:text-sky-400";
   if (normalized === "por llegar") return "bg-amber-500/15 text-amber-600 dark:text-amber-400";
   if (normalized === "finalizado") return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400";
-  return "bg-red-500/15 text-red-600 dark:text-red-400";
+  return "bg-red-600 text-white";
 }
 
 export default function AdminPage() {
@@ -97,6 +97,7 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingConsultas, setLoadingConsultas] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [consultasError, setConsultasError] = useState<string | null>(null);
   const [ordersError, setOrdersError] = useState<string | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [editingGuiaOrderId, setEditingGuiaOrderId] = useState<string | null>(null);
@@ -124,14 +125,17 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/consultas", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        const data = await res.json().catch(() => ({}));
         if (res.ok) {
-          const data = await res.json();
           setConsultas(data.consultas ?? []);
+          setConsultasError(null);
         } else {
           setConsultas([]);
+          setConsultasError(data?.error ? `Error al cargar consultas: ${data.error}` : "Error al cargar consultas.");
         }
       } catch {
         setConsultas([]);
+        setConsultasError("No se pudieron cargar las consultas.");
       } finally {
         setLoadingConsultas(false);
       }
@@ -150,8 +154,6 @@ export default function AdminPage() {
             setOrdersError(`Error al sincronizar Stripe: ${sync.error}`);
           } else if (sync?.reason) {
             setOrdersError(`Sincronización Stripe no activa: ${sync.reason}`);
-          } else if (sync?.attempted) {
-            setOrdersError(`Sincronización Stripe OK (modo ${sync.mode ?? "desconocido"}).`);
           } else {
             setOrdersError(null);
           }
@@ -324,9 +326,11 @@ export default function AdminPage() {
             <Sparkles className="w-5 h-5 text-teal-500" />
             Solicitudes de plan (consultas)
           </h2>
-          <p className="text-sm text-muted mb-4 rounded-lg bg-muted/40 border border-border/50 px-3 py-2 max-w-2xl">
-            Solicitudes de dieta y compras de la tienda visibles para la Nutrióloga. Inicia sesión con <strong className="text-foreground">didi@dietas.com</strong>.
-          </p>
+          {consultasError && (
+            <p className="text-sm mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 px-3 py-2">
+              {consultasError}
+            </p>
+          )}
           {loadingConsultas ? (
             <div className="flex items-center gap-3 text-muted py-8">
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-500/30 border-t-teal-500" />
@@ -338,7 +342,7 @@ export default function AdminPage() {
               <p className="text-muted">No hay consultas aún.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {consultas.map((c) => (
                 <div
                   key={c.id}
@@ -354,7 +358,7 @@ export default function AdminPage() {
                       )}
                       {c.planDieta && (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-teal-500/15 text-teal-600 dark:text-teal-400">
-                          {c.planDieta === "prueba" ? "Prueba ($10)" : c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : c.planDieta === "mensual" ? "Mensual" : c.planDieta ?? ""}
+                          {c.planDieta === "semanal" ? "Semanal" : c.planDieta === "quincenal" ? "Quincenal" : c.planDieta === "mensual" ? "Mensual" : c.planDieta ?? ""}
                         </span>
                       )}
                       <span className="flex items-center gap-1 text-xs text-muted">
