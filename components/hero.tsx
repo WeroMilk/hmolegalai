@@ -9,7 +9,7 @@ export function Hero() {
   const { t } = useI18n();
 
   return (
-    <section className="relative flex justify-center pt-24 sm:pt-16 pb-14 sm:pb-20 sm:min-h-[calc(100svh-72px)] sm:items-center">
+    <section className="relative flex justify-center pt-24 sm:pt-20 pb-14 sm:pb-20 sm:min-h-[calc(100svh-72px)] sm:items-center">
       <div className="relative z-10 max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 text-center w-full min-w-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
