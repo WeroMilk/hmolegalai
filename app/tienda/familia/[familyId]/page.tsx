@@ -92,10 +92,10 @@ export default function FamiliaPage() {
               <div className="px-4 pb-4 flex items-center gap-2">
                 <Link
                   href={`/tienda/${product.slug}`}
-                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline sm:justify-start sm:px-0 w-9 h-9 sm:w-auto sm:h-auto rounded-lg hover:bg-teal-500/10 sm:hover:bg-transparent"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline sm:justify-start sm:px-0 w-10 h-10 sm:w-auto sm:h-auto rounded-lg hover:bg-teal-500/10 sm:hover:bg-transparent"
                   aria-label="Ver producto"
                 >
-                  <Search className="w-4 h-4" />
+                  <Search className="w-5 h-5" />
                   <span className="hidden sm:inline">Ver producto</span>
                 </Link>
                 <button
@@ -104,10 +104,10 @@ export default function FamiliaPage() {
                     e.preventDefault();
                     addItem({ productId: product.id, quantity: 1, isSubscription: false });
                   }}
-                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-muted hover:text-teal-600 dark:hover:text-teal-400 transition-colors sm:justify-start sm:px-0 w-9 h-9 sm:w-auto sm:h-auto rounded-lg hover:bg-teal-500/10 sm:hover:bg-transparent"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-muted hover:text-teal-600 dark:hover:text-teal-400 transition-colors sm:justify-start sm:px-0 w-10 h-10 sm:w-auto sm:h-auto rounded-lg hover:bg-teal-500/10 sm:hover:bg-transparent"
                   aria-label="Añadir al carrito"
                 >
-                  <ShoppingCart className="w-4 h-4" />
+                  <ShoppingCart className="w-5 h-5" />
                   <span className="hidden sm:inline">Añadir al carrito</span>
                 </button>
               </div>

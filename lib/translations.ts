@@ -92,7 +92,7 @@ const _base = {
     faq_section_title: "Preguntas frecuentes",
     faq_section_subtitle: "Resolvemos tus dudas más comunes",
     faq_1_q: "¿Cómo recibo mi plan de alimentación?",
-    faq_1_a: "Después de pagar, te contactamos por WhatsApp en menos de 24 horas hábiles con tu plan personalizado.",
+    faq_1_a: "Después de pagar, te contactamos por WhatsApp en menos de 24 horas con tu plan personalizado.",
     faq_2_q: "¿Puedo comprar suplementos sin solicitar dieta?",
     faq_2_a: "Sí. En nuestra tienda puedes encontrar la línea de suplementos VITALHEALTH y otros productos con envío a toda la República Mexicana.",
     faq_3_q: "¿Los pagos son seguros?",
@@ -314,7 +314,7 @@ const _base = {
     about_trust_short: "Cédula profesional. Planes basados en SMAE y NOM-043. Sin dietas genéricas.",
     about_payment_title: "Pago",
     about_payment_short: "Stripe. Tarjetas y débito. Compra única y 100% segura en dietas y suplementos.",
-    about_contact_email: "lnhdianagallardo@gmail.com",
+    about_contact_email: "bigalival@gmail.com",
 
     // Legal pages (Terms, Privacy, Disclaimer) – section titles and intros
     legal_terms_intro: "Última actualización: Enero 2026. AVATAR LEGAL AI («la Plataforma») es un servicio de generación automatizada de plantillas de documentos legales con sede en Hermosillo, Sonora, México. Al utilizar la Plataforma usted acepta los siguientes términos.",
@@ -692,7 +692,7 @@ const _base = {
     faq_section_title: "Frequently asked questions",
     faq_section_subtitle: "Answers to common questions",
     faq_1_q: "How do I receive my meal plan?",
-    faq_1_a: "After payment, we contact you via WhatsApp within 24 business hours with your personalized plan.",
+    faq_1_a: "After payment, we contact you via WhatsApp within 24 hours with your personalized plan.",
     faq_2_q: "Can I buy supplements without requesting a diet?",
     faq_2_a: "Yes. In our store you can find the VITALHEALTH supplement line and other products with shipping across Mexico.",
     faq_3_q: "Are payments secure?",
@@ -902,7 +902,7 @@ const _base = {
     about_trust_short: "Professional license. Plans based on SMAE and NOM-043. No generic diets.",
     about_payment_title: "Payment",
     about_payment_short: "Stripe. Credit and debit. One-time and 100% secure payment for diets and supplements.",
-    about_contact_email: "lnhdianagallardo@gmail.com",
+    about_contact_email: "bigalival@gmail.com",
 
     legal_terms_intro: "Last updated: January 2026. AVATAR LEGAL AI («the Platform») is an automated legal document template generation service based in Hermosillo, Sonora, Mexico. By using the Platform you accept the following terms.",
     legal_terms_s1_title: "Definition of the service",

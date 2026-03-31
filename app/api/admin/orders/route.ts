@@ -88,19 +88,26 @@ async function syncOrdersFromStripe() {
 
     const paidAt = session.created ? new Date(session.created * 1000) : new Date();
 
+    const orderRef = adminDb.collection("orders").doc(session.id);
     syncJobs.push(
-      adminDb.collection("orders").doc(session.id).set(
-        {
-          stripeSessionId: session.id,
-          status: "pendiente",
-          paidAt,
-          shippingAddress,
-          userId: session.metadata?.userId && session.metadata.userId.length > 0 ? session.metadata.userId : null,
-          items: itemsOrder,
-          createdAt: paidAt,
-        },
-        { merge: true }
-      )
+      orderRef.get().then((snap) => {
+        const current = snap.data() as Record<string, unknown> | undefined;
+        const currentStatus = typeof current?.status === "string" ? current.status : undefined;
+        const currentCreatedAt = current?.createdAt;
+        return orderRef.set(
+          {
+            stripeSessionId: session.id,
+            // Preserve admin-managed status across refreshes.
+            status: currentStatus ?? "pendiente",
+            paidAt,
+            shippingAddress,
+            userId: session.metadata?.userId && session.metadata.userId.length > 0 ? session.metadata.userId : null,
+            items: itemsOrder,
+            createdAt: currentCreatedAt ?? paidAt,
+          },
+          { merge: true }
+        );
+      })
     );
     synced += 1;
   }
