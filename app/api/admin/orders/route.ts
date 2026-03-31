@@ -33,6 +33,12 @@ function toMillis(value: unknown): number {
   return 0;
 }
 
+type OrderRow = {
+  id: string;
+  createdAt?: unknown;
+  paidAt?: unknown;
+} & Record<string, unknown>;
+
 async function syncOrdersFromStripe() {
   if (!adminDb) return;
   const stripe = await getStripe();
@@ -137,7 +143,7 @@ export async function GET(request: NextRequest) {
       };
     }
     const snap = await adminDb.collection("orders").limit(300).get();
-    const orders = snap.docs.map((doc) => {
+    const orders: OrderRow[] = snap.docs.map((doc) => {
       const d = doc.data() as Record<string, unknown>;
       const serialized = serializeDocData(d);
       return {
@@ -145,7 +151,7 @@ export async function GET(request: NextRequest) {
         ...serialized,
         createdAt: serialized.createdAt ?? null,
         paidAt: serialized.paidAt ?? null,
-      };
+      } as OrderRow;
     }).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)).slice(0, 200);
     return NextResponse.json({ orders, debug: { sync: syncDebug } });
   } catch (e) {

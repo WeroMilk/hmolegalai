@@ -10,7 +10,7 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://didi-vitahealth.verc
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "VitalHealth | Didi Gallardo",
+  title: "VitalHealth | Diana Gallardo",
   description: "Planes de alimentación personalizados y suplementos VitalHealth VITALAGE. Nutrióloga titulada. Salud integral y bienestar.",
   keywords: "nutrición, dieta personalizada, suplementos, VitalHealth, VITALAGE, colágeno, NAD, nutrióloga, Didi Gallardo",
   icons: {
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_MX",
     url: siteUrl,
-    siteName: "VitalHealth | Didi Gallardo",
+    siteName: "VitalHealth | Diana Gallardo",
     images: [{ url: `${siteUrl}/logo.png`, width: 512, height: 512, alt: "VitalHealth" }],
   },
   twitter: {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "VitalHealth | Didi Gallardo",
+    title: "VitalHealth | Diana Gallardo",
   },
   other: {
     "theme-color": "#5eead4",

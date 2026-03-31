@@ -26,6 +26,11 @@ function toMillis(value: unknown): number {
   return 0;
 }
 
+type ConsultaRow = {
+  id: string;
+  createdAt?: unknown;
+} & Record<string, unknown>;
+
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "").trim();
@@ -48,10 +53,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const snap = await adminDb.collection("consultas").limit(300).get();
-    const consultas = snap.docs.map((doc) => {
+    const consultas: ConsultaRow[] = snap.docs.map((doc) => {
       const d = doc.data() as Record<string, unknown>;
       const serialized = serializeDocData(d);
-      return { id: doc.id, ...serialized };
+      return { id: doc.id, ...serialized } as ConsultaRow;
     }).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)).slice(0, 200);
     return NextResponse.json({ consultas });
   } catch (e) {
