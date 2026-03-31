@@ -36,7 +36,10 @@ export async function POST(request: NextRequest) {
       };
       const meta = session.metadata ?? {};
       if (adminDb && session.id) {
-        if (meta.type === "tienda") {
+        const isConsulta = meta.type === "consulta" || !!meta.planDieta || !!meta.cNombre;
+        const isDocumento = !!meta.documentId;
+        const isTiendaOrder = meta.type === "tienda" || (!isConsulta && !isDocumento);
+        if (isTiendaOrder) {
           const shipping = session.shipping_details?.address || session.customer_details?.address;
           const shippingName = session.shipping_details?.name || session.customer_details?.name;
           const shippingAddress = shipping

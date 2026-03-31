@@ -33,7 +33,10 @@ async function syncOrdersFromStripe() {
   const syncJobs: Promise<unknown>[] = [];
 
   for (const session of sessions.data) {
-    const isTiendaOrder = session.metadata?.type === "tienda";
+    const metadataType = session.metadata?.type ?? "";
+    const isConsulta = metadataType === "consulta" || !!session.metadata?.planDieta || !!session.metadata?.cNombre;
+    const isDocumento = !!session.metadata?.documentId;
+    const isTiendaOrder = metadataType === "tienda" || (!isConsulta && !isDocumento);
     const isPaid = session.payment_status === "paid";
     if (!isTiendaOrder || !isPaid || !session.id) continue;
 
