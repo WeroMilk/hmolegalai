@@ -19,7 +19,16 @@ export async function PATCH(
     if (!id) return NextResponse.json({ error: "ID requerido" }, { status: 400 });
     const body = await request.json();
     const { status, numeroGuia } = body;
-    if (status !== undefined && status !== "enviada" && status !== "paid" && status !== "pending") {
+    if (
+      status !== undefined &&
+      status !== "pendiente" &&
+      status !== "enviado" &&
+      status !== "por llegar" &&
+      status !== "finalizado" &&
+      status !== "enviada" &&
+      status !== "paid" &&
+      status !== "pending"
+    ) {
       return NextResponse.json({ error: "Estado no válido" }, { status: 400 });
     }
     if (!adminDb) {
@@ -27,8 +36,8 @@ export async function PATCH(
     }
     const update: Record<string, unknown> = {};
     if (status !== undefined) {
-      update.status = status;
-      if (status === "enviada") update.enviadaAt = new Date();
+      update.status = status === "paid" || status === "pending" || status === "enviada" ? "pendiente" : status;
+      if (status === "enviado" || status === "enviada") update.enviadaAt = new Date();
     }
     if (numeroGuia !== undefined) {
       update.numeroGuia = typeof numeroGuia === "string" ? numeroGuia.trim().slice(0, 200) : "";
@@ -62,7 +71,14 @@ export async function DELETE(
     if (!adminDb) {
       return NextResponse.json({ error: "Base de datos no configurada" }, { status: 503 });
     }
-    await adminDb.collection("orders").doc(id).delete();
+    const orderRef = adminDb.collection("orders").doc(id);
+    const orderSnap = await orderRef.get();
+    const currentStatus = (orderSnap.data()?.status as string | undefined) ?? "";
+    const normalizedStatus = currentStatus === "paid" || currentStatus === "pending" || currentStatus === "enviada" ? "pendiente" : currentStatus;
+    if (normalizedStatus !== "finalizado") {
+      return NextResponse.json({ error: "Solo puedes eliminar órdenes finalizadas" }, { status: 400 });
+    }
+    await orderRef.delete();
     return NextResponse.json({ ok: true });
   } catch (e) {
     console.error("Admin order delete error:", e);

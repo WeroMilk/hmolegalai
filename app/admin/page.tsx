@@ -20,7 +20,6 @@ import {
   Truck,
   Sparkles,
   Trash2,
-  Check,
 } from "lucide-react";
 
 type Consulta = {
@@ -65,6 +64,32 @@ type Order = {
   enviadaAt?: string | null;
 };
 
+type OrderStatus = "pendiente" | "enviado" | "por llegar" | "finalizado";
+
+const ORDER_STATUS_OPTIONS: OrderStatus[] = ["pendiente", "enviado", "por llegar", "finalizado"];
+
+function normalizeOrderStatus(status?: string): OrderStatus {
+  if (status === "enviado" || status === "por llegar" || status === "finalizado") return status;
+  if (status === "paid" || status === "pending" || status === "enviada" || status === "pendiente") return "pendiente";
+  return "pendiente";
+}
+
+function getOrderStatusLabel(status?: string): string {
+  const normalized = normalizeOrderStatus(status);
+  if (normalized === "enviado") return "Enviado";
+  if (normalized === "por llegar") return "Por llegar";
+  if (normalized === "finalizado") return "Finalizado";
+  return "Pendiente";
+}
+
+function getOrderStatusClass(status?: string): string {
+  const normalized = normalizeOrderStatus(status);
+  if (normalized === "enviado") return "bg-sky-500/15 text-sky-600 dark:text-sky-400";
+  if (normalized === "por llegar") return "bg-amber-500/15 text-amber-600 dark:text-amber-400";
+  if (normalized === "finalizado") return "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400";
+  return "bg-muted text-muted-foreground";
+}
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
@@ -73,7 +98,6 @@ export default function AdminPage() {
   const [loadingConsultas, setLoadingConsultas] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
-  const [guiaByOrderId, setGuiaByOrderId] = useState<Record<string, string>>({});
   const [editingGuiaOrderId, setEditingGuiaOrderId] = useState<string | null>(null);
   const [guiaEditValue, setGuiaEditValue] = useState("");
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
@@ -133,9 +157,8 @@ export default function AdminPage() {
     fetchOrders();
   }, [user]);
 
-  const markAsShipped = async (orderId: string) => {
+  const updateOrderStatus = async (orderId: string, status: OrderStatus) => {
     if (!user) return;
-    const numeroGuia = guiaByOrderId[orderId]?.trim() || "";
     setUpdatingOrderId(orderId);
     try {
       const token = await user.getIdToken();
@@ -145,15 +168,10 @@ export default function AdminPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status: "enviada", ...(numeroGuia ? { numeroGuia } : {}) }),
+        body: JSON.stringify({ status }),
       });
       if (res.ok) {
-        setOrders((prev) =>
-          prev.map((o) =>
-            o.id === orderId ? { ...o, status: "enviada", numeroGuia: numeroGuia || o.numeroGuia } : o
-          )
-        );
-        setGuiaByOrderId((prev) => ({ ...prev, [orderId]: "" }));
+        setOrders((prev) => prev.map((o) => (o.id === orderId ? { ...o, status } : o)));
       }
     } finally {
       setUpdatingOrderId(null);
@@ -187,7 +205,12 @@ export default function AdminPage() {
 
   const deleteOrder = async (orderId: string) => {
     if (!user) return;
-    if (!confirm("¿Eliminar esta orden? No se puede deshacer.")) return;
+    const order = orders.find((o) => o.id === orderId);
+    if (normalizeOrderStatus(order?.status) !== "finalizado") {
+      alert("Solo puedes eliminar órdenes con estado finalizado.");
+      return;
+    }
+    if (!confirm("¿Eliminar esta orden finalizada? No se puede deshacer.")) return;
     setDeletingOrderId(orderId);
     try {
       const token = await user.getIdToken();
@@ -225,8 +248,8 @@ export default function AdminPage() {
     );
   }
 
-  const pendingShip = orders.filter((o) => o.status === "paid").length;
-  const shipped = orders.filter((o) => o.status === "enviada").length;
+  const pendingShip = orders.filter((o) => normalizeOrderStatus(o.status) === "pendiente").length;
+  const shipped = orders.filter((o) => normalizeOrderStatus(o.status) === "enviado").length;
 
   return (
     <div className="min-h-screen text-foreground bg-gradient-to-b from-background via-background to-teal-500/5">
@@ -449,18 +472,33 @@ export default function AdminPage() {
                     </code>
                     <span
                       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${
-                        o.status === "enviada"
-                          ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
-                          : o.status === "paid"
-                            ? "bg-amber-500/15 text-amber-600 dark:text-amber-400"
-                            : "bg-muted text-muted-foreground"
+                        getOrderStatusClass(o.status)
                       }`}
                     >
-                      {o.status === "enviada" && <Truck className="w-3.5 h-3.5" />}
-                      {o.status === "paid" && <Package className="w-3.5 h-3.5" />}
-                      {o.status === "enviada" ? "Enviada" : o.status === "paid" ? "Pagada" : (o.status ?? "pending")}
+                      {(normalizeOrderStatus(o.status) === "enviado" || normalizeOrderStatus(o.status) === "por llegar") && (
+                        <Truck className="w-3.5 h-3.5" />
+                      )}
+                      {normalizeOrderStatus(o.status) === "pendiente" && <Package className="w-3.5 h-3.5" />}
+                      {normalizeOrderStatus(o.status) === "finalizado" && <Sparkles className="w-3.5 h-3.5" />}
+                      {getOrderStatusLabel(o.status)}
                     </span>
                   </div>
+                  {Array.isArray(o.items) && o.items.length > 0 && (
+                    <div className="text-sm mb-4 p-3 rounded-xl bg-muted/30 border border-border/50">
+                      <p className="font-medium text-foreground mb-1.5">Productos</p>
+                      <ul className="space-y-1 text-muted">
+                        {o.items.map((item, idx) => {
+                          const current = item as { productId?: string; quantity?: number } | null;
+                          return (
+                            <li key={`${o.id}-item-${idx}`} className="flex items-center justify-between gap-3">
+                              <span className="truncate">{current?.productId ?? "Producto"}</span>
+                              <span>x{current?.quantity ?? 1}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  )}
                   <div className="flex flex-wrap gap-4 text-sm text-muted mb-4">
                     <span className="flex items-center gap-1.5">
                       <Clock className="w-4 h-4 text-teal-500/70" />
@@ -488,86 +526,87 @@ export default function AdminPage() {
                       </p>
                     </div>
                   )}
-                  {o.status === "paid" && (
-                    <div className="space-y-2">
-                      <label className="block text-xs font-medium text-muted">Número de guía (opcional)</label>
-                      <Input
-                        placeholder="Ej. 1234567890"
-                        value={guiaByOrderId[o.id] ?? ""}
-                        onChange={(e) => setGuiaByOrderId((prev) => ({ ...prev, [o.id]: e.target.value }))}
-                        className="max-w-xs text-sm"
-                      />
-                      <Button
-                        size="sm"
-                        variant="outline"
+                  <div className="space-y-2 pt-2 border-t border-border/50">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <label className="text-xs font-medium text-muted">Estado:</label>
+                      <select
+                        value={normalizeOrderStatus(o.status)}
+                        onChange={(e) => updateOrderStatus(o.id, e.target.value as OrderStatus)}
                         disabled={updatingOrderId === o.id}
-                        onClick={() => markAsShipped(o.id)}
-                        className="border-teal-500/50 text-teal-600 hover:bg-teal-500/10"
+                        className="h-9 rounded-md border border-input bg-background px-3 text-sm"
                       >
-                        {updatingOrderId === o.id ? (
-                          <>
-                            <span className="animate-spin inline-block w-4 h-4 border-2 border-teal-500/30 border-t-teal-500 rounded-full mr-2" />
-                            Procesando...
-                          </>
-                        ) : (
-                          <>
-                            <Truck className="w-4 h-4 mr-2" />
-                            Enviada
-                          </>
-                        )}
-                      </Button>
+                        {ORDER_STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {getOrderStatusLabel(status)}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                  )}
-                  {o.status === "enviada" && (
-                    <div className="space-y-2 pt-2 border-t border-border/50">
-                      {editingGuiaOrderId === o.id ? (
-                        <div className="flex flex-wrap items-center gap-2">
-                          <Input
-                            placeholder="Número de guía"
-                            value={guiaEditValue}
-                            onChange={(e) => setGuiaEditValue(e.target.value)}
-                            className="max-w-[180px] text-sm"
-                          />
-                          <Button size="sm" variant="outline" disabled={updatingOrderId === o.id} onClick={() => saveOrderGuia(o.id)}>
-                            {updatingOrderId === o.id ? <span className="animate-spin inline-block w-4 h-4 border-2 border-teal-500/30 border-t-teal-500 rounded-full" /> : <Check className="w-4 h-4" />}
-                          </Button>
-                          <Button size="sm" variant="ghost" onClick={() => { setEditingGuiaOrderId(null); setGuiaEditValue(""); }}>
-                            Cancelar
-                          </Button>
-                        </div>
+                    {(normalizeOrderStatus(o.status) === "enviado" ||
+                      normalizeOrderStatus(o.status) === "por llegar" ||
+                      normalizeOrderStatus(o.status) === "finalizado") && (
+                      <>
+                        {editingGuiaOrderId === o.id ? (
+                          <div className="flex flex-wrap items-center gap-2">
+                            <Input
+                              placeholder="Número de guía"
+                              value={guiaEditValue}
+                              onChange={(e) => setGuiaEditValue(e.target.value)}
+                              className="max-w-[220px] text-sm"
+                            />
+                            <Button size="sm" variant="outline" disabled={updatingOrderId === o.id} onClick={() => saveOrderGuia(o.id)}>
+                              Guardar guía
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => {
+                                setEditingGuiaOrderId(null);
+                                setGuiaEditValue("");
+                              }}
+                            >
+                              Cancelar
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex flex-wrap items-center gap-2">
+                            {o.numeroGuia ? (
+                              <span className="text-sm text-muted">
+                                Guía: <strong className="text-foreground">{o.numeroGuia}</strong>
+                              </span>
+                            ) : null}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-muted hover:text-foreground"
+                              onClick={() => {
+                                setEditingGuiaOrderId(o.id);
+                                setGuiaEditValue(o.numeroGuia ?? "");
+                              }}
+                            >
+                              {o.numeroGuia ? "Editar guía" : "Agregar número de guía"}
+                            </Button>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                      disabled={deletingOrderId === o.id || normalizeOrderStatus(o.status) !== "finalizado"}
+                      onClick={() => deleteOrder(o.id)}
+                    >
+                      {deletingOrderId === o.id ? (
+                        <span className="animate-spin inline-block w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full" />
                       ) : (
-                        <div className="flex flex-wrap items-center gap-2">
-                          {o.numeroGuia ? (
-                            <span className="text-sm text-muted">Guía: <strong className="text-foreground">{o.numeroGuia}</strong></span>
-                          ) : null}
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="text-muted hover:text-foreground"
-                            onClick={() => { setEditingGuiaOrderId(o.id); setGuiaEditValue(o.numeroGuia ?? ""); }}
-                          >
-                            {o.numeroGuia ? "Editar guía" : "Agregar número de guía"}
-                          </Button>
-                        </div>
+                        <>
+                          <Trash2 className="w-4 h-4 mr-1.5" />
+                          Eliminar
+                        </>
                       )}
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                        disabled={deletingOrderId === o.id}
-                        onClick={() => deleteOrder(o.id)}
-                      >
-                        {deletingOrderId === o.id ? (
-                          <span className="animate-spin inline-block w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full" />
-                        ) : (
-                          <>
-                            <Trash2 className="w-4 h-4 mr-1.5" />
-                            Eliminar
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  )}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>

@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
           }
           await adminDb.collection("orders").doc(session.id).set({
             stripeSessionId: session.id,
-            status: "paid",
+            status: "pendiente",
             paidAt: new Date(),
             shippingAddress: shippingAddress ?? null,
             userId: meta.userId && meta.userId.length > 0 ? meta.userId : null,
