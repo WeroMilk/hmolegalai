@@ -8,7 +8,7 @@ import { PRODUCT_FAMILIES, getProductsByFamily } from "@/lib/products";
 import type { Product } from "@/lib/products";
 import { useCart } from "@/lib/cart-context";
 import { motion } from "framer-motion";
-import { ShoppingBag, ArrowLeft, ShoppingCart } from "lucide-react";
+import { Search, ArrowLeft, ShoppingCart } from "lucide-react";
 
 function formatPrice(centavos: number): string {
   return `$ ${(centavos / 100).toLocaleString("es-MX")}`;
@@ -89,13 +89,14 @@ export default function FamiliaPage() {
                   </p>
                 </div>
               </Link>
-              <div className="px-4 pb-4 flex gap-2">
+              <div className="px-4 pb-4 flex items-center gap-2">
                 <Link
                   href={`/tienda/${product.slug}`}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-teal-600 dark:text-teal-400 hover:underline sm:justify-start sm:px-0 w-9 h-9 sm:w-auto sm:h-auto rounded-lg hover:bg-teal-500/10 sm:hover:bg-transparent"
+                  aria-label="Ver producto"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  Ver producto
+                  <Search className="w-4 h-4" />
+                  <span className="hidden sm:inline">Ver producto</span>
                 </Link>
                 <button
                   type="button"
@@ -103,10 +104,11 @@ export default function FamiliaPage() {
                     e.preventDefault();
                     addItem({ productId: product.id, quantity: 1, isSubscription: false });
                   }}
-                  className="inline-flex items-center gap-1.5 text-sm font-medium text-muted hover:text-teal-600 dark:hover:text-teal-400 transition-colors"
+                  className="inline-flex items-center justify-center gap-1.5 text-sm font-medium text-muted hover:text-teal-600 dark:hover:text-teal-400 transition-colors sm:justify-start sm:px-0 w-9 h-9 sm:w-auto sm:h-auto rounded-lg hover:bg-teal-500/10 sm:hover:bg-transparent"
+                  aria-label="Añadir al carrito"
                 >
                   <ShoppingCart className="w-4 h-4" />
-                  Añadir al carrito
+                  <span className="hidden sm:inline">Añadir al carrito</span>
                 </button>
               </div>
             </motion.article>
