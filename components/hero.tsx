@@ -9,7 +9,7 @@ export function Hero() {
   const { t } = useI18n();
 
   return (
-    <section className="relative flex items-start sm:items-center justify-center pt-24 sm:pt-24 md:pt-20 pb-8 sm:pb-4">
+    <section className="relative min-h-[calc(100svh-64px)] sm:min-h-[calc(100svh-72px)] flex items-center justify-center pt-6 sm:pt-0 pb-6 sm:pb-0">
       <div className="relative z-10 max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 text-center w-full min-w-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -47,7 +47,7 @@ export function Hero() {
             {t("home_shipping")}
           </p>
 
-          <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-1 xs:px-2 sm:px-4 mt-4 xs:mt-5 mb-3 xs:mb-6 sm:mt-12 sm:mb-0 md:mt-10 md:mb-0">
+          <div className="grid grid-cols-3 gap-2 xs:gap-3 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-1 xs:px-2 sm:px-4 mt-4 xs:mt-5 sm:mt-12 md:mt-10">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
