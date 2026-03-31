@@ -27,18 +27,28 @@ function serializeDocData(d: Record<string, unknown>): Record<string, unknown> {
 async function syncOrdersFromStripe() {
   if (!adminDb) return;
   const stripe = await getStripe();
-  if (!stripe) return;
+  if (!stripe) return { attempted: false, reason: "Stripe no configurado", synced: 0 };
 
   const sessions = await stripe.checkout.sessions.list({ limit: 100 });
   const syncJobs: Promise<unknown>[] = [];
+  let paidSessions = 0;
+  let tiendaCandidates = 0;
+  let synced = 0;
+  let mode: "test" | "live" | "mixed" | "unknown" = "unknown";
+  let sawTest = false;
+  let sawLive = false;
 
   for (const session of sessions.data) {
+    if (session.livemode) sawLive = true;
+    else sawTest = true;
+    if (session.payment_status === "paid") paidSessions += 1;
     const metadataType = session.metadata?.type ?? "";
     const isConsulta = metadataType === "consulta" || !!session.metadata?.planDieta || !!session.metadata?.cNombre;
     const isDocumento = !!session.metadata?.documentId;
     const isTiendaOrder = metadataType === "tienda" || (!isConsulta && !isDocumento);
     const isPaid = session.payment_status === "paid";
     if (!isTiendaOrder || !isPaid || !session.id) continue;
+    tiendaCandidates += 1;
 
     const shipping = session.shipping_details?.address || session.customer_details?.address;
     const shippingName = session.shipping_details?.name || session.customer_details?.name;
@@ -77,9 +87,12 @@ async function syncOrdersFromStripe() {
         { merge: true }
       )
     );
+    synced += 1;
   }
 
   await Promise.all(syncJobs);
+  mode = sawLive && sawTest ? "mixed" : sawLive ? "live" : sawTest ? "test" : "unknown";
+  return { attempted: true, reason: null, synced, paidSessions, tiendaCandidates, mode };
 }
 
 export async function GET(request: NextRequest) {
@@ -103,7 +116,17 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    await syncOrdersFromStripe();
+    let syncDebug: Record<string, unknown> = { attempted: false };
+    try {
+      syncDebug = (await syncOrdersFromStripe()) as Record<string, unknown>;
+    } catch (syncError) {
+      console.error("Admin orders sync error:", syncError);
+      syncDebug = {
+        attempted: true,
+        synced: 0,
+        error: syncError instanceof Error ? syncError.message : "Error desconocido al sincronizar Stripe",
+      };
+    }
     const snap = await adminDb.collection("orders").orderBy("createdAt", "desc").limit(200).get();
     const orders = snap.docs.map((doc) => {
       const d = doc.data() as Record<string, unknown>;
@@ -115,7 +138,7 @@ export async function GET(request: NextRequest) {
         paidAt: serialized.paidAt ?? null,
       };
     });
-    return NextResponse.json({ orders });
+    return NextResponse.json({ orders, debug: { sync: syncDebug } });
   } catch (e) {
     console.error("Admin orders error:", e);
     return NextResponse.json({ error: "Error al listar órdenes" }, { status: 500 });

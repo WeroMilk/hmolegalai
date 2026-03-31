@@ -97,6 +97,7 @@ export default function AdminPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingConsultas, setLoadingConsultas] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
+  const [ordersError, setOrdersError] = useState<string | null>(null);
   const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
   const [editingGuiaOrderId, setEditingGuiaOrderId] = useState<string | null>(null);
   const [guiaEditValue, setGuiaEditValue] = useState("");
@@ -141,14 +142,26 @@ export default function AdminPage() {
         const res = await fetch("/api/admin/orders", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        const data = await res.json().catch(() => ({}));
         if (res.ok) {
-          const data = await res.json();
           setOrders(data.orders ?? []);
+          const sync = data?.debug?.sync as { attempted?: boolean; error?: string; mode?: string; reason?: string } | undefined;
+          if (sync?.error) {
+            setOrdersError(`Error al sincronizar Stripe: ${sync.error}`);
+          } else if (sync?.reason) {
+            setOrdersError(`Sincronización Stripe no activa: ${sync.reason}`);
+          } else if (sync?.attempted) {
+            setOrdersError(`Sincronización Stripe OK (modo ${sync.mode ?? "desconocido"}).`);
+          } else {
+            setOrdersError(null);
+          }
         } else {
           setOrders([]);
+          setOrdersError(data?.error ? `Error al cargar órdenes: ${data.error}` : "Error al cargar órdenes.");
         }
       } catch {
         setOrders([]);
+        setOrdersError("No se pudieron cargar las órdenes. Revisa conexión o configuración del servidor.");
       } finally {
         setLoadingOrders(false);
       }
@@ -449,6 +462,11 @@ export default function AdminPage() {
             <ShoppingBag className="w-5 h-5 text-teal-500" />
             Órdenes (tienda)
           </h2>
+          {ordersError && (
+            <p className="text-sm mb-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300 px-3 py-2">
+              {ordersError}
+            </p>
+          )}
           {loadingOrders ? (
             <div className="flex items-center gap-3 text-muted py-8">
               <div className="animate-spin rounded-full h-6 w-6 border-2 border-teal-500/30 border-t-teal-500" />
