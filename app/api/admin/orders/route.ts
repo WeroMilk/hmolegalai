@@ -24,6 +24,15 @@ function serializeDocData(d: Record<string, unknown>): Record<string, unknown> {
   return out;
 }
 
+function toMillis(value: unknown): number {
+  if (typeof value === "string") {
+    const t = Date.parse(value);
+    return Number.isNaN(t) ? 0 : t;
+  }
+  if (value instanceof Date) return value.getTime();
+  return 0;
+}
+
 async function syncOrdersFromStripe() {
   if (!adminDb) return;
   const stripe = await getStripe();
@@ -127,7 +136,7 @@ export async function GET(request: NextRequest) {
         error: syncError instanceof Error ? syncError.message : "Error desconocido al sincronizar Stripe",
       };
     }
-    const snap = await adminDb.collection("orders").orderBy("createdAt", "desc").limit(200).get();
+    const snap = await adminDb.collection("orders").limit(300).get();
     const orders = snap.docs.map((doc) => {
       const d = doc.data() as Record<string, unknown>;
       const serialized = serializeDocData(d);
@@ -137,10 +146,11 @@ export async function GET(request: NextRequest) {
         createdAt: serialized.createdAt ?? null,
         paidAt: serialized.paidAt ?? null,
       };
-    });
+    }).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)).slice(0, 200);
     return NextResponse.json({ orders, debug: { sync: syncDebug } });
   } catch (e) {
     console.error("Admin orders error:", e);
-    return NextResponse.json({ error: "Error al listar órdenes" }, { status: 500 });
+    const reason = e instanceof Error ? e.message : "Error desconocido";
+    return NextResponse.json({ error: `Error al listar órdenes: ${reason}` }, { status: 500 });
   }
 }

@@ -17,6 +17,15 @@ function serializeDocData(d: Record<string, unknown>): Record<string, unknown> {
   return out;
 }
 
+function toMillis(value: unknown): number {
+  if (typeof value === "string") {
+    const t = Date.parse(value);
+    return Number.isNaN(t) ? 0 : t;
+  }
+  if (value instanceof Date) return value.getTime();
+  return 0;
+}
+
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "").trim();
@@ -38,15 +47,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const snap = await adminDb.collection("consultas").orderBy("createdAt", "desc").limit(200).get();
+    const snap = await adminDb.collection("consultas").limit(300).get();
     const consultas = snap.docs.map((doc) => {
       const d = doc.data() as Record<string, unknown>;
       const serialized = serializeDocData(d);
       return { id: doc.id, ...serialized };
-    });
+    }).sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt)).slice(0, 200);
     return NextResponse.json({ consultas });
   } catch (e) {
     console.error("Admin consultas error:", e);
-    return NextResponse.json({ error: "Error al listar consultas" }, { status: 500 });
+    const reason = e instanceof Error ? e.message : "Error desconocido";
+    return NextResponse.json({ error: `Error al listar consultas: ${reason}` }, { status: 500 });
   }
 }
