@@ -9,7 +9,7 @@ export function Hero() {
   const { t } = useI18n();
 
   return (
-    <section className="relative flex justify-center pt-24 sm:pt-6 pb-10 sm:pb-16 sm:min-h-[calc(100svh-72px)] sm:items-center">
+    <section className="relative flex justify-center pt-24 sm:pt-12 pb-14 sm:pb-20 sm:min-h-[calc(100svh-72px)] sm:items-center">
       <div className="relative z-10 max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8 text-center w-full min-w-0">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -43,11 +43,11 @@ export function Hero() {
             </Link>
           </div>
 
-          <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mb-5 xs:mb-6 sm:mb-8">
+          <p className="text-sm font-medium text-teal-600 dark:text-teal-400 mt-5 xs:mt-6 sm:mt-0 mb-5 xs:mb-6 sm:mb-8">
             {t("home_shipping")}
           </p>
 
-          <div className="grid grid-cols-3 gap-3 xs:gap-4 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-0 xs:px-2 sm:px-4 mt-3 xs:mt-4 sm:mt-12 md:mt-10">
+          <div className="grid grid-cols-3 gap-3 xs:gap-4 sm:gap-10 md:gap-12 max-w-4xl mx-auto px-0 xs:px-2 sm:px-4 mt-6 xs:mt-7 sm:mt-12 md:mt-10 mb-8 xs:mb-10 sm:mb-0">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
