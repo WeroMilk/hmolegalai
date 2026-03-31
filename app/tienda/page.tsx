@@ -48,7 +48,7 @@ export default function TiendaPage() {
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.35, delay: index * 0.06 }}
-                  className="rounded-2xl bg-white dark:bg-white border border-gray-200 dark:border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col text-center"
+                  className="rounded-2xl bg-white dark:bg-card border border-gray-200 dark:border-border shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden flex flex-col text-center"
                 >
                   <Link href={`/tienda/familia/${fam.id}`} className="group flex flex-col flex-1">
                     <div className="relative aspect-[4/3] bg-white border border-gray-200/50 dark:border-gray-200/70 flex items-center justify-center p-4 sm:p-6">
@@ -68,10 +68,10 @@ export default function TiendaPage() {
                       )}
                     </div>
                     <div className="p-5 sm:p-6 flex flex-col flex-1 min-h-0">
-                      <h3 className="font-bold text-lg sm:text-xl text-foreground dark:text-slate-900 shrink-0">
+                      <h3 className="font-bold text-lg sm:text-xl text-foreground shrink-0">
                         {fam.name}
                       </h3>
-                      <p className="text-sm text-muted dark:text-slate-600 mt-1 flex-1 min-h-0">
+                      <p className="text-sm text-muted mt-1 flex-1 min-h-0">
                         {fam.shortDescription ?? fam.description ?? `${count} producto${count !== 1 ? "s" : ""}`}
                       </p>
                       <span className="mt-4 shrink-0 inline-flex items-center justify-center w-full py-3 px-5 rounded-xl text-white font-semibold bg-gradient-to-b from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 transition-all shadow-sm">
